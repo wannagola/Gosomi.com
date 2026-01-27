@@ -167,43 +167,43 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const law = LAWS.find(l => l.id === case_.lawType);
   
   const statusConfig = {
-    'filed': { 
+    'FILED': { 
       label: '접수 완료', 
       color: 'bg-blue-500',
       icon: <FileText className="w-5 h-5" />,
       textColor: 'text-blue-400'
     },
-    'summoned': { 
+    'SUMMONED': { 
       label: '소환 완료', 
       color: 'bg-purple-500',
       icon: <AlertCircle className="w-5 h-5" />,
       textColor: 'text-purple-400'
     },
-    'in-defense': { 
+    'DEFENSE_SUBMITTED': { 
       label: '변론 중', 
       color: 'bg-yellow-500',
       icon: <Clock className="w-5 h-5" />,
       textColor: 'text-yellow-400'
     },
-    'awaiting-verdict': { 
+    'VERDICT_READY': { 
       label: '판결 대기', 
       color: 'bg-orange-500',
       icon: <Clock className="w-5 h-5" />,
       textColor: 'text-orange-400'
     },
-    'sentenced': { 
+    'COMPLETED': { 
       label: '선고 완료', 
       color: 'bg-green-500',
       icon: <CheckCircle className="w-5 h-5" />,
       textColor: 'text-green-400'
     },
-    'expired': { 
+    'EXPIRED': { 
       label: '기한 만료', 
       color: 'bg-gray-500',
       icon: <AlertCircle className="w-5 h-5" />,
       textColor: 'text-gray-400'
     },
-    'appealed': { 
+    'UNDER_APPEAL': { 
       label: '항소 접수', 
       color: 'bg-red-500',
       icon: <AlertCircle className="w-5 h-5" />,
@@ -211,7 +211,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
     },
   };
 
-  const status = statusConfig[case_.status];
+  const status = statusConfig[case_.status] || statusConfig['FILED'];
   const timeSince = getTimeSince(case_.createdAt);
 
   return (
