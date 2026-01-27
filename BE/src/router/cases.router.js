@@ -257,12 +257,15 @@ router.get("/:id", async (req, res) => {
     const defenseContent = dRows[0]?.content || null;
 
     // Fetch evidences - always return array (empty if none)
-    const [evRows] = await pool.query("SELECT id, type, content, is_key_evidence FROM evidences WHERE case_id=? ORDER BY created_at", [id]);
+    const [evRows] = await pool.query(
+      "SELECT id, type, text_content, file_path, submitted_by FROM evidences WHERE case_id=? ORDER BY created_at", 
+      [id]
+    );
     const evidences = evRows.map(e => ({
       id: String(e.id),
       type: e.type,
-      content: e.content,
-      isKeyEvidence: Boolean(e.is_key_evidence)
+      content: e.text_content || e.file_path || '', // Use text_content or file_path
+      isKeyEvidence: false // Default to false since column doesn't exist in schema
     }));
 
     return res.json({
