@@ -1,4 +1,4 @@
-import { Case } from '@/types/court';
+import { Case, LAWS } from '@/types/court';
 import { Scale, Clock, Send } from 'lucide-react';
 
 interface WaitingPageProps {
@@ -6,6 +6,8 @@ interface WaitingPageProps {
 }
 
 export function WaitingPage({ case_ }: WaitingPageProps) {
+  const law = LAWS.find(l => l.id === case_.lawType);
+  
   return (
     <div className="min-h-screen bg-[#05050a] text-white flex flex-col items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center space-y-8">
@@ -24,6 +26,20 @@ export function WaitingPage({ case_ }: WaitingPageProps) {
             AI 판사의 판결이 시작됩니다.
           </p>
         </div>
+
+        {/* 적용 법률 */}
+        {law && (
+          <div className="bg-[var(--color-court-dark)] border border-[var(--color-gold-dark)] border-opacity-30 rounded-xl p-6 max-w-lg mx-auto">
+            <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-4">적용 법률</h3>
+            <div className="flex items-center gap-4">
+              <span className="text-5xl">{law.icon}</span>
+              <div className="text-left">
+                <p className="font-bold text-xl text-[var(--color-gold-accent)]">{law.title}</p>
+                <p className="text-sm text-gray-400 mt-1">{law.description}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded-xl p-6 max-w-lg mx-auto">
           <div className="flex items-center justify-between mb-4 border-b border-gray-800 pb-4">

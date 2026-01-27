@@ -115,8 +115,8 @@ function buildPrompt({ legalCode, caseRow, defenseRow, plaintiffTextEvs, defenda
   "oneLine": "한 줄 판결",
   "reasoning": "판결 이유",
   "penalties": {
-    "serious": ["진지한 벌칙 1개 이상(최대 3개)"],
-    "funny": ["재미있는 벌칙 1개 이상(최대 3개)"]
+    "serious": ["진지한 벌칙 정확히 2개"],
+    "funny": ["재미있는 벌칙 정확히 2개"]
   },
   "faultRatio": {"plaintiff": 0~100 정수, "defendant": 0~100 정수}
 }
@@ -124,7 +124,9 @@ function buildPrompt({ legalCode, caseRow, defenseRow, plaintiffTextEvs, defenda
 - "NOT_GUILTY" (기각/무죄): 피고 승소. 원고에게 벌칙을 부과(무고 등).
 - "BOTH_AT_FAULT" (쌍방 과실): **둘 다 잘못함.** 이 경우 "penalties"는 **반드시 빈 배열**이어야 함. 아무도 벌칙을 받지 않음.
 - faultRatio는 plaintiff+defendant=100이 되도록 해라. (쌍방 과실이면 50:50에 가깝게)
-- penalties의 각 항목은 법전(JSON)의 penalties에서 intensity에 맞는 것만 고른다. 단, 쌍방 과실이면 빈 배열.
+- penalties는 serious 2개, funny 2개를 반드시 생성해라. serious는 진지하고 실질적인 벌칙, funny는 유머러스하면서도 효과적인 벌칙이어야 함.
+- 벌칙은 사건의 law_type과 intensity에 맞게 법전의 penalties 중에서 선택하거나, 창의적으로 생성해도 좋다.
+- **[중요] 쌍방 과실(BOTH_AT_FAULT)인 경우에만** penalties를 빈 배열 {"serious": [], "funny": []}로 설정한다.
 - **[중요]** 판결 이유(reasoning)를 작성할 때, 반드시 해당 법 조항(제N조 제M항)을 인용하여 법리적 근거를 명확히 제시하라. (예: '카톡매너법 제2조 제1항에 의거하여...')
 
 [법전(JSON)]
