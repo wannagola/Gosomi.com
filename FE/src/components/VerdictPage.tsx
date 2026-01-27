@@ -558,7 +558,7 @@ export function VerdictPage({
         {!isCapturing && (
           <div className={`grid gap-4 ${
             // 항소 버튼이 보이면 3열, 안 보이면 2열
-            (!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && ['VERDICT_READY', 'COMPLETED'].includes(case_.status))
+            (!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY')
               ? "md:grid-cols-3" 
               : "md:grid-cols-2"
           }`}>
@@ -579,7 +579,7 @@ export function VerdictPage({
               카카오톡 공유
             </button>
             {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (1심이고 항소 이력이 없을 때 무조건 표시) */}
-            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && ['VERDICT_READY', 'COMPLETED'].includes(case_.status) && (
+            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && (
               <button
                 type="button"
                 onClick={() => setShowAppealForm(true)}
