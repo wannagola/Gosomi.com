@@ -128,18 +128,35 @@ export function VerdictPage({
   // ✅ Prioritize AI-generated penalties from case_, then fallback to static Law data
   // Helper functions to parse JSON data safely
   const parseFaultRatio = () => {
-    if (!case_.faultRatio) return { plaintiff: 50, defendant: 50 };
-    try {
-      const ratio = typeof case_.faultRatio === 'string' 
-        ? JSON.parse(case_.faultRatio) 
-        : case_.faultRatio;
-      return {
-        plaintiff: ratio.plaintiff || 50,
-        defendant: ratio.defendant || 50
-      };
-    } catch {
-      return { plaintiff: 50, defendant: 50 };
+    let ratio = { plaintiff: 50, defendant: 50 };
+    if (case_.faultRatio) {
+      try {
+        const parsed = typeof case_.faultRatio === 'string' 
+          ? JSON.parse(case_.faultRatio) 
+          : case_.faultRatio;
+        
+        ratio = {
+            plaintiff: parsed.plaintiff || 50,
+            defendant: parsed.defendant || 50
+        };
+      } catch {
+        ratio = { plaintiff: 50, defendant: 50 };
+      }
     }
+
+    // Normalize to 100
+    const total = ratio.plaintiff + ratio.defendant;
+    if (total === 0) return { plaintiff: 50, defendant: 50 };
+
+    // Calculate percentage based on total
+    const plaintiffPercent = Math.round((ratio.plaintiff / total) * 100);
+    // Ensure total is exactly 100 by calculating the remainder
+    const defendantPercent = 100 - plaintiffPercent;
+
+    return {
+        plaintiff: plaintiffPercent,
+        defendant: defendantPercent
+    };
   };
 
   const parsePenalties = () => {
