@@ -214,6 +214,21 @@
     }
     ```
 
+### 🔍 친구 검색
+- **Endpoint**: `GET /api/friends/search`
+- **Query Params**: 
+    - `q`: 검색어 (닉네임)
+    - `userId`: 본인 ID (검색 결과에서 제외)
+- **Response**:
+    ```json
+    {
+      "ok": true,
+      "data": [
+        { "id": 3, "nickname": "새친구", "profileImage": "..." }
+      ]
+    }
+    ```
+
 ### 🤝 친구 관리
 - **친구 요청**: `POST /api/friends/request` (Body: `{ "userId": 1, "friendId": 2 }`)
 - **요청 리스트**: `GET /api/friends/requests?userId=1` (나에게 온 요청 확인)

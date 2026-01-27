@@ -42,14 +42,9 @@ export const userService = {
     await apiClient.delete('/api/friends', { data: { userId, friendId } });
   },
 
-  // Search (Optional, if needed for adding friends)
-  searchUsers: async (query: string): Promise<User[]> => {
-    // Assuming an endpoint exists or we use getting friends as a proxy if no dedicated search
-    // Using a hypothetical endpoint based on common patterns, though not explicitly in the summary list above for 'Search'.
-    // The spec mentions "Search List" for Cases, but for users it implies friend requests.
-    // If no search user endpoint, we might skip this or implement if backend supports.
-    // Spec doesn't strictly define user search, only friend list. 
-    // We'll leave it empty or comment it out if not strictly defined.
-    return []; 
+  // Search
+  searchUsers: async (query: string, userId: string): Promise<User[]> => {
+    const response = await apiClient.get<{ ok: boolean; data: User[] }>(`/api/friends/search?q=${encodeURIComponent(query)}&userId=${userId}`);
+    return response.data.data;
   }
 };

@@ -3,6 +3,30 @@ import { pool } from "../db.js";
 
 const router = Router();
 
+// GET /api/friends/search?q=nickname&userId=123
+router.get("/search", async (req, res) => {
+    try {
+        const { q, userId } = req.query;
+        if (!q) return res.status(400).json({ error: "query required" });
+
+        const searchPattern = `%${q}%`;
+        let query = "SELECT id, nickname, profile_image FROM users WHERE nickname LIKE ? LIMIT 20";
+        let params = [searchPattern];
+
+        if (userId) {
+            query = "SELECT id, nickname, profile_image FROM users WHERE nickname LIKE ? AND id != ? LIMIT 20";
+            params = [searchPattern, userId];
+        }
+
+        const [rows] = await pool.query(query, params);
+        
+        // Check friendship status for each result could be nice, but simple search first.
+        return res.json({ ok: true, data: rows });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
 // GET /api/friends?userId=123
 router.get("/", async (req, res) => {
     try {
