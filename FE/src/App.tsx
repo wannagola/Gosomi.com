@@ -367,7 +367,12 @@ function CaseRouteHandler({
     const case_ = activeCase;
 
     const isDefendant = currentUser?.id === case_.defendantId;
-    const isSummoned = case_.status === 'SUMMONED' || case_.status === 'FILED';
+    const isPlaintiff = currentUser?.id === case_.plaintiffId;
+    
+    // ✅ Core logic: Show verdict page ONLY when verdict exists
+    // Otherwise: Plaintiff sees waiting, Defendant sees defense page
+    const hasVerdict = case_.verdictText != null && case_.verdictText !== '';
+    const hasDefense = case_.defenseContent != null && case_.defenseContent !== '';
 
     // Debugging logs
     console.log('🔍 CaseRouteHandler Debug:', {
@@ -377,17 +382,21 @@ function CaseRouteHandler({
         plaintiffId: case_.plaintiffId,
         defendantId: case_.defendantId,
         isDefendant,
-        isSummoned,
-        willRedirect: isSummoned && isDefendant ? 'to defense' : isSummoned ? 'show waiting' : 'show verdict'
+        isPlaintiff,
+        hasVerdict,
+        hasDefense,
+        verdictTextLength: case_.verdictText?.length || 0,
+        defenseContentLength: case_.defenseContent?.length || 0,
+        willShow: hasVerdict ? 'verdict page' : isDefendant ? 'defense page' : 'waiting page'
     });
 
     return (
         <Routes>
             <Route path="" element={
-                isSummoned ? (
-                    isDefendant ? <Navigate to="defense" replace /> : <WaitingPage case_={case_} />
-                ) : (
+                hasVerdict ? (
                     <VerdictPage case_={case_} onAppeal={handleAppeal} onSelectPenalty={handleSelectPenalty} />
+                ) : (
+                    isDefendant ? <Navigate to="defense" replace /> : <WaitingPage case_={case_} />
                 )
             } /> 
             <Route path="defense" element={<DefensePage case_={case_} onSubmitDefense={(data) => handleSubmitDefense(case_.id, data)} />} />
