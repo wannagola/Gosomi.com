@@ -25,6 +25,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
       // Optional: Redirect to login or dispatch an event
       if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
         window.location.href = '/login';

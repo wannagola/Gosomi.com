@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
 import { CourtHeader } from '@/components/CourtHeader';
 import { CourtLobby } from '@/components/CourtLobby';
 import { LawBook } from '@/components/LawBook';
@@ -24,6 +24,9 @@ export default function App() {
   
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+      
       const savedUser = localStorage.getItem('currentUser');
       return savedUser ? JSON.parse(savedUser) : null;
     } catch (e) {
@@ -65,15 +68,10 @@ export default function App() {
   }, [currentUser]);
 
   // Auth Guard
-  useEffect(() => {
-    if (!currentUser && location.pathname !== '/login' && location.pathname !== '/law-book' && !location.pathname.startsWith('/case/')) {
-        // Allow shared links (case details) to be viewed without login? 
-        // Spec implies Auth header required (except login).
-        // For now, let's enforce login for everything except maybe /login.
-        // If the user lands on '/', redirect to login.
-        navigate('/login');
-    }
-  }, [currentUser, location, navigate]);
+  // Auth Guard Logic
+  if (!currentUser && location.pathname !== '/login' && location.pathname !== '/law-book' && !location.pathname.startsWith('/case/')) {
+      return <Navigate to="/login" replace />;
+  }
 
   const refreshData = async () => {
       if (!currentUser) return;

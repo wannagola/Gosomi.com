@@ -44,8 +44,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                     import('@/api/authService').then(({ authService }) => {
                         authService.login({ kakaoId, nickname, profileImage })
                             .then(data => {
-                                onLogin(data.user);
                                 localStorage.setItem('token', data.token);
+                                onLogin(data.user);
                             })
                             .catch(err => {
                                 console.error('Backend Login failed', err);
