@@ -53,10 +53,11 @@ export function CourtLobby({
 
   const filteredCases = recentCases.filter(
     (case_) =>
-      case_.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      case_.status !== 'COMPLETED' &&
+      (case_.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       case_.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       case_.plaintiff.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      case_.defendant.toLowerCase().includes(searchTerm.toLowerCase()),
+      case_.defendant.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   return (
