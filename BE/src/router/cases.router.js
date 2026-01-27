@@ -178,8 +178,8 @@ router.get("/", async (req, res) => {
         appealStatus: r.appeal_status,
         displayStatus,
         createdAt: r.created_at,
-        plaintiffName: r.plaintiff_name,
-        defendantName: r.defendant_name,
+        plaintiff: r.plaintiff_name,
+        defendant: r.defendant_name,
       };
     });
 
@@ -232,12 +232,17 @@ router.get("/:id", async (req, res) => {
     if (isNaN(id)) return res.status(400).json({ error: "invalid case id" });
 
     const [rows] = await pool.query(
-      `SELECT id, case_number, title, content, status,
-              plaintiff_id, defendant_id, created_at,
-              verdict_text, penalties_json, fault_ratio,
-              penalty_choice, penalty_selected
-       FROM cases
-       WHERE id=?`,
+      `SELECT c.id, c.case_number, c.title, c.content, c.status,
+              c.plaintiff_id, c.defendant_id, c.created_at,
+              c.verdict_text, c.penalties_json, c.fault_ratio,
+              c.penalty_choice, c.penalty_selected,
+              c.appeal_status,
+              p.nickname AS plaintiff_name,
+              d.nickname AS defendant_name
+       FROM cases c
+       JOIN users p ON c.plaintiff_id = p.id
+       JOIN users d ON c.defendant_id = d.id
+       WHERE c.id=?`,
       [id]
     );
 
@@ -258,6 +263,8 @@ router.get("/:id", async (req, res) => {
       status: c.status,
       plaintiffId: c.plaintiff_id,
       defendantId: c.defendant_id,
+      plaintiff: c.plaintiff_name,
+      defendant: c.defendant_name,
       createdAt: c.created_at,
 
       verdictText: c.verdict_text,

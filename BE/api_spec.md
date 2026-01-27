@@ -41,8 +41,10 @@
           "caseNumber": "2026-GOSOMI-010",
           "title": "탕수육 찍먹 부먹 논쟁",
           "displayStatus": "재판중", // 프론트 표시용 한글 상태
-          "plaintiffName": "김민서",
-          "defendantName": "이몽룡",
+          "plaintiffName": "김민서", // Deprecated, use plaintiff
+          "defendantName": "이몽룡", // Deprecated, use defendant
+          "plaintiff": "김민서",
+          "defendant": "이몽룡",
           "createdAt": "2026-01-26T15:00:00Z"
         }
       ]
@@ -135,6 +137,8 @@
       "status": "SUMMONED", // FILED, SUMMONED, DEFENSE_SUBMITTED, VERDICT_READY, UNDER_APPEAL, COMPLETED
       "plaintiffId": 1,
       "defendantId": 2,
+      "plaintiff": "김민서",
+      "defendant": "이몽룡",
       "defenseContent": "피고의 변론 내용...", 
       "verdictText": "...",
       "faultRatio": { "plaintiff": 20, "defendant": 80 },
