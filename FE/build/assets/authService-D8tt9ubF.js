@@ -1,0 +1,1 @@
+import{a as t}from"./index-ql83mVQF.js";const n={login:async o=>{const e=window.location.origin+"/login";return(await t.post("/api/auth/kakao",{code:o,redirectUri:e})).data},logout:async()=>{localStorage.removeItem("token"),localStorage.removeItem("currentUser")}};export{n as authService};
