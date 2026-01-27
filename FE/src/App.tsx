@@ -66,7 +66,7 @@ export default function App() {
 
   // Auth Guard
   useEffect(() => {
-    if (!currentUser && location.pathname !== '/login' && !location.pathname.startsWith('/case/')) {
+    if (!currentUser && location.pathname !== '/login' && location.pathname !== '/law-book' && !location.pathname.startsWith('/case/')) {
         // Allow shared links (case details) to be viewed without login? 
         // Spec implies Auth header required (except login).
         // For now, let's enforce login for everything except maybe /login.

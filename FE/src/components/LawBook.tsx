@@ -97,8 +97,8 @@ function LawCard({ law, index, onClick }: LawCardProps) {
     >
       {/* 법조문 번호 */}
       <div className="flex items-start justify-between mb-4">
-        <div className="text-6xl opacity-80 group-hover:scale-110 transition-transform">
-          {law.icon}
+        <div className="w-20 h-20 opacity-80 group-hover:scale-110 transition-transform">
+          <img src={law.icon} alt={law.title} className="w-full h-full object-contain" />
         </div>
         <div className="text-right">
           <div className="text-xs text-gray-500 mb-1">제{index + 1}조</div>
@@ -146,7 +146,9 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
         {/* 헤더 */}
         <div className="sticky top-0 bg-[var(--color-court-gray)] border-b-2 border-[var(--color-gold-dark)] p-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="text-5xl">{law.icon}</div>
+            <div className="w-16 h-16">
+              <img src={law.icon} alt={law.title} className="w-full h-full object-contain" />
+            </div>
             <div>
               <h2 className="text-3xl">{law.title}</h2>
               <p className="text-sm text-[var(--color-gold-primary)]">

@@ -1,3 +1,12 @@
+import kakaoIcon from '@/assets/카톡매너법.png';
+import friendshipIcon from '@/assets/우정법.png';
+import timeIcon from '@/assets/시간준수법.png';
+import moneyIcon from '@/assets/금전정산법.png';
+import foodIcon from '@/assets/식탐방지법.png';
+import gameIcon from '@/assets/게임법.png';
+import spoilerIcon from '@/assets/스포방지법.png';
+import coupleIcon from '@/assets/커플평화협정법.png';
+
 // 사건 상태 타입
 export type CaseStatus = 
   | 'FILED' // 접수 완료
@@ -121,7 +130,7 @@ export const LAWS: Law[] = [
     id: 'kakao',
     title: '카톡매너법',
     description: '카카오톡 대화 예절을 준수하고, 읽씹·안읽씹·단답 등으로 상대를 불편하게 하지 않는다.',
-    icon: '💬',
+    icon: kakaoIcon,
     severityCriteria: {
       low: '안읽씹 1일 이상 / 할말없게하는거(단답)',
       medium: '읽씹 1일 이상',
@@ -146,7 +155,7 @@ export const LAWS: Law[] = [
     id: 'friendship',
     title: '우정법',
     description: '친구 관계에서 상호 존중과 배려를 실천하며, 신뢰를 훼손하는 행위를 금지한다.',
-    icon: '🤝',
+    icon: friendshipIcon,
     severityCriteria: {
       low: '오해 수준',
       medium: '감정 상함 명확',
@@ -171,7 +180,7 @@ export const LAWS: Law[] = [
     id: 'time',
     title: '시간준수법',
     description: '약속 시간을 엄수하며, 지각·당일 취소·노쇼 등으로 상대의 시간을 낭비하지 않는다.',
-    icon: '⏰',
+    icon: timeIcon,
     severityCriteria: {
       low: '단순 지각',
       medium: '반복 지각·당일 취소',
@@ -196,7 +205,7 @@ export const LAWS: Law[] = [
     id: 'money',
     title: '금전정산법',
     description: '더치페이·빌린 돈 등 금전 관계를 명확히 정산하며, 지연·회피하지 않는다.',
-    icon: '💰',
+    icon: moneyIcon,
     severityCriteria: {
       low: '실수',
       medium: '지연·회피',
@@ -221,7 +230,7 @@ export const LAWS: Law[] = [
     id: 'food',
     title: '식탐방지법',
     description: '공유 음식을 공정하게 나누며, 무단으로 독점하거나 과도하게 섭취하지 않는다.',
-    icon: '🍕',
+    icon: foodIcon,
     severityCriteria: {
       low: '무의식적 위반',
       medium: '반복',
@@ -246,7 +255,7 @@ export const LAWS: Law[] = [
     id: 'game',
     title: '게임법',
     description: '게임 내 매너를 지키고, 팀원을 존중하며, 던짐·탈주·욕설 등을 금지한다.',
-    icon: '🎮',
+    icon: gameIcon,
     severityCriteria: {
       low: '매너 부족',
       medium: '팀 기여 저해',
@@ -271,7 +280,7 @@ export const LAWS: Law[] = [
     id: 'spoiler',
     title: '스포방지법',
     description: '드라마·영화·스포츠 등의 내용을 미리 누설하지 않으며, 상대의 관람 경험을 존중한다.',
-    icon: '🎬',
+    icon: spoilerIcon,
     severityCriteria: {
       low: '실수',
       medium: '명확한 스포',
@@ -296,7 +305,7 @@ export const LAWS: Law[] = [
     id: 'couple',
     title: '커플평화협정법',
     description: '연인 간 갈등을 평화롭게 해결하고, 상대를 배려하며 존중한다.',
-    icon: '💑',
+    icon: coupleIcon,
     severityCriteria: {
       low: '오해',
       medium: '감정 소모',
