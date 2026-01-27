@@ -22,8 +22,12 @@ if (typeof window !== "undefined" && window.Kakao) {
   console.warn("Kakao SDK not loaded. Check index.html script tag.");
 }
 
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <ErrorBoundary>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </ErrorBoundary>
 );
