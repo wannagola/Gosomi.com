@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText, Search, TrendingUp, Clock } from "lucide-react";
 import { Case } from "@/types/court";
 import backgroundImage from "@/assets/court.jpg";
 import { LegalModal } from './LegalModal';
 import { TERMS_AND_CONDITIONS, PRIVACY_POLICY, THIRD_PARTY_CONSENT, MARKETING_CONSENT } from '@/data/legalText';
+import apiClient from '@/api/client';
 
 interface CourtLobbyProps {
   onNewCase: () => void;
   onViewCase: (caseId: string) => void;
   recentCases: Case[];
+}
+
+interface Stats {
+  total: number;
+  todayVerdict: number;
+  ongoing: number;
 }
 
 export function CourtLobby({
@@ -18,11 +25,27 @@ export function CourtLobby({
 }: CourtLobbyProps) {
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [stats, setStats] = useState<Stats>({ total: 0, todayVerdict: 0, ongoing: 0 });
   const [modalState, setModalState] = useState<{ isOpen: boolean; title: string; content: string }>({
     isOpen: false,
     title: '',
     content: ''
   });
+
+  // Fetch stats on mount
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await apiClient.get<{ ok: boolean; stats: Stats }>('/api/cases/stats');
+        if (response.data.ok) {
+          setStats(response.data.stats);
+        }
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const openModal = (title: string, content: string) => {
     setModalState({ isOpen: true, title, content });
@@ -90,9 +113,9 @@ export function CourtLobby({
 
           {/* 통계 대시보드 */}
           <div className="grid md:grid-cols-3 gap-6 mb-16">
-            <StatCard icon={<FileText className="w-8 h-8" />} label="총 접수 사건" value="1,234" subtext="건" />
-            <StatCard icon={<TrendingUp className="w-8 h-8" />} label="오늘의 판결" value="47" subtext="건" />
-            <StatCard icon={<Clock className="w-8 h-8" />} label="진행 중인 사건" value="89" subtext="건" />
+            <StatCard icon={<FileText className="w-8 h-8" />} label="총 접수 사건" value={stats.total.toLocaleString()} subtext="건" />
+            <StatCard icon={<TrendingUp className="w-8 h-8" />} label="오늘의 판결" value={stats.todayVerdict.toLocaleString()} subtext="건" />
+            <StatCard icon={<Clock className="w-8 h-8" />} label="진행 중인 사건" value={stats.ongoing.toLocaleString()} subtext="건" />
           </div>
 
           {/* 실시간 재판 현황판 */}

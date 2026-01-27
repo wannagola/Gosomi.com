@@ -199,21 +199,22 @@ router.get("/stats", async (req, res) => {
     // 1. 전체 접수된 사건 수
     const [[{ total }]] = await pool.query("SELECT COUNT(*) AS total FROM cases");
 
-    // 2. 오늘의 판결 개수 (1심 또는 항소심 판결이 오늘 완료된 것)
-    // *정확한 판결 시간 필드가 없으므로, 현재는 created_at으로 근사치 계산하거나 
-    // 나중에 verdict_updated_at 필드를 추가하여 보완할 수 있습니다.
+    // 2. 오늘의 판결 개수 (verdict_text가 오늘 생성된 것)
+    // Note: verdict_text가 있고, created_at이 오늘인 경우를 근사치로 사용
+    // 더 정확하려면 verdict_updated_at 필드를 추가해야 함
     const [[{ todayVerdict }]] = await pool.query(`
       SELECT COUNT(*) AS todayVerdict 
       FROM cases 
-      WHERE (status IN ('VERDICT_READY', 'VERDICT_DONE', 'COMPLETED') OR appeal_status = 'DONE')
+      WHERE verdict_text IS NOT NULL 
       AND DATE(created_at) = CURDATE()
     `);
 
-    // 3. 진행 중인 사건 개수 (최종 결과가 나오지 않은 모든 사건)
+    // 3. 진행 중인 사건 개수 (verdict_text가 없는 모든 사건 = 접수 완료 이후 판결 전)
     const [[{ ongoing }]] = await pool.query(`
       SELECT COUNT(*) AS ongoing 
       FROM cases 
-      WHERE status NOT IN ('COMPLETED', 'EXPIRED')
+      WHERE verdict_text IS NULL 
+      AND status NOT IN ('EXPIRED', 'COMPLETED')
     `);
 
     return res.json({
