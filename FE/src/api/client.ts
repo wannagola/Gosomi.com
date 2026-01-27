@@ -26,6 +26,10 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
+      
+      // Dispatch custom event to notify App.tsx to clear state
+      window.dispatchEvent(new Event('auth:logout'));
+
       // Optional: Redirect to login or dispatch an event
       if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
         window.location.href = '/login';

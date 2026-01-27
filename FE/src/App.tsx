@@ -67,6 +67,16 @@ export default function App() {
     fetchData();
   }, [currentUser]);
 
+  // Listen for forced logout events from api/client
+  useEffect(() => {
+      const handleLogoutEvent = () => {
+          setCurrentUser(null);
+          // Optional: Show toast message?
+      };
+      window.addEventListener('auth:logout', handleLogoutEvent);
+      return () => window.removeEventListener('auth:logout', handleLogoutEvent);
+  }, []);
+
   // Auth Guard
   // Auth Guard Logic
   if (!currentUser && location.pathname !== '/login' && location.pathname !== '/law-book' && !location.pathname.startsWith('/case/')) {
