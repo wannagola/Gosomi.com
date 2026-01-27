@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { User, Friend } from '@/types/user';
 import { Case, CaseStatus, LAWS } from '@/types/court';
 import { User as UserIcon, Check, X, UserPlus, Search, FileText, Clock, AlertCircle, CheckCircle, Plus } from 'lucide-react';
@@ -298,7 +298,7 @@ interface CaseListItemProps {
 function CaseListItem({ case_, onView }: CaseListItemProps) {
   const law = LAWS.find(l => l.id === case_.lawType);
   
-  const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode; textColor: string }> = {
+  const statusConfig: Record<string, { label: string; color: string; icon: ReactNode; textColor: string }> = {
     'FILED': { 
       label: '접수 완료', 
       color: 'bg-blue-500',
