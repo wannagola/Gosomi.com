@@ -380,17 +380,19 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
         {/* 메인 정보 */}
         <div className="flex-1 text-left">
           <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
-                {trialStage}
-              </span>
-              <p className="text-sm font-mono text-[var(--color-gold-primary)]">
+            <div>
+              <p className="text-sm font-mono text-[var(--color-gold-primary)] mb-1">
                 {case_.caseNumber}
               </p>
             </div>
-            <div className={`flex items-center gap-2 px-4 py-2 ${status.color} bg-opacity-20 rounded-lg border border-current`}>
-              <span className={status.textColor}>{status.icon}</span>
-              <span className={`${status.textColor} font-bold text-sm`}>{status.label}</span>
+            <div className="flex items-center gap-2">
+               <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
+                {trialStage}
+              </span>
+              <div className={`flex items-center gap-2 px-4 py-2 ${status.color} bg-opacity-20 rounded-lg border border-current`}>
+                <span className={status.textColor}>{status.icon}</span>
+                <span className={`${status.textColor} font-bold text-sm`}>{status.label}</span>
+              </div>
             </div>
           </div>
 

@@ -174,7 +174,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
                 법 개요
               </h3>
             </div>
-            <p className="text-gray-300 leading-relaxed">{law.description}</p>
+            <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{law.content || law.description}</p>
           </section>
 
           {/* 강도 선택 */}

@@ -239,14 +239,16 @@ function CaseCard({ case_, onView }: any) {
     >
       <div className="flex items-start justify-between">
         <div className="flex-1 text-left">
-          <div className="flex items-center gap-2 mb-2">
-            <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
-              {trialStage}
-            </span>
+          <div className="flex items-center gap-3 mb-2">
             <span className="text-sm font-mono text-[var(--color-gold-primary)]">{case_.caseNumber}</span>
-            <span className={`px-3 py-1 ${status.color} bg-opacity-20 text-white text-xs rounded-full border border-current`}>
-              {status.label}
-            </span>
+            <div className="flex gap-2">
+               <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
+                {trialStage}
+              </span>
+              <span className={`px-3 py-1 ${status.color} bg-opacity-20 text-white text-xs rounded-full border border-current`}>
+                {status.label}
+              </span>
+            </div>
           </div>
           <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[var(--color-gold-accent)] transition-colors">{case_.title}</h3>
           <p className="text-sm text-gray-400">원고: {case_.plaintiff} vs 피고: {case_.defendant}</p>
