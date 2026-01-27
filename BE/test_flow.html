@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gosomi Flow Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .step {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .step h3 {
+            margin-top: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 8px 16px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:disabled {
+            background: #ccc;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        pre {
+            background: #eee;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        table.case-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table.case-list th,
+        table.case-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table.case-list th {
+            background-color: #333;
+            color: white;
+        }
+
+        table.case-list tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>⚖️ Gosomi Service Flow Test</h1>
+
+    <!-- Stats Display -->
+    <div class="step" id="stepStats">
+        <h3>📊 Service Stats (실시간 통계)</h3>
+        <button onclick="loadStats()">Refresh Stats</button>
+        <button onclick="loadStats()">Refresh Stats</button>
+        <pre id="statsResult"></pre>
+    </div>
+
+    <!-- Step Notification: Check Notifications -->
+    <div class="step" id="stepNotifications">
+        <h3>🔔 Notifications (알림함)</h3>
+        <input type="text" id="notifUserId" placeholder="Specific User ID (Optional)"
+            style="width:200px; display:inline-block;">
+        <button onclick="checkNotifications()">Check Notifications</button>
+        <div id="notificationResult"></div>
+    </div>
+
+    <!-- Step 0: User Setup -->
+    <div class="step" id="step0">
+        <h3>Step 0: Prepare Users</h3>
+        <p>We need valid User IDs to create a case.</p>
+        <button onclick="createDummyUsers()">Create Dummy Plaintiff & Defendant</button>
+        <div id="usersResult"></div>
+
+        <!-- Friend Management -->
+        <!-- My Page Area -->
+        <div style="margin-top:20px; padding:15px; background:#f0f8ff; border:1px solid #ccc; border-radius:5px;">
+            <h3 style="margin-top:0;">👤 My Page (Plaintiff View)</h3>
+
+            <!-- Friend Actions -->
+            <div style="margin-bottom:10px; padding:10px; background:white; border-radius:5px;">
+                <strong>🔍 Search & Add Friends</strong><br>
+                <input type="text" id="friendTargetId" placeholder="User ID to Request" style="width:150px;">
+                <button onclick="sendFriendRequest()">Send Request</button>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="listFriends()">👥 My Friend List</button>
+                <button onclick="listFriendRequests()">📩 Incoming Requests</button>
+                <button onclick="searchMyCases()">📂 My Cases</button>
+            </div>
+
+            <pre id="friendResult" style="background:#eee; padding:5px; margin-top:5px; min-height:50px;"></pre>
+        </div>
+    </div>
+
+    <!-- Step 0.5: Search Cases -->
+    <div class="step" id="stepSearch">
+        <h3>Step 0.5: Search Cases (사건 검색)</h3>
+        <input type="text" id="searchQuery" placeholder="Search by Case No, Title, Name...">
+        <button onclick="searchCases()">Search All</button>
+        <button onclick="searchMyCases()">My Cases (Plaintiff/Defendant)</button>
+        <button onclick="searchOngoingCases()">List Ongoing Cases (Home)</button>
+        <div id="searchResult"></div>
+    </div>
+
+
+
+    <!-- Step 1: Filing -->
+    <div class="step hidden" id="step1">
+        <h3>Step 1: File a Case (고소 하기)</h3>
+        <input type="text" id="plaintiffId" placeholder="Plaintiff ID (filled auto)" readonly>
+        <input type="text" id="defendantId" placeholder="Defendant ID (filled auto)" readonly>
+        <input type="text" id="caseTitle" placeholder="Case Title (e.g. 탕수육 사건)">
+        <textarea id="caseContent" rows="3"
+            placeholder="Case Content">친구가 탕수육 소스를 물어보지도 않고 부었습니다. 이건 중대한 계약 위반입니다.</textarea>
+
+        <!-- Jury Options -->
+        <fieldset style="margin-bottom:10px;">
+            <legend>Jury Settings (배심원 설정)</legend>
+            <label>
+                <input type="checkbox" id="juryEnabled" onchange="toggleJuryOptions()"> Enable Jury (배심원 활성화)
+            </label>
+            <div id="juryModeDiv" class="hidden" style="margin-top:5px; margin-left: 20px;">
+                <label>
+                    <input type="radio" name="juryMode" value="RANDOM" checked onclick="toggleFriendSelect(false)"> 🎲
+                    Random Selection (랜덤 5명)
+                </label>
+                <br>
+                <label>
+                    <input type="radio" name="juryMode" value="INVITE" onclick="toggleFriendSelect(true)"> 🔗 Invite
+                    Friends (친구 초대)
+                </label>
+
+                <div id="friendSelectDiv" class="hidden" style="margin-top:5px; border:1px dashed #ccc; padding:5px;">
+                    <button onclick="loadFriendsForInvite()">Load My Friends to Invite</button>
+                    <div id="friendListContainer"></div>
+                </div>
+            </div>
+        </fieldset>
+
+        <button onclick="createCase()">File Case</button>
+        <pre id="caseResult"></pre>
+    </div>
+
+    <!-- Step 2: Evidence -->
+    <div class="step hidden" id="step2">
+        <h3>Step 2: Upload Plaintiff Evidence (증거 제출)</h3>
+        <textarea id="pEvidenceText" rows="2" placeholder="Text Evidence (e.g. 카톡 캡처 내용)">소스가 부어진 처참한 사진입니다.</textarea>
+        <p>Image (Optional): <input type="file" id="pEvidenceFile"></p>
+        <button onclick="uploadPlaintiffEvidence()">Upload Evidence</button>
+        <pre id="evidenceResult"></pre>
+    </div>
+
+    <!-- Step 3: Summon -->
+    <div class="step hidden" id="step3">
+        <h3>Step 3: Summon Defendant (소환장 발송)</h3>
+        <button onclick="createSummon()">Generate Summon Link</button>
+        <pre id="summonResult"></pre>
+    </div>
+
+    <!-- Step 4: Defense -->
+    <div class="step hidden" id="step4">
+        <h3>Step 4: Defendant Defense (피고 변론)</h3>
+        <p>Simulating Defendant clicking the link...</p>
+        <textarea id="defenseContent" rows="3"
+            placeholder="Defense Content">원래 탕수육은 부어먹는 요리입니다. 눅눅해지는 게 아니라 소스가 배어드는 겁니다.</textarea>
+        <button onclick="submitDefense()">Submit Defense</button>
+        <pre id="defenseResult"></pre>
+    </div>
+
+    <!-- Step 4.5: Jury Duty (Only if enabled) -->
+    <div class="step hidden" id="stepJury">
+        <h3>⚖️ Jury Duty (배심원 투표 - 1심 전용)</h3>
+        <p>Simulating a Juror viewing the case (before Verdict)...</p>
+        <input type="text" id="jurorId" placeholder="Juror User ID (Check Notifications if Invited)">
+        <button onclick="loadJuryView()">Load Case for Jury</button>
+
+        <div id="juryView" class="hidden" style="margin-top:10px; border:1px solid #aaa; padding:10px;">
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1; background:#fee; padding:5px;">
+                    <h4>Plaintiff's Argument</h4>
+                    <p id="juryPlaintiffContent"></p>
+                </div>
+                <div style="flex:1; background:#eef; padding:5px;">
+                    <h4>Defendant's Argument</h4>
+                    <p id="juryDefendantContent"></p>
+                </div>
+            </div>
+
+            <h4 style="text-align:center; margin-top:20px;">Who is at fault?</h4>
+            <div style="text-align:center; gap:10px;">
+                <button onclick="voteJury('PLAINTIFF')" style="background:#fcc;">👈 Plaintiff Fault</button>
+                <button onclick="voteJury('DEFENDANT')" style="background:#ccf;">Defendant Fault 👉</button>
+            </div>
+            <pre id="juryVoteResult"></pre>
+        </div>
+    </div>
+
+    <!-- Step 5: Verdict -->
+    <div class="step hidden" id="step5">
+        <h3>Step 5: AI Verdict (AI 판결)</h3>
+        <p>Gemini is thinking... (This may take a few seconds)</p>
+        <button onclick="generateVerdict()">Get Verdict</button>
+        <pre id="verdictResult"></pre>
+    </div>
+
+    <!-- Step 6: Penalty -->
+    <div class="step hidden" id="step6">
+        <h3>Step 6: Choose Penalty (벌칙 선택)</h3>
+        <p>The verdict is in. Now choose the penalty flavor.</p>
+        <button onclick="choosePenalty('FUNNY')">🤣 Funny Penalty</button>
+        <button onclick="choosePenalty('SERIOUS')">😐 Serious Penalty</button>
+        <pre id="penaltyResult"></pre>
+        <button onclick="showAppealStep()" style="margin-top:10px; background:#555;">Thinking of Appeal...?</button>
+    </div>
+
+    <!-- Step 7: Appeal Request -->
+    <div class="step hidden" id="step7">
+        <h3>Step 7: Appeal Request (항소 신청 - 1회 한정)</h3>
+        <p>Not satisfied? File an appeal!</p>
+        <textarea id="appealReason" rows="3"
+            placeholder="Appeal Reason (Why is the verdict wrong?)">판사님, 이건 너무합니다. 제가 억울합니다.</textarea>
+        <!-- Mock Input for Appellant (Assuming Plaintiff or Defendant) -->
+        <select id="appellantSelect">
+            <option value="PLAINTIFF">Plaintiff Appeals</option>
+            <option value="DEFENDANT">Defendant Appeals</option>
+        </select>
+        <p>Appeal Evidence (Optional): <input type="file" id="appealEvidenceFile"></p>
+        <textarea id="appealEvidenceText" rows="2" placeholder="New Evidence Text">새로운 증거가 나왔습니다.</textarea>
+
+        <button onclick="requestAppeal()">Submit Appeal</button>
+        <pre id="appealResult"></pre>
+    </div>
+
+    <!-- Step 8: Appeal Defense -->
+    <div class="step hidden" id="step8">
+        <h3>Step 8: Appeal Defense (항소 답변)</h3>
+        <p>The other party responds...</p>
+        <textarea id="appealResponseContent" rows="3" placeholder="Rebuttal Content">항소는 말도 안됩니다. 기각해주세요.</textarea>
+        <p>Defense Evidence (Optional): <input type="file" id="appealDefenseFile"></p>
+        <textarea id="appealDefenseText" rows="2" placeholder="Rebuttal Evidence Text">반박 증거입니다.</textarea>
+
+        <button onclick="submitAppealDefense()">Submit Appeal Defense</button>
+        <pre id="appealDefenseResult"></pre>
+    </div>
+
+    <!-- Step 9: Final Verdict -->
+    <div class="step hidden" id="step9">
+        <h3>Step 9: Final Verdict (재심 판결)</h3>
+        <p>Gemini is re-evaluating everything...</p>
+        <button onclick="generateAppealVerdict()">Get Final Verdict</button>
+        <pre id="finalVerdictResult"></pre>
+
+        <div id="appealPenaltySection" class="hidden">
+            <h4>Final Penalty Choice (최종 벌칙 선택)</h4>
+            <p>Now choose the FINAL penalty flavor based on the appeal verdict.</p>
+            <button onclick="choosePenalty('FUNNY')">🤣 Funny Penalty</button>
+            <button onclick="choosePenalty('SERIOUS')">😐 Serious Penalty</button>
+            <pre id="finalPenaltyResult"></pre>
+            <div id="appealPenaltySection" class="hidden">
+                <h4>Final Penalty Choice (최종 벌칙 선택)</h4>
+                <p>Now choose the FINAL penalty flavor based on the appeal verdict.</p>
+                <button onclick="choosePenalty('FUNNY')">🤣 Funny Penalty</button>
+                <button onclick="choosePenalty('SERIOUS')">😐 Serious Penalty</button>
+                <pre id="finalPenaltyResult"></pre>
+            </div>
+        </div>
+
+
+
+        <script>
+            let g_plaintiffId = null;
+            let g_defendantId = null;
+            let g_caseId = null;
+            let g_summonToken = null;
+
+            async function api(method, url, data, isFormData = false) {
+                const opts = { method };
+                if (data) {
+                    if (isFormData) {
+                        opts.body = data;
+                    } else {
+                        opts.headers = { 'Content-Type': 'application/json' };
+                        opts.body = JSON.stringify(data);
+                    }
+                }
+                const res = await fetch(url, opts);
+                return await res.json();
+            }
+
+            async function loadStats() {
+                const res = await api('GET', '/api/cases/stats');
+                document.getElementById('statsResult').innerText = JSON.stringify(res, null, 2);
+            }
+
+            async function searchOngoingCases() {
+                const res = await api('GET', '/api/cases?status=ONGOING');
+                const html = renderCasesTable(res.data);
+                document.getElementById('searchResult').innerHTML = html;
+            }
+
+            async function checkNotifications() {
+                const customId = document.getElementById('notifUserId').value;
+                if (customId) {
+                    const res = await api('GET', `/api/notifications?userId=${customId}`);
+                    let html = `<h4>Result for User ${customId}:</h4><ul>`;
+                    if (res.data && res.data.length > 0) {
+                        res.data.forEach(n => html += `<li>[${n.type}] ${n.message} (Case: ${n.case_title})</li>`);
+                    } else {
+                        html += '<li>No notifications.</li>';
+                    }
+                    html += '</ul>';
+                    document.getElementById('notificationResult').innerHTML = html;
+                    return;
+                }
+
+                if (!g_plaintiffId && !g_defendantId) {
+                    alert("Please create dummy users first (Step 0) or enter a specific User ID.");
+                    return;
+                }
+
+                // Demo Mode: Check P & D
+                let html = '';
+
+                // 1. Plaintiff Notifications
+                if (g_plaintiffId) {
+                    const res = await api('GET', `/api/notifications?userId=${g_plaintiffId}`);
+                    if (res.data && res.data.length > 0) {
+                        html += `<h4>To Plaintiff (${g_plaintiffId}):</h4><ul>`;
+                        res.data.forEach(n => html += `<li>[${n.type}] ${n.message} (Case: ${n.case_title})</li>`);
+                        html += `</ul>`;
+                    }
+                }
+
+                // 2. Defendant Notifications
+                if (g_defendantId) {
+                    const res = await api('GET', `/api/notifications?userId=${g_defendantId}`);
+                    if (res.data && res.data.length > 0) {
+                        html += `<h4>To Defendant (${g_defendantId}):</h4><ul>`;
+                        res.data.forEach(n => html += `<li>[${n.type}] ${n.message} (Case: ${n.case_title})</li>`);
+                        html += `</ul>`;
+                    }
+                }
+
+                if (html === '') html = '<p>No notifications for Plaintiff or Defendant.</p>';
+                document.getElementById('notificationResult').innerHTML = html;
+            }
+
+            function renderCasesTable(cases) {
+                if (!cases || cases.length === 0) return '<p>No cases found.</p>';
+
+                let html = '<table class="case-list">';
+                html += '<thead><tr><th>Status</th><th>Case No</th><th>Title</th><th>Parties</th></tr></thead>';
+                html += '<tbody>';
+                cases.forEach(c => {
+                    html += `<tr>
+                    <td><b>${c.displayStatus}</b></td>
+                    <td>${c.caseNumber}</td>
+                    <td>${c.title}</td>
+                    <td>${c.plaintiffName} vs ${c.defendantName}</td>
+                </tr>`;
+                });
+                html += '</tbody></table>';
+                return html;
+            }
+
+            async function searchCases() {
+                const q = document.getElementById('searchQuery').value;
+                const res = await api('GET', `/api/cases?q=${encodeURIComponent(q)}`);
+
+                if (res.data) {
+                    document.getElementById('searchResult').innerHTML = renderCasesTable(res.data);
+                } else {
+                    document.getElementById('searchResult').innerText = JSON.stringify(res, null, 2);
+                }
+            }
+
+            async function searchMyCases() {
+                if (!g_plaintiffId && !g_defendantId) {
+                    alert("Please create dummy users first (Step 0)");
+                    return;
+                }
+                const res = await api('GET', `/api/cases?userId=${g_plaintiffId}`);
+                if (res.data) {
+                    document.getElementById('searchResult').innerHTML = renderCasesTable(res.data);
+                } else {
+                    document.getElementById('searchResult').innerText = JSON.stringify(res, null, 2);
+                }
+            }
+
+            async function createDummyUsers() {
+                // Quick hack: Use the auth endpoint or just direct insert if we had a route.
+                // call test route to create P, D, and random pool
+                const res = await fetch('/test/create-dummy-users?count=7'); // Request 7 users (1 P, 1 D, 5 Random)
+                const data = await res.json();
+
+                // Assuming backend returns { plaintiff: {...}, defendant: {...}, others: [...] } 
+                // Wait, I need to check test.router.js to see if it supports 'count' or returns others.
+                // If not, I'll update test.router.js first. 
+                // For now, let's assume I will update test.router.js to return 'jurors'.
+
+                g_plaintiffId = data.plaintiff.id;
+                g_defendantId = data.defendant.id;
+
+                document.getElementById('plaintiffId').value = g_plaintiffId;
+                document.getElementById('defendantId').value = g_defendantId;
+
+                let userMsg = `Main Users:\n- Plaintiff: ${data.plaintiff.id} (${data.plaintiff.nickname})\n- Defendant: ${data.defendant.id} (${data.defendant.nickname})`;
+
+                if (data.jurors && data.jurors.length > 0) {
+                    userMsg += `\n\nExtra Users (Potential Jurors):\n` + data.jurors.map(u => `- ID ${u.id} (${u.nickname})`).join('\n');
+                }
+
+                document.getElementById('usersResult').innerText = userMsg;
+                document.getElementById('step1').classList.remove('hidden');
+            }
+
+            async function sendFriendRequest() {
+                const targetId = document.getElementById('friendTargetId').value;
+                if (!g_plaintiffId || !targetId) return alert("Need Plaintiff ID & Target ID");
+
+                const res = await api('POST', '/api/friends/request', { userId: g_plaintiffId, friendId: targetId });
+                document.getElementById('friendResult').innerText = JSON.stringify(res, null, 2);
+            }
+
+            async function listFriends() {
+                if (!g_plaintiffId) return alert("Need Plaintiff ID");
+                const res = await api('GET', `/api/friends?userId=${g_plaintiffId}`);
+                document.getElementById('friendResult').innerText = JSON.stringify(res, null, 2);
+            }
+
+            async function listFriendRequests() {
+                if (!g_plaintiffId) return alert("Need Plaintiff ID");
+                const res = await api('GET', `/api/friends/requests?userId=${g_plaintiffId}`);
+
+                let html = '<h5>Incoming Requests:</h5><ul>';
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(r => {
+                        html += `<li>From User ${r.from_user_id} (${r.nickname}) <button onclick="acceptFriendRequest(${r.id})">Accept</button></li>`;
+                    });
+                } else {
+                    html += '<li>No pending requests.</li>';
+                }
+                html += '</ul>';
+                document.getElementById('friendResult').innerHTML = html;
+            }
+
+            async function acceptFriendRequest(requestId) {
+                const res = await api('POST', '/api/friends/accept', { requestId });
+                alert("Accepted: " + JSON.stringify(res));
+                listFriends(); // Refresh friend list
+            }
+
+            function toggleJuryOptions() {
+                const enabled = document.getElementById('juryEnabled').checked;
+                const div = document.getElementById('juryModeDiv');
+                if (enabled) div.classList.remove('hidden');
+                else div.classList.add('hidden');
+            }
+
+            function toggleFriendSelect(show) {
+                const div = document.getElementById('friendSelectDiv');
+                if (show) div.classList.remove('hidden');
+                else div.classList.add('hidden');
+            }
+
+            async function loadFriendsForInvite() {
+                if (!g_plaintiffId) return alert("Need Plaintiff ID");
+                const res = await api('GET', `/api/friends?userId=${g_plaintiffId}`);
+
+                const container = document.getElementById('friendListContainer');
+                container.innerHTML = '';
+
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(f => {
+                        const label = document.createElement('label');
+                        label.style.display = 'block';
+                        // Add onchange handler to enforce limit
+                        label.innerHTML = `<input type="checkbox" name="juryFriend" value="${f.id}" onchange="checkFriendLimit(this)"> ${f.nickname}`;
+                        container.appendChild(label);
+                    });
+                } else {
+                    container.innerHTML = '<p>No friends found. (Add friends in Step 0)</p>';
+                }
+            }
+
+            function checkFriendLimit(checkbox) {
+                const checks = document.querySelectorAll('input[name="juryFriend"]:checked');
+                if (checks.length > 5) {
+                    checkbox.checked = false;
+                    alert("You can only invite up to 5 friends.");
+                }
+            }
+
+            async function createCase() {
+                try {
+                    const title = document.getElementById('caseTitle').value;
+                    const content = document.getElementById('caseContent').value;
+                    const juryEnabled = document.getElementById('juryEnabled').checked;
+                    let juryMode = null;
+                    let juryInvitedUserIds = [];
+
+                    if (juryEnabled) {
+                        const modes = document.getElementsByName('juryMode');
+                        for (const m of modes) {
+                            if (m.checked) {
+                                juryMode = m.value;
+                                break;
+                            }
+                        }
+
+                        if (juryMode === 'INVITE') {
+                            const checks = document.getElementsByName('juryFriend');
+                            // Defensive check if checks is invalid
+                            if (checks) {
+                                for (const c of checks) {
+                                    if (c.checked) juryInvitedUserIds.push(c.value);
+                                }
+                            }
+                        }
+                    }
+
+                    const res = await api('POST', '/api/cases', {
+                        title, content, plaintiffId: g_plaintiffId, defendantId: g_defendantId,
+                        juryEnabled, juryMode, juryInvitedUserIds
+                    });
+
+                    document.getElementById('caseResult').innerText = JSON.stringify(res, null, 2);
+                    if (res.id) {
+                        g_caseId = res.id;
+                        document.getElementById('step2').classList.remove('hidden');
+
+                        // Show Jury Step if enabled
+                        if (juryEnabled) {
+                            document.getElementById('stepJury').classList.remove('hidden');
+                        } else {
+                            document.getElementById('stepJury').classList.add('hidden');
+                        }
+                    }
+                } catch (e) {
+                    alert("Error creating case: " + e.message);
+                    console.error(e);
+                }
+            }
+
+            async function uploadPlaintiffEvidence() {
+                const text = document.getElementById('pEvidenceText').value;
+                const fileInput = document.getElementById('pEvidenceFile');
+
+                const formData = new FormData();
+                formData.append('textEvidence', text);
+                if (fileInput.files[0]) {
+                    formData.append('image', fileInput.files[0]);
+                }
+
+                const res = await api('POST', `/api/cases/${g_caseId}/evidence/plaintiff`, formData, true);
+                document.getElementById('evidenceResult').innerText = JSON.stringify(res, null, 2);
+
+                // Proceed even if fail (optional)
+                document.getElementById('step3').classList.remove('hidden');
+            }
+
+            async function createSummon() {
+                const res = await api('POST', `/api/cases/${g_caseId}/summon`);
+                document.getElementById('summonResult').innerText = JSON.stringify(res, null, 2);
+
+                if (res.token) {
+                    g_summonToken = res.token;
+                    document.getElementById('step4').classList.remove('hidden');
+                }
+            }
+
+            async function submitDefense() {
+                const content = document.getElementById('defenseContent').value;
+                const res = await api('POST', `/api/summons/${g_summonToken}/defense`, { content });
+                document.getElementById('defenseResult').innerText = JSON.stringify(res, null, 2);
+
+                document.getElementById('step5').classList.remove('hidden');
+            }
+
+            async function generateVerdict() {
+                const res = await api('POST', `/api/cases/${g_caseId}/verdict`);
+                document.getElementById('verdictResult').innerText = JSON.stringify(res, null, 2);
+
+                if (res.ok) {
+                    document.getElementById('step6').classList.remove('hidden');
+
+                    // Mutual Fault Check
+                    const hasPenalties = (res.verdictText.includes("penalties") || (res.skippedImages && res.skippedImages.length > -1)); // dirty check, better check res data
+                    // Better: Check if we have penalty text logic or just rely on API response
+                    // Actually the response doesn't explicity say "BOTH_AT_FAULT" in top level, 
+                    // but the prompt returns empty arrays for penalties.
+                    // Let's modify api/:id endpoint or just check if we can select penalties.
+
+                    // wait, the generateVerdict returns the whole AI response?
+                    // yes: { ok: true, verdictText: "...", faultRatio: {...}, ... }
+                    // It does NOT return the raw JSON object with "penalties" array in the simplified response.
+                    // But /api/cases/:id/penalty needs to know if there are penalties.
+                    // Let's update test flow to just try to show buttons, but if MUTUAL FAULT, show message.
+                    // WE DON'T KNOW purely from generateVerdict response if it is Mutual Fault unless we parse verdictText or check faultRatio 50:50.
+                    // Let's assume user reads the text.
+                    // BUT the buttons "Funny Penalty" will fail if empty?
+                    // Backend: gives "no penalties available" error.
+
+                    // Let's add a visual hint
+                    // Actually better to have /api/cases/:id return penalties so frontend knows.
+                    // It does! GET /api/cases/:id returns penalties_json.
+                    // generateVerdict response doesn't.
+
+                    // Quick fix for test: Reload case to check penalties
+                    const caseRes = await api('GET', `/api/cases/${g_caseId}`);
+                    const penalties = typeof caseRes.penalties === 'string' ? JSON.parse(caseRes.penalties) : caseRes.penalties;
+
+                    let ratioHtml = '';
+                    if (caseRes.faultRatio) {
+                        const fr = typeof caseRes.faultRatio === 'string' ? JSON.parse(caseRes.faultRatio) : caseRes.faultRatio;
+                        ratioHtml = `<div style="background:#ffd; padding:10px; border:1px solid #ee9; margin:10px 0;">
+                        <h4>⚖️ Fault Ratio (과실 비율)</h4>
+                        <p style="font-size:1.2em;">Plaintiff <b>${fr.plaintiff}%</b> vs Defendant <b>${fr.defendant}%</b></p>
+                     </div>`;
+                    }
+
+                    const penaltyDiv = document.getElementById('step6');
+
+                    if (!penalties.serious || penalties.serious.length === 0) {
+                        // Mutual Fault case
+                        penaltyDiv.innerHTML = `<h3>Step 6: Verdict (판결)</h3>
+                        ${ratioHtml}
+                        <p style="color:blue; font-weight:bold;">🤝 Mutual Fault (쌍방 과실)!</p>
+                        <p>No penalties for anyone. Peace. 🕊️</p>`;
+
+                        const appealBtn = document.createElement('button');
+                        appealBtn.innerText = "Thinking of Appeal...?";
+                        appealBtn.onclick = showAppealStep;
+                        appealBtn.style = "margin-top:10px; background:#555;";
+                        penaltyDiv.appendChild(appealBtn);
+                    } else {
+                        // Normal verdict: Prepend ratio
+                        // Insert after h3
+                        const temp = document.createElement('div');
+                        temp.innerHTML = ratioHtml;
+                        penaltyDiv.insertBefore(temp.firstChild, penaltyDiv.children[1]);
+                    }
+                }
+            }
+
+            async function choosePenalty(choice) {
+                const res = await api('POST', `/api/cases/${g_caseId}/penalty`, { choice });
+                document.getElementById('penaltyResult').innerText = JSON.stringify(res, null, 2);
+            }
+
+            function showAppealStep() {
+                document.getElementById('step7').classList.remove('hidden');
+                // Hide Jury Step explicitly as it's not for appeals
+                document.getElementById('stepJury').classList.add('hidden');
+            }
+
+            async function requestAppeal() {
+                const reason = document.getElementById('appealReason').value;
+                const appellantType = document.getElementById('appellantSelect').value;
+                const appellantId = appellantType === 'PLAINTIFF' ? g_plaintiffId : g_defendantId;
+
+                // 1. Upload Evidence (Optional)
+                const text = document.getElementById('appealEvidenceText').value;
+                const fileInput = document.getElementById('appealEvidenceFile');
+
+                if (text || fileInput.files[0]) {
+                    const formData = new FormData();
+                    formData.append('textEvidence', text);
+                    formData.append('stage', 'APPEAL'); // Important!
+                    if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+
+                    // Determine endpoint based on appellant
+                    const endpoint = appellantType === 'PLAINTIFF'
+                        ? `/api/cases/${g_caseId}/evidence/plaintiff`
+                        : `/api/summons/${g_summonToken}/evidence`; // Note: Logic gap if Defendant appeals, they might not use summons token or reuse it. 
+                    // My backend summons token logic checks expiry. If expired, defendant can't upload? 
+                    // Let's assume for this test the token is still valid or we need a way for Defendant to upload.
+                    // Actually, if summons expired, defendant interaction is tricky. 
+                    // But for now let's reuse summons endpoint assuming valid token.
+
+                    await api('POST', endpoint, formData, true);
+                }
+
+                // 2. Submit Appeal
+                const res = await api('POST', `/api/cases/${g_caseId}/appeal`, { appellantId, reason });
+                document.getElementById('appealResult').innerText = JSON.stringify(res, null, 2);
+
+                if (res.ok) {
+                    document.getElementById('step8').classList.remove('hidden');
+                }
+            }
+
+            async function submitAppealDefense() {
+                const content = document.getElementById('appealResponseContent').value;
+
+                // 1. Upload Evidence (Optional) - Opponent
+                const text = document.getElementById('appealDefenseText').value;
+                const fileInput = document.getElementById('appealDefenseFile');
+
+                // NOTE: In this test UI, we are lazy about who is who. 
+                // If Plaintiff appealed, Defendant defends (uses summons token).
+                // If Defendant appealed, Plaintiff defends (uses cases/:id/evidence/plaintiff).
+                // Let's just assume Plaintiff Appealed for the happy path test.
+
+                const appellantType = document.getElementById('appellantSelect').value;
+                if (text || fileInput.files[0]) {
+                    const formData = new FormData();
+                    formData.append('textEvidence', text);
+                    formData.append('stage', 'APPEAL');
+                    if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+
+                    const endpoint = appellantType === 'PLAINTIFF'
+                        ? `/api/summons/${g_summonToken}/evidence` // Defendant replies
+                        : `/api/cases/${g_caseId}/evidence/plaintiff`; // Plaintiff replies
+
+                    await api('POST', endpoint, formData, true);
+                }
+
+                const res = await api('POST', `/api/cases/${g_caseId}/appeal/defense`, { content });
+                document.getElementById('appealDefenseResult').innerText = JSON.stringify(res, null, 2);
+
+                document.getElementById('step9').classList.remove('hidden');
+            }
+
+            async function generateAppealVerdict() {
+                const res = await api('POST', `/api/cases/${g_caseId}/appeal/verdict`);
+                document.getElementById('finalVerdictResult').innerText = JSON.stringify(res, null, 2);
+
+                if (res.ok) {
+                    document.getElementById('appealPenaltySection').classList.remove('hidden');
+                }
+            }
+            async function loadJuryView() {
+                const jurorId = document.getElementById('jurorId').value;
+                if (!jurorId || !g_caseId) return alert("Need Juror ID and Active Case ID");
+
+                const res = await api('GET', `/api/cases/${g_caseId}`); // In real app, juror views via link, no permission check on GET needed usually or checks status
+
+                if (res.appeal_status && res.appeal_status !== 'NONE') {
+                    alert("Jury voting is NOT available during Appeal (1st Trial Only).");
+                    document.getElementById('juryView').classList.add('hidden');
+                    return;
+                }
+
+                document.getElementById('juryPlaintiffContent').innerText = res.content || '...';
+                document.getElementById('juryDefendantContent').innerText = res.defenseContent || '(Not submitted yet)';
+
+                document.getElementById('juryView').classList.remove('hidden');
+            }
+
+            async function voteJury(vote) {
+                const jurorId = document.getElementById('jurorId').value;
+                const res = await api('POST', `/api/cases/${g_caseId}/jury/vote`, { userId: jurorId, vote });
+                document.getElementById('juryVoteResult').innerText = JSON.stringify(res, null, 2);
+            }
+        </script>
+</body>
+
+</html>

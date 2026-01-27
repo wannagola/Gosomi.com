@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/* Design System Tokens */
+@theme {
+  /* Colors - 법정 테마 */
+  --color-court-dark: #0a0a0f;
+  --color-court-gray: #1a1a24;
+  --color-court-border: #2a2a3a;
+  --color-gold-primary: #d4a574;
+  --color-gold-accent: #f4d6a0;
+  --color-gold-dark: #a47e54;
+  --color-verdict-guilty: #ef4444;
+  --color-verdict-innocent: #3b82f6;
+  
+  /* Typography */
+  --font-family-serif: 'Noto Serif KR', serif;
+  --font-family-sans: 'Noto Sans KR', sans-serif;
+}
+
+/* Global Styles */
+body {
+  background-color: var(--color-court-dark);
+  color: #e5e7eb;
+  font-family: var(--font-family-sans);
+}
+
+/* 근엄한 법정 타이포그래피 */
+h1 {
+  font-family: var(--font-family-serif);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-gold-accent);
+  letter-spacing: 0.05em;
+}
+
+h2 {
+  font-family: var(--font-family-serif);
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--color-gold-primary);
+}
+
+h3 {
+  font-family: var(--font-family-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-gold-primary);
+}
+
+/* 공식 문서 스타일 */
+.official-document {
+  background: linear-gradient(to bottom, rgba(26, 26, 36, 0.95), rgba(22, 22, 31, 0.95));
+  border: 2px solid var(--color-gold-dark);
+  box-shadow: 0 4px 20px rgba(212, 165, 116, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* 애니메이션 - 절제된 */
+@keyframes seal-stamp {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* 법원 공식 효과 */
+.court-seal {
+  animation: seal-stamp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Kakao Login Test</title>
+</head>
+<body>
+    <h1>Kakao Login Test</h1>
+    <p>1. Make sure you set KAKAO_REST_API_KEY in .env</p>
+    <p>2. Make sure your Kakao Developers Console has Redirect URI set to: <br>
+       <strong>http://localhost:3000/test/kakao/callback</strong>
+    </p>
+    
+    <button id="loginBtn">Login with Kakao</button>
+    
+    <div id="result" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px; display: none;">
+        <h3>Login Result</h3>
+        <pre id="jsonResult"></pre>
+    </div>
+
+    <script>
+        // REPLACE THIS WITH YOUR REST API KEY IF NOT USING ENV INJECTION (For this static file test)
+        // But since this is a static file, we can't easily read .env. 
+        // We will ask the user to input it or try to fetch it if served from backend.
+        // For simplicity, let's ask user to input client id here or just hardcode for logic check.
+        
+        const REDIRECT_URI = 'http://localhost:3000/test/kakao/callback'; // check backend route
+        
+        document.getElementById('loginBtn').onclick = () => {
+             const apiKey = prompt("Please enter your Kakao REST API Key:");
+             if(!apiKey) return;
+             
+             const url = `https://kauth.kakao.com/oauth/authorize?client_id=${apiKey}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+             window.location.href = url;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "Gosomi.com",
+  "language": "js",
+  "architecture": {
+    "src": true,
+    "structured": true,
+    "docker": true
+  },
+  "generated": "2026-01-25T07:10:27.126Z",
+  "version": "1.3.3"
+}
