@@ -9,8 +9,7 @@ import coupleIcon from '@/assets/커플평화협정법.png';
 
 // 사건 상태 타입
 export type CaseStatus = 
-  | 'FILED' // 접수 완료
-  | 'SUMMONED' // 소환 완료
+  | 'SUMMONED' // 소환 완료 (피고에게 소환장 발송됨)
   | 'DEFENSE_SUBMITTED' // 변론 제출 완료
   | 'VERDICT_READY' // 판결(벌칙선택 대기)
   | 'UNDER_APPEAL' // 항소 진행 중

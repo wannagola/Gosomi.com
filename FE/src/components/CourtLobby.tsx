@@ -219,7 +219,6 @@ function StatCard({ icon, label, value, subtext }: any) {
 
 function CaseCard({ case_, onView }: any) {
   const statusConfig: any = {
-    FILED: { label: "접수 완료", color: "bg-blue-500" },
     SUMMONED: { label: "소환 완료", color: "bg-purple-500" },
     DEFENSE_SUBMITTED: { label: "변론 제출", color: "bg-yellow-500" },
     VERDICT_READY: { label: "판결 대기", color: "bg-orange-500" },
@@ -228,7 +227,7 @@ function CaseCard({ case_, onView }: any) {
     UNDER_APPEAL: { label: "항소 중", color: "bg-red-500" },
   };
 
-  const status = statusConfig[case_.status] || statusConfig.FILED;
+  const status = statusConfig[case_.status] || statusConfig.SUMMONED;
   return (
     <button
       onClick={() => onView(case_.id)}

@@ -4,6 +4,14 @@ import { Case, CaseStatus, LAWS } from '@/types/court';
 import { User as UserIcon, Check, X, UserPlus, Search, FileText, Clock, AlertCircle, CheckCircle, Plus } from 'lucide-react';
 import { userService } from '@/api/userService';
 
+// Helper function to format win rate
+// Shows integer if .00 (e.g., 50), otherwise shows up to 2 decimal places (e.g., 50.5 or 50.56)
+const formatWinRate = (rate: number | undefined): string => {
+    if (rate === undefined || rate === null) return '50';
+    const num = Number(rate);
+    return num % 1 === 0 ? num.toString() : num.toFixed(2);
+};
+
 interface MyPageProps {
   user: User;
   friends: Friend[];
@@ -94,7 +102,7 @@ export function MyPage({
                     <div>
                         <h1 className="text-4xl font-bold text-white mb-2">{currentUserWithStats.nickname}</h1>
                         <p className="text-[var(--color-gold-primary)] font-bold text-lg">
-                            승소율 {currentUserWithStats.winRate || 50}%
+                            승소율 {formatWinRate(currentUserWithStats.winRate)}%
                         </p>
                     </div>
                 </div>
@@ -183,7 +191,7 @@ export function MyPage({
                                         </div>
                                         <div className="flex items-center gap-2 text-[var(--color-gold-primary)] font-medium">
                                             <CheckCircle className="w-4 h-4" />
-                                            <span>승소율 {friend.winRate || 0}%</span>
+                                            <span>승소율 {formatWinRate(friend.winRate)}%</span>
                                         </div>
                                     </div>
 
@@ -319,14 +327,8 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const law = LAWS.find(l => l.id === case_.lawType);
   
   const statusConfig: Record<string, { label: string; color: string; icon: ReactNode; textColor: string }> = {
-    'FILED': { 
-      label: '접수 완료', 
-      color: 'bg-blue-500',
-      icon: <FileText className="w-5 h-5" />,
-      textColor: 'text-blue-400'
-    },
     'SUMMONED': { 
-      label: '접수 완료', 
+      label: '소환 완료', 
       color: 'bg-purple-500',
       icon: <AlertCircle className="w-5 h-5" />,
       textColor: 'text-purple-400'
@@ -363,7 +365,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
     }
   };
 
-  const status = statusConfig[case_.status] || statusConfig['FILED'];
+  const status = statusConfig[case_.status] || statusConfig['SUMMONED'];
   const timeSince = getTimeSince(case_.createdAt);
 
   return (

@@ -23,7 +23,6 @@ export function MyCasesPage({ cases, onViewCase }: MyCasesPageProps) {
 
   const statusStats = {
     all: cases.length,
-    FILED: cases.filter(c => c.status === 'FILED').length,
     SUMMONED: cases.filter(c => c.status === 'SUMMONED').length,
     DEFENSE_SUBMITTED: cases.filter(c => c.status === 'DEFENSE_SUBMITTED').length,
     VERDICT_READY: cases.filter(c => c.status === 'VERDICT_READY').length,
@@ -55,16 +54,9 @@ export function MyCasesPage({ cases, onViewCase }: MyCasesPageProps) {
             onClick={() => setFilter('all')}
           />
           <StatCard
-            label="접수 완료"
-            count={statusStats.FILED}
-            color="purple"
-            active={filter === 'FILED'}
-            onClick={() => setFilter('FILED')}
-          />
-          <StatCard
             label="소환 완료"
             count={statusStats.SUMMONED}
-            color="yellow"
+            color="purple"
             active={filter === 'SUMMONED'}
             onClick={() => setFilter('SUMMONED')}
           />
@@ -168,12 +160,6 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const law = LAWS.find(l => l.id === case_.lawType);
   
   const statusConfig = {
-    'FILED': { 
-      label: '접수 완료', 
-      color: 'bg-blue-500',
-      icon: <FileText className="w-5 h-5" />,
-      textColor: 'text-blue-400'
-    },
     'SUMMONED': { 
       label: '소환 완료', 
       color: 'bg-purple-500',
@@ -218,7 +204,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
     },
   };
 
-  const status = statusConfig[case_.status] || statusConfig['FILED'];
+  const status = statusConfig[case_.status] || statusConfig['SUMMONED'];
   const timeSince = getTimeSince(case_.createdAt);
 
   return (

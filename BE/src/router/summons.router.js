@@ -115,7 +115,7 @@ router.post("/cases/:id/defense", async (req, res) => {
     if (caseRows.length === 0) return res.status(404).json({ error: "case not found" });
 
     const c = caseRows[0];
-    if (c.status !== 'SUMMONED' && c.status !== 'FILED' && c.status !== 'DEFENSE_SUBMITTED') {
+    if (c.status !== 'SUMMONED' && c.status !== 'DEFENSE_SUBMITTED') {
        // Allow re-submission if stuck in DEFENSE_SUBMITTED without verdict? No, usually enforce once.
        // But user might retry. For now, strict.
     }
