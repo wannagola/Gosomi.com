@@ -306,7 +306,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
       textColor: 'text-blue-400'
     },
     'SUMMONED': { 
-      label: '소환 완료', 
+      label: '접수 완료', 
       color: 'bg-purple-500',
       icon: <AlertCircle className="w-5 h-5" />,
       textColor: 'text-purple-400'

@@ -161,7 +161,7 @@ router.get("/", async (req, res) => {
     // Status Mapping
     const results = rows.map(r => {
       let displayStatus = "접수됨";
-      if (r.status === 'SUMMONED') displayStatus = "소환 중";
+      if (r.status === 'SUMMONED') displayStatus = "접수 완료";
       else if (r.status === 'DEFENSE_SUBMITTED') displayStatus = "판결 대기";
       else if (r.status === 'VERDICT_READY' || r.status === 'VERDICT_DONE' || r.status === 'COMPLETED') {
         if (r.appeal_status === 'REQUESTED' || r.appeal_status === 'RESPONDED') displayStatus = "항소됨";

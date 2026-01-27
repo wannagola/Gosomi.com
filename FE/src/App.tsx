@@ -369,6 +369,18 @@ function CaseRouteHandler({
     const isDefendant = currentUser?.id === case_.defendantId;
     const isSummoned = case_.status === 'SUMMONED' || case_.status === 'FILED';
 
+    // Debugging logs
+    console.log('🔍 CaseRouteHandler Debug:', {
+        caseId: case_.id,
+        caseStatus: case_.status,
+        currentUserId: currentUser?.id,
+        plaintiffId: case_.plaintiffId,
+        defendantId: case_.defendantId,
+        isDefendant,
+        isSummoned,
+        willRedirect: isSummoned && isDefendant ? 'to defense' : isSummoned ? 'show waiting' : 'show verdict'
+    });
+
     return (
         <Routes>
             <Route path="" element={
