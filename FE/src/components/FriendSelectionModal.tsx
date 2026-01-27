@@ -33,7 +33,7 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
   };
 
   const filteredFriends = friends.filter(friend => 
-    friend.nickname.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (friend.nickname || '').toLowerCase().includes(searchQuery.toLowerCase()) &&
     friend.status === 'friend' // Only show accepted friends
   );
 
