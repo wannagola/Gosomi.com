@@ -60,23 +60,16 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
                   
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1">
-                        <p className={`text-base ${!notification.read ? 'text-white font-bold' : 'text-gray-300'}`}>
+                      <p className={`text-base ${!notification.read ? 'text-white font-bold' : 'text-gray-300'}`}>
                         {notification.message}
-                        </p>
-
+                      </p>
                     </div>
 
-                    {notification.link ? (
-                      !notification.read ? (
-                        <p className="text-sm text-[var(--color-gold-primary)] mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          클릭하여 확인하기 &rarr;
-                        </p>
-                      ) : (
-                        <p className="text-sm text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          클릭하여 이동하기 &rarr;
-                        </p>
-                      )
-                    ) : null}
+                    {notification.link && (
+                      <p className={`text-sm mt-1 opacity-0 group-hover:opacity-100 transition-opacity ${!notification.read ? 'text-[var(--color-gold-primary)]' : 'text-gray-500'}`}>
+                        {!notification.read ? '클릭하여 확인하기 →' : '클릭하여 이동하기 →'}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
