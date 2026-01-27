@@ -242,21 +242,7 @@ export default function App() {
 
   // Logic to determine appeal handler arguments in route
   const onAppealWrapper = (caseId: string, appellant: 'plaintiff' | 'defendant') => {
-      // In VerdictPage, 'appellant' is passed. 
-      // We pass it to handleAppeal.
-      // handleAppeal signature: (caseId, appellantId, reason)
-      // Verdict Page just triggers the intent. The actual Reason input is in AppealPage?
-      // Wait, `VerdictPage` usually has an "Appeal" button that redirects to `AppealPage`.
-      // If `VerdictPage` calls `onAppeal`, it might expect a redirect.
-      
-      // Let's check VerdictPage usage:
-      // it calls `onAppeal(userRole)`
-      
-      // In Mock: 
-      // setCases(...)
-      // navigate(...)
-      
-      // Here:
+      // Navigate to appeal page with correct litigant param
       navigate(`/case/${caseId}/appeal?litigant=${appellant}`);
   };
 
