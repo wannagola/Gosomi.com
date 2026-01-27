@@ -7,7 +7,8 @@
     "build-frontend": "npm run build --prefix FE",
     "copy-assets": "mkdir -p BE/public && cp -r FE/build/* BE/public/",
     "build-deploy": "npm run setup-dependencies && npm run build-frontend && npm run copy-assets",
-    "start": "npm start --prefix BE"
+    "start": "npm start --prefix BE",
+    "dev": "npm run dev --prefix BE"
   },
   "engines": {
     "node": ">=18.0.0"
