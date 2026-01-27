@@ -381,8 +381,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               </div>
             </div>
 
-            {/* 💡 변론 팁 (심플 버전으로 복구) */}
-            <div className="mt-8 p-5 bg-purple-900 bg-opacity-20 border border-purple-500/30 rounded-xl flex gap-4 items-start">
+            {/* 💡 변론 팁 (심플 버전 - 테두리 제거 & 간격 추가) */}
+            <div className="mt-8 mb-12 p-5 bg-purple-900 bg-opacity-20 rounded-xl flex gap-4 items-start">
                <div className="p-2 bg-purple-500/20 rounded-lg shrink-0">
                   <Shield className="w-6 h-6 text-purple-300" />
                </div>
