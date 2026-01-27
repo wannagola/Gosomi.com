@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { User, Friend } from '@/types/user';
 import { Case, CaseStatus, LAWS } from '@/types/court';
 import { User as UserIcon, Check, X, UserPlus, Search, FileText, Clock, AlertCircle, CheckCircle, Plus } from 'lucide-react';
@@ -30,6 +30,26 @@ export function MyPage({
     const [caseFilter, setCaseFilter] = useState<'all' | CaseStatus>('all');
     const [caseSearchQuery, setCaseSearchQuery] = useState('');
     const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+    const [currentUserWithStats, setCurrentUserWithStats] = useState<User>(user);
+
+    // Fetch latest user stats when component mounts
+    useEffect(() => {
+        const fetchUserStats = async () => {
+            try {
+                const stats = await userService.getUserStats(user.id);
+                setCurrentUserWithStats({
+                    ...user,
+                    winRate: stats.winningRate
+                });
+            } catch (error) {
+                console.error('Failed to fetch user stats:', error);
+                // Keep original user data if fetch fails
+                setCurrentUserWithStats(user);
+            }
+        };
+
+        fetchUserStats();
+    }, [user.id]);
 
     // --- Friend Logic ---
     // (Visuals handled in render)
@@ -65,16 +85,16 @@ export function MyPage({
                 {/* Profile Header */}
                 <div className="flex items-center gap-6 mb-12">
                      <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-[var(--color-gold-dark)]">
-                        {user.profileImage ? (
-                            <img src={user.profileImage} alt={user.nickname} className="w-full h-full object-cover" />
+                        {currentUserWithStats.profileImage ? (
+                            <img src={currentUserWithStats.profileImage} alt={currentUserWithStats.nickname} className="w-full h-full object-cover" />
                         ) : (
                             <UserIcon className="w-12 h-12 text-gray-400" />
                         )}
                     </div>
                     <div>
-                        <h1 className="text-4xl font-bold text-white mb-2">{user.nickname}</h1>
+                        <h1 className="text-4xl font-bold text-white mb-2">{currentUserWithStats.nickname}</h1>
                         <p className="text-[var(--color-gold-primary)] font-bold text-lg">
-                            승소율 {user.winRate || 0}%
+                            승소율 {currentUserWithStats.winRate || 50}%
                         </p>
                     </div>
                 </div>
