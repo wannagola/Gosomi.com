@@ -241,9 +241,17 @@ export default function App() {
   };
 
   // Logic to determine appeal handler arguments in route
-  const onAppealWrapper = (caseId: string, appellant: 'plaintiff' | 'defendant') => {
-      // Navigate to appeal page with correct litigant param
-      navigate(`/case/${caseId}/appeal?litigant=${appellant}`);
+  const onAppealWrapper = (caseId: string, appellant: 'plaintiff' | 'defendant', data?: { reason: string; evidence: string; files: FileList | null }) => {
+      if (data) {
+          // If data is provided, submit directly
+          // Combine reason and evidence into statement for now, as API might not accept separate evidence string field yet
+          const combinedStatement = `[항소 사유]\n${data.reason}\n\n[추가 증거]\n${data.evidence}`;
+          // Files are not handled yet in basic flow, passing empty array for evidences
+          handleSubmitAppeal(caseId, appellant, combinedStatement, []);
+      } else {
+        // Fallback navigation
+        navigate(`/case/${caseId}/appeal?litigant=${appellant}`);
+      }
   };
 
   return (
@@ -384,14 +392,24 @@ function CaseRouteHandler({
         <Routes>
             <Route path="" element={
                 hasVerdict ? (
-                    <VerdictPage case_={case_} onAppeal={handleAppeal} onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)} />
+                    <VerdictPage 
+                        case_={case_} 
+                        onAppeal={(appellant, data) => handleAppeal(case_.id, appellant, data)} 
+                        onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)} 
+                    />
                 ) : (
                     isDefendant ? <Navigate to="defense" replace /> : <WaitingPage case_={case_} />
                 )
             } /> 
             <Route path="defense" element={<DefensePage case_={case_} onSubmitDefense={(data) => handleSubmitDefense(case_.id, data)} />} />
             <Route path="jury" element={<JuryVotingPage case_={case_} onVote={(vote) => handleVote(case_.id, vote)} />} />
-            <Route path="verdict" element={<VerdictPage case_={case_} onAppeal={handleAppeal} onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)} />} />
+            <Route path="verdict" element={
+                    <VerdictPage 
+                        case_={case_} 
+                        onAppeal={(appellant, data) => handleAppeal(case_.id, appellant, data)} 
+                        onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)} 
+                    />
+            } />
             <Route path="appeal" element={<AppealPage case_={case_} onSubmitAppeal={handleSubmitAppeal} />} />
         </Routes>
     );

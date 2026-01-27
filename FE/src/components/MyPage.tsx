@@ -92,11 +92,11 @@ export function MyPage({
 
                 {/* Profile Header */}
                 <div className="flex items-center gap-6 mb-12">
-                     <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-[var(--color-gold-dark)]">
+                     <div className="w-36 h-36 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-[var(--color-gold-dark)]">
                         {currentUserWithStats.profileImage ? (
                             <img src={currentUserWithStats.profileImage} alt={currentUserWithStats.nickname} className="w-full h-full object-cover" />
                         ) : (
-                            <UserIcon className="w-12 h-12 text-gray-400" />
+                            <UserIcon className="w-16 h-16 text-gray-400" />
                         )}
                     </div>
                     <div>
@@ -173,7 +173,7 @@ export function MyPage({
                                 <div key={friend.id} className="relative group bg-[#13141f] bg-opacity-80 backdrop-blur-md border border-[var(--color-court-border)] rounded-2xl p-6 flex items-center gap-6 transition-all hover:scale-[1.02] hover:border-[var(--color-gold-dark)] hover:shadow-2xl hover:shadow-[var(--color-gold-dark)]/10">
                                     {/* Avatar */}
                                     <div className="relative flex-shrink-0">
-                                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center overflow-hidden border-4 border-[#1a1b26] ring-2 ring-[var(--color-court-border)] group-hover:ring-[var(--color-gold-primary)] transition-all shadow-xl">
+                                        <div className="w-28 h-28 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center overflow-hidden border-4 border-[#1a1b26] ring-2 ring-[var(--color-court-border)] group-hover:ring-[var(--color-gold-primary)] transition-all shadow-xl">
                                             {friend.profileImage ? (
                                                 <img src={friend.profileImage} alt={friend.nickname} className="w-full h-full object-cover" />
                                             ) : (

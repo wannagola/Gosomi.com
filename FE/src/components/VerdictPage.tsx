@@ -13,7 +13,7 @@ import { Case, LAWS } from "@/types/court";
 
 interface VerdictPageProps {
   case_: Case;
-  onAppeal?: (appellant: 'plaintiff' | 'defendant') => void;
+  onAppeal?: (appellant: 'plaintiff' | 'defendant', data?: { reason: string; evidence: string; files: FileList | null }) => void;
   onSelectPenalty?: (penalty: "serious" | "funny") => void;
 }
 
@@ -265,7 +265,7 @@ export function VerdictPage({
       content: {
         title: title,
         description: description,
-        imageUrl: "https://via.placeholder.com/800x400.png?text=Verdict+Result", // Simple, standard placeholder
+        imageUrl: window.location.origin + "/gosomidotcom.png",
         link: {
           mobileWebUrl: window.location.href,
           webUrl: window.location.href,
@@ -607,7 +607,7 @@ export function VerdictPage({
         {showAppealForm && (
           <AppealModal
             onClose={() => setShowAppealForm(false)}
-            onSubmit={() => onAppeal?.(appellant)}
+            onSubmit={(data) => onAppeal?.(appellant, data)}
           />
         )}
       </div>
@@ -687,7 +687,7 @@ function PenaltyButton({
 
 interface AppealModalProps {
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: { reason: string; evidence: string; files: FileList | null }) => void;
 }
 
 function AppealModal({ onClose, onSubmit }: AppealModalProps) {
@@ -702,7 +702,7 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
 
   const handleSubmit = () => {
     if (reason.trim() && newEvidence.trim()) {
-      onSubmit();
+      onSubmit({ reason, evidence: newEvidence, files: attachedFiles });
       onClose();
     }
   };
@@ -798,20 +798,15 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
           <div className="flex gap-4 pt-2">
             <button
               onClick={onClose}
-              className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"
+              className="flex-1 py-3 rounded-lg border border-[var(--color-court-border)] hover:bg-[var(--color-court-border)] transition-colors text-gray-400 font-bold"
             >
               취소
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!reason.trim() || !newEvidence.trim()}
-              className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all ${
-                reason.trim() && newEvidence.trim()
-                  ? "bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-lg"
-                  : "bg-gray-700 text-gray-500 cursor-not-allowed"
-              }`}
+              className="flex-1 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold hover:shadow-lg hover:from-orange-500 hover:to-orange-400 transition-all"
             >
-              항소 접수
+              제출하기
             </button>
           </div>
         </div>
