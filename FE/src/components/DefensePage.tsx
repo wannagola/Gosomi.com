@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Shield, Upload, AlertTriangle, Send, Eye, Paperclip } from 'lucide-react';
+import { Shield, Upload, AlertTriangle, Send, Eye, Paperclip, ImageIcon } from 'lucide-react';
 import { Case, Evidence, LAWS } from '@/types/court';
 
 interface DefensePageProps {
@@ -32,6 +32,41 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
       ]);
       setTextEvidence('');
     }
+  };
+
+  const addImageEvidence = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('이미지 크기는 2MB 이하여야 합니다.');
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      setEvidences([
+        ...evidences,
+        {
+          id: Date.now().toString(),
+          type: "image",
+          content: base64,
+          isKeyEvidence: false,
+        },
+      ]);
+    };
+    reader.readAsDataURL(file);
+    
+    // Reset input
+    e.target.value = '';
   };
 
   const toggleKeyEvidence = (id: string) => {
@@ -156,7 +191,15 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                           핵심 증거
                         </span>
                       )}
-                      <p className="text-sm text-gray-300">{evidence.content}</p>
+                      {evidence.type === 'image' ? (
+                        <img 
+                          src={evidence.content} 
+                          alt="원고 증거 이미지" 
+                          className="max-w-sm rounded-lg border border-[var(--color-court-border)]"
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-300">{evidence.content}</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -206,6 +249,25 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                 </button>
               </div>
 
+              {/* Image Upload */}
+              <div className="mb-3">
+                <input
+                  type="file"
+                  id="defense-image-input"
+                  accept="image/*"
+                  onChange={addImageEvidence}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="defense-image-input"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-purple-500 hover:text-white transition-colors cursor-pointer"
+                >
+                  <ImageIcon className="w-5 h-5" />
+                  이미지 증거 첨부
+                </label>
+                <span className="ml-3 text-xs text-gray-500">최대 2MB, JPG/PNG/GIF</span>
+              </div>
+
               {evidences.length > 0 && (
                 <div className="space-y-2">
                   {evidences.map((evidence) => (
@@ -224,7 +286,15 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                               핵심 증거
                             </span>
                           )}
-                          <p className="text-sm text-gray-300">{evidence.content}</p>
+                          {evidence.type === 'image' ? (
+                            <img 
+                              src={evidence.content} 
+                              alt="증거 이미지" 
+                              className="max-w-md rounded-lg border border-[var(--color-court-border)]"
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-300">{evidence.content}</p>
+                          )}
                         </div>
                         <div className="flex gap-2 ml-4">
                           <button

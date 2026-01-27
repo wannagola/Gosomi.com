@@ -5,6 +5,7 @@ import {
   AlertCircle,
   Share2,
   CheckCircle,
+  ImageIcon,
 } from "lucide-react";
 import { LAWS, LawType, Evidence } from "@/types/court";
 import { Friend } from "@/types/user";
@@ -502,6 +503,41 @@ function Step2Evidence({
     setTextEvidence("");
   };
 
+  const addImageEvidence = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('이미지 크기는 2MB 이하여야 합니다.');
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      setEvidences([
+        ...evidences,
+        {
+          id: Date.now().toString(),
+          type: "image",
+          content: base64,
+          isKeyEvidence: false,
+        },
+      ]);
+    };
+    reader.readAsDataURL(file);
+    
+    // Reset input
+    e.target.value = '';
+  };
+
   const toggleKeyEvidence = (id: string) => {
     setEvidences(
       evidences.map((e) =>
@@ -539,6 +575,25 @@ function Step2Evidence({
             <Upload className="w-5 h-5" />
           </button>
         </div>
+        
+        {/* Image Upload */}
+        <div className="mt-3">
+          <input
+            type="file"
+            id="image-evidence-input"
+            accept="image/*"
+            onChange={addImageEvidence}
+            className="hidden"
+          />
+          <label
+            htmlFor="image-evidence-input"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-primary)] hover:text-white transition-colors cursor-pointer"
+          >
+            <ImageIcon className="w-5 h-5" />
+            이미지 증거 첨부
+          </label>
+          <span className="ml-3 text-xs text-gray-500">최대 2MB, JPG/PNG/GIF</span>
+        </div>
       </div>
 
       {/* 증거 목록 */}
@@ -564,7 +619,15 @@ function Step2Evidence({
                         핵심 증거
                       </span>
                     )}
-                    <p className="text-sm text-gray-300">{evidence.content}</p>
+                    {evidence.type === 'image' ? (
+                      <img 
+                        src={evidence.content} 
+                        alt="증거 이미지" 
+                        className="max-w-md rounded-lg border border-[var(--color-court-border)]"
+                      />
+                    ) : (
+                      <p className="text-sm text-gray-300">{evidence.content}</p>
+                    )}
                   </div>
                   <div className="flex gap-2 ml-4">
                     <button
