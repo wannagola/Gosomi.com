@@ -694,22 +694,22 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-      <div className="official-document rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto custom-scrollbar">
+      <div className="official-document rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto custom-scrollbar">
         <div className="sticky top-0 bg-[#1a1a2e] border-b-2 border-[var(--color-gold-dark)] p-4 flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
-              <FileText className="w-8 h-8 text-orange-400" />
-              <h2 className="text-2xl">항소장 작성</h2>
+              <FileText className="w-6 h-6 text-orange-400" />
+              <h2 className="text-xl">항소장 작성</h2>
             </div>
             <button
               onClick={onClose}
               className="p-2 hover:bg-[var(--color-court-border)] rounded-lg transition-colors"
             >
-              <span className="text-2xl text-gray-400">×</span>
+              <span className="text-xl text-gray-400">×</span>
             </button>
-          </div>
+        </div>
         
-        <div className="p-8 space-y-6">
-          <div className="p-4 bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg">
+        <div className="p-6 space-y-5">
+          <div className="p-3 bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg">
             <p className="text-sm text-orange-200">
               ⚠️ <strong>항소는 1회만 가능합니다.</strong> 추가 증거가 반드시
               필요하며, 정당한 사유 없이는 기각될 수 있습니다.
@@ -724,7 +724,7 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="판결이 부당하다고 생각하는 이유를 상세히 작성하세요"
-              rows={5}
+              rows={3}
               className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none resize-none"
             />
           </div>
@@ -737,7 +737,7 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
               value={newEvidence}
               onChange={(e) => setNewEvidence(e.target.value)}
               placeholder="1심에서 제출하지 못한 새로운 증거를 제출하세요"
-              rows={5}
+              rows={3}
               className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none resize-none"
             />
           </div>
@@ -780,7 +780,7 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
             )}
           </div>
 
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-4 pt-2">
             <button
               onClick={onClose}
               className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"

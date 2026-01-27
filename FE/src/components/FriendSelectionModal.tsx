@@ -33,7 +33,7 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
   };
 
   const filteredFriends = friends.filter(friend => 
-    friend.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    friend.nickname.toLowerCase().includes(searchQuery.toLowerCase()) &&
     friend.status === 'friend' // Only show accepted friends
   );
 
@@ -91,14 +91,14 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
                         </div>
                         
                         <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                            {friend.avatar ? (
-                                <img src={friend.avatar} alt={friend.name} className="w-full h-full object-cover" />
+                            {friend.profileImage ? (
+                                <img src={friend.profileImage} alt={friend.nickname} className="w-full h-full object-cover" />
                             ) : (
                                 <UserIcon className="w-4 h-4 text-gray-400" />
                             )}
                         </div>
                         
-                        <span className="text-white font-medium">{friend.name}</span>
+                        <span className="text-white font-medium">{friend.nickname}</span>
                     </div>
                 ))
             )}
