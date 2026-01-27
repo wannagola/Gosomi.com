@@ -18,11 +18,11 @@ app.use("/test", testRouter); // Mount test router
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // FE 정적 파일 서빙 (React 빌드 파일)
-// 배포 환경: /usr/src/app/public
-// 로컬 환경: ../FE/build
-const publicPath = path.resolve(__dirname, "../../public");
+// 배포 환경 (Root Directory=BE): ../public
+// 로컬 환경: ../../FE/build
+const deployPath = path.resolve(__dirname, "../public");
 const localBuildPath = path.resolve(__dirname, "../../FE/build");
-const frontendPath = existsSync(publicPath) ? publicPath : localBuildPath;
+const frontendPath = existsSync(deployPath) ? deployPath : localBuildPath;
 
 console.log("Frontend path:", frontendPath);
 app.use(express.static(frontendPath));
