@@ -31,7 +31,7 @@ export function CourtHeader({ notifications = [], user, onMarkNotificationsAsRea
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <Scale className="w-10 h-10 text-[var(--color-gold-accent)]" strokeWidth={2} />
+              <img src="/gosomidotcom.png" alt="Gosomi Logo" className="w-10 h-10 object-contain" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--color-gold-accent)] rounded-full animate-pulse" />
             </div>
             <div>
