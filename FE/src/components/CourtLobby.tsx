@@ -205,7 +205,7 @@ function CaseCard({ case_, onView }: any) {
     UNDER_APPEAL: { label: "항소 중", color: "bg-red-500" },
   };
 
-  const status = statusConfig[case_.status] || statusConfig.filed;
+  const status = statusConfig[case_.status] || statusConfig.FILED;
   return (
     <button
       onClick={() => onView(case_.id)}
