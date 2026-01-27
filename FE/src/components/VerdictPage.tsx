@@ -122,9 +122,11 @@ export function VerdictPage({
 
   const law = LAWS.find((l) => l.id === case_.lawType);
 
-  // ✅ Law 타입에 seriousPenalty/funnyPenalty가 없다는 에러(ts2339) 방지용 안전 getter
-  //    (LAWS 구조가 조금 달라도 최대한 커버)
+  // ✅ Prioritize AI-generated penalties from case_, then fallback to static Law data
   const getSeriousPenalty = () => {
+    if (case_.penalties?.serious && Array.isArray(case_.penalties.serious) && case_.penalties.serious.length > 0) {
+        return case_.penalties.serious.join('\n');
+    }
     const l: any = law as any;
     return (
       l?.seriousPenalty ??
@@ -136,6 +138,9 @@ export function VerdictPage({
   };
 
   const getFunnyPenalty = () => {
+    if (case_.penalties?.funny && Array.isArray(case_.penalties.funny) && case_.penalties.funny.length > 0) {
+        return case_.penalties.funny.join('\n');
+    }
     const l: any = law as any;
     return (
       l?.funnyPenalty ??

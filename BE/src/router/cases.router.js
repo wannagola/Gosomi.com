@@ -33,12 +33,18 @@ router.post("/", async (req, res) => {
       : null;
 
     const [result] = await pool.query(
-      `INSERT INTO cases (case_number, title, content, plaintiff_id, defendant_id, jury_enabled, jury_mode, jury_invite_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO cases (case_number, title, content, plaintiff_id, defendant_id, jury_enabled, jury_mode, jury_invite_token, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'SUMMONED')`,
       [caseNumber, title, content, plaintiffId, defendantId, juryEnabled ? 1 : 0, juryMode, inviteToken]
     );
 
     const newId = result.insertId;
+
+    // 🔔 Notify Defendant immediately
+    await pool.query(
+      `INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'SUMMON', 'You have been summoned.', ?)`,
+      [defendantId, newId]
+    );
 
     // Jury Logic
     if (juryEnabled) {
