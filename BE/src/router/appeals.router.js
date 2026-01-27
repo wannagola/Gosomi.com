@@ -42,7 +42,7 @@ router.post("/cases/:id/appeal", async (req, res) => {
             : caseRow.plaintiff_id;
 
         await pool.query(
-            `INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'APPEAL', 'An appeal has been requested.', ?)`,
+            `INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'APPEAL_REQUESTED', 'An appeal has been requested.', ?)`,
             [opponentId, caseId]
         );
 
@@ -109,7 +109,7 @@ router.post("/cases/:id/appeal/verdict", async (req, res) => {
         if (caseRows.length > 0) {
             const { plaintiff_id, defendant_id } = caseRows[0];
             const message = 'Final appeal verdict has been reached.';
-            await pool.query("INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT', ?, ?), (?, 'VERDICT', ?, ?)",
+            await pool.query("INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'APPEAL_VERDICT_READY', ?, ?), (?, 'APPEAL_VERDICT_READY', ?, ?)",
                 [plaintiff_id, message, caseId, defendant_id, message, caseId]);
         }
 

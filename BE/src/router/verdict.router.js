@@ -17,7 +17,7 @@ router.post("/cases/:id/verdict", async (req, res) => {
     if (caseRows.length > 0) {
       const { plaintiff_id, defendant_id } = caseRows[0];
       const message = 'The verdict has been reached.';
-      await pool.query("INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT', ?, ?), (?, 'VERDICT', ?, ?)",
+      await pool.query("INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT_COMPLETED', ?, ?), (?, 'VERDICT_COMPLETED', ?, ?)",
         [plaintiff_id, message, caseId, defendant_id, message, caseId]);
     }
 

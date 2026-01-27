@@ -371,8 +371,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
             </div>
 
             {/* 안내 */}
-            <div className="p-5 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-xl mb-8">
-              <p className="text-sm text-purple-200 leading-relaxed">
+            <div className="w-full p-5 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-xl mb-8 box-border">
+              <p className="text-sm text-purple-200 leading-relaxed break-keep">
                 <span className="font-bold text-base block mb-1">💡 변론 팁</span>
                 감정적인 반응보다 객관적인 사실과 증거를 제시하세요.
                 AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.

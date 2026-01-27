@@ -565,7 +565,8 @@ export function VerdictPage({
               카카오톡 공유
             </button>
             {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (VERDICT_COMPLETED 상태일 때만 표시) */}
-            {!case_.status.includes('APPEAL') && (
+            {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (VERDICT_COMPLETED 상태이고 항소 이력이 없을 때만 표시) */}
+            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && (
               <button
                 onClick={() => setShowAppealForm(true)}
                 className="px-8 py-4 border-2 border-orange-600 text-orange-400 font-bold rounded-xl hover:bg-orange-900 hover:bg-opacity-20 transition-all flex items-center justify-center gap-3"

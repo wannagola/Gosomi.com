@@ -384,7 +384,7 @@ function CaseRouteHandler({
         <Routes>
             <Route path="" element={
                 hasVerdict ? (
-                    <VerdictPage case_={case_} onAppeal={handleAppeal} onSelectPenalty={handleSelectPenalty} />
+                    <VerdictPage case_={case_} onAppeal={handleAppeal} onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)} />
                 ) : (
                     isDefendant ? <Navigate to="defense" replace /> : <WaitingPage case_={case_} />
                 )

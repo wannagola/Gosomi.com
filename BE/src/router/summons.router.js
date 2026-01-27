@@ -129,7 +129,7 @@ router.post("/cases/:id/defense", async (req, res) => {
 
     // 🔔 Notification: Notify Plaintiff
     await pool.query(
-      "INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT', 'Defendant has submitted defense.', ?)",
+      "INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT_COMPLETED', 'Defendant has submitted defense.', ?)",
       [c.plaintiff_id, caseId]
     );
 
