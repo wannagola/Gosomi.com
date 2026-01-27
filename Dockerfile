@@ -15,6 +15,11 @@ WORKDIR /frontend
 COPY FE/package*.json ./
 RUN npm install
 COPY FE/ ./
+
+# Inject Environment Variables at Build Time
+ARG VITE_KAKAO_JS_KEY
+ENV VITE_KAKAO_JS_KEY=$VITE_KAKAO_JS_KEY
+
 RUN npm run build
 
 # Move frontend build to backend public directory

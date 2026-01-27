@@ -15,50 +15,61 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const [loading, setLoading] = useState(false);
 
   const handleKakaoLogin = () => {
-      // Try Real Login First
+      const key = import.meta.env.VITE_KAKAO_JS_KEY;
+      
       if (!window.Kakao) {
           alert('Kakao SDK not loaded');
           return;
       }
-      if (!window.Kakao.isInitialized()) {
-        const key = import.meta.env.VITE_KAKAO_JS_KEY;
+
+      if (!window.Kakao.isInitialized() && key) {
         window.Kakao.init(key);
       }
       
-      window.Kakao.Auth.authorize({
-        redirectUri: window.location.origin + '/login'
+      setLoading(true);
+
+      // 1. Popup Login (Get Access Token)
+      window.Kakao.Auth.login({
+        success: function(authObj: any) {
+            // 2. Fetch User Profile from Kakao (Frontend Side)
+            window.Kakao.API.request({
+                url: '/v2/user/me',
+                success: function(res: any) {
+                    const kakaoId = String(res.id);
+                    const properties = res.properties || {};
+                    const nickname = properties.nickname;
+                    const profileImage = properties.profile_image;
+
+                    // 3. Send Profile Data to Backend (No Kakao calls on Backend)
+                    import('@/api/authService').then(({ authService }) => {
+                        authService.login({ kakaoId, nickname, profileImage })
+                            .then(data => {
+                                onLogin(data.user);
+                                localStorage.setItem('token', data.token);
+                            })
+                            .catch(err => {
+                                console.error('Backend Login failed', err);
+                                alert('로그인 서버 처리 실패');
+                            })
+                            .finally(() => setLoading(false));
+                    });
+                },
+                fail: function(error: any) {
+                    console.error('User Info Req Failed', error);
+                    setLoading(false);
+                    alert('사용자 정보 가져오기 실패');
+                }
+            });
+        },
+        fail: function(err: any) {
+            console.error(err);
+            setLoading(false);
+            alert('카카오 로그인 실패');
+        },
       });
   };
 
-  // Handle Code Callback (Keep it just in case user fixes the key)
-  const processedRef = useRef(false);
-
-  useEffect(() => {
-     const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-     const code = params.get('code');
-     
-     if (code && !processedRef.current) {
-         processedRef.current = true;
-         // ... (existing real auth logic if needed, but it's failing)
-         // We can leave it or remove it. Let's leave it but catch the error gracefully
-         setLoading(true);
-         import('@/api/authService').then(({ authService }) => {
-             authService.login(code)
-                .then(data => {
-                    onLogin(data.user);
-                    localStorage.setItem('token', data.token);
-                })
-                .catch(err => {
-                    console.error('Login failed', err);
-                    alert('로그인 처리 중 오류가 발생했습니다. (설정 또는 중복 요청)');
-                    processedRef.current = false; // Allow retry if failed? Or keep it locked.
-                    // Remove code from URL to prevent infinite loop of alerts?
-                    window.history.replaceState({}, '', '/login');
-                })
-                .finally(() => setLoading(false));
-         });
-     }
-  }, [onLogin]);
+  // Removed useEffect for code param handling since we use Popup
 
   return (
     <div className="min-h-screen w-full relative flex flex-col items-center justify-center overflow-y-auto bg-[#050505] py-10">

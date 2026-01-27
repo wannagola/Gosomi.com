@@ -8,10 +8,9 @@ interface LoginResponse {
 }
 
 export const authService = {
-  login: async (code: string): Promise<{ token: string; user: User }> => {
-    // Backend needs to know which redirect_uri was used to generate the code
-    const redirectUri = window.location.origin + '/login'; 
-    const response = await apiClient.post<LoginResponse>('/api/auth/kakao', { code, redirectUri });
+  login: async (userData: { kakaoId: string; nickname?: string; profileImage?: string }): Promise<{ token: string; user: User }> => {
+    // Backend purely trusts this data now (as requested)
+    const response = await apiClient.post<LoginResponse>('/api/auth/kakao', userData);
     return response.data;
   },
 
