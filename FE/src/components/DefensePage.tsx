@@ -263,6 +263,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                     accept="image/*"
                     onChange={addImageEvidence}
                     className="hidden"
+                    style={{ display: 'none' }}
                   />
                   <label
                     htmlFor="defense-image-input"
@@ -282,6 +283,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                     multiple
                     onChange={handleFileChange}
                     className="hidden"
+                    style={{ display: 'none' }}
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
