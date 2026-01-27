@@ -18,7 +18,13 @@ router.get("/", async (req, res) => {
             [userId]
         );
 
-        return res.json({ ok: true, data: rows });
+        // Map is_read to read for frontend compatibility
+        const notifications = rows.map(row => ({
+            ...row,
+            read: Boolean(row.is_read)
+        }));
+
+        return res.json({ ok: true, data: notifications });
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }

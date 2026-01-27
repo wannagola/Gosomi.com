@@ -5,7 +5,7 @@
 
 import { pool } from '../db.js';
 
-async function migrateFiled ToSummoned() {
+async function migrateFiledToSummoned() {
   try {
     console.log('Starting migration: FILED -> SUMMONED');
     

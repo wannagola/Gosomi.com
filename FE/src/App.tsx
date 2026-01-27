@@ -221,7 +221,11 @@ export default function App() {
   const handleMarkNotifRead = async (id: string) => {
       try {
           await notificationService.markRead(id);
-          setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+          // Refresh notifications from server to ensure persistence
+          if (currentUser) {
+              const fetchedNotifs = await notificationService.getNotifications(currentUser.id);
+              setNotifications(fetchedNotifs);
+          }
       } catch (error) { console.error(error); }
   };
 
