@@ -256,11 +256,21 @@ router.get("/:id", async (req, res) => {
     const [dRows] = await pool.query("SELECT content FROM defenses WHERE case_id=? ORDER BY created_at DESC LIMIT 1", [id]);
     const defenseContent = dRows[0]?.content || null;
 
+    // Fetch evidences - always return array (empty if none)
+    const [evRows] = await pool.query("SELECT id, type, content, is_key_evidence FROM evidences WHERE case_id=? ORDER BY created_at", [id]);
+    const evidences = evRows.map(e => ({
+      id: String(e.id),
+      type: e.type,
+      content: e.content,
+      isKeyEvidence: Boolean(e.is_key_evidence)
+    }));
+
     return res.json({
       id: c.id,
       caseNumber: c.case_number,
       title: c.title,
       content: c.content,
+      evidences, // Always an array
       defenseContent, // Added for Jury
       status: c.status,
       plaintiffId: c.plaintiff_id,

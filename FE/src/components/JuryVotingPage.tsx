@@ -85,7 +85,7 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
               </div>
               <div className="p-4 bg-purple-900 bg-opacity-20 border-l-4 border-purple-600 rounded-r-lg">
                 <p className="text-sm text-gray-300 leading-relaxed line-clamp-6">
-                  {case_.description}
+                  {case_.content}
                 </p>
               </div>
               {case_.evidences.length > 0 && (

@@ -23,11 +23,12 @@ export function MyCasesPage({ cases, onViewCase }: MyCasesPageProps) {
 
   const statusStats = {
     all: cases.length,
-    summoned: cases.filter(c => c.status === 'summoned').length,
-    'in-defense': cases.filter(c => c.status === 'in-defense').length,
-    'awaiting-verdict': cases.filter(c => c.status === 'awaiting-verdict').length,
-    sentenced: cases.filter(c => c.status === 'sentenced').length,
-    appealed: cases.filter(c => c.status === 'appealed').length,
+    FILED: cases.filter(c => c.status === 'FILED').length,
+    SUMMONED: cases.filter(c => c.status === 'SUMMONED').length,
+    DEFENSE_SUBMITTED: cases.filter(c => c.status === 'DEFENSE_SUBMITTED').length,
+    VERDICT_READY: cases.filter(c => c.status === 'VERDICT_READY').length,
+    COMPLETED: cases.filter(c => c.status === 'COMPLETED').length,
+    UNDER_APPEAL: cases.filter(c => c.status === 'UNDER_APPEAL').length,
   };
 
   return (
@@ -54,39 +55,39 @@ export function MyCasesPage({ cases, onViewCase }: MyCasesPageProps) {
             onClick={() => setFilter('all')}
           />
           <StatCard
-            label="소환됨"
-            count={statusStats.summoned}
+            label="접수 완료"
+            count={statusStats.FILED}
             color="purple"
-            active={filter === 'summoned'}
-            onClick={() => setFilter('summoned')}
+            active={filter === 'FILED'}
+            onClick={() => setFilter('FILED')}
           />
           <StatCard
-            label="변론 중"
-            count={statusStats['in-defense']}
+            label="소환 완료"
+            count={statusStats.SUMMONED}
             color="yellow"
-            active={filter === 'in-defense'}
-            onClick={() => setFilter('in-defense')}
+            active={filter === 'SUMMONED'}
+            onClick={() => setFilter('SUMMONED')}
           />
           <StatCard
-            label="판결 대기"
-            count={statusStats['awaiting-verdict']}
+            label="변론 제출"
+            count={statusStats.DEFENSE_SUBMITTED}
             color="orange"
-            active={filter === 'awaiting-verdict'}
-            onClick={() => setFilter('awaiting-verdict')}
+            active={filter === 'DEFENSE_SUBMITTED'}
+            onClick={() => setFilter('DEFENSE_SUBMITTED')}
           />
           <StatCard
-            label="선고 완료"
-            count={statusStats.sentenced}
+            label="판결 완료"
+            count={statusStats.COMPLETED}
             color="green"
-            active={filter === 'sentenced'}
-            onClick={() => setFilter('sentenced')}
+            active={filter === 'COMPLETED'}
+            onClick={() => setFilter('COMPLETED')}
           />
           <StatCard
-            label="항소됨"
-            count={statusStats.appealed}
+            label="항소 중"
+            count={statusStats.UNDER_APPEAL}
             color="red"
-            active={filter === 'appealed'}
-            onClick={() => setFilter('appealed')}
+            active={filter === 'UNDER_APPEAL'}
+            onClick={() => setFilter('UNDER_APPEAL')}
           />
         </div>
 
@@ -209,6 +210,12 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
       icon: <AlertCircle className="w-5 h-5" />,
       textColor: 'text-red-400'
     },
+    'APPEAL_VERDICT_READY': { 
+      label: '항소심 판결', 
+      color: 'bg-red-600',
+      icon: <CheckCircle className="w-5 h-5" />,
+      textColor: 'text-red-500'
+    },
   };
 
   const status = statusConfig[case_.status] || statusConfig['FILED'];
@@ -275,22 +282,22 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
           </div>
 
           {/* 진행률 표시 */}
-          {case_.verdict && (
+          {case_.faultRatio && (
             <div className="mt-4 pt-4 border-t border-[var(--color-court-border)]">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
                     <span>과실 비율</span>
-                    <span>원고 {case_.verdict.plaintiffFault}% : 피고 {case_.verdict.defendantFault}%</span>
+                    <span>원고 {case_.faultRatio.plaintiff}% : 피고 {case_.faultRatio.defendant}%</span>
                   </div>
                   <div className="h-2 bg-[var(--color-court-dark)] rounded-full overflow-hidden flex">
                     <div 
                       className="bg-blue-500" 
-                      style={{ width: `${case_.verdict.plaintiffFault}%` }}
+                      style={{ width: `${case_.faultRatio.plaintiff}%` }}
                     />
                     <div 
                       className="bg-red-500" 
-                      style={{ width: `${case_.verdict.defendantFault}%` }}
+                      style={{ width: `${case_.faultRatio.defendant}%` }}
                     />
                   </div>
                 </div>

@@ -127,19 +127,22 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-3">고소 내용</h3>
               <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-30 rounded-lg border-l-4 border-purple-600">
                 <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {showOriginal ? case_.description : case_.description.slice(0, 200) + '...'}
+                  {showOriginal 
+                    ? (case_.content || '소송 내용이 없습니다.') 
+                    : ((case_.content || '').slice(0, 200) + ((case_.content?.length ?? 0) > 200 ? '...' : ''))
+                  }
                 </p>
               </div>
             </div>
 
             {/* 원고 증거 */}
-            {case_.evidences.length > 0 && (
+            {case_.evidences?.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-3">
-                  원고 측 증거 ({case_.evidences.length}건)
+                  원고 측 증거 ({case_.evidences?.length || 0}건)
                 </h3>
                 <div className="space-y-2">
-                  {case_.evidences.map((evidence) => (
+                  {case_.evidences?.map((evidence) => (
                     <div
                       key={evidence.id}
                       className={`p-3 rounded-lg border ${

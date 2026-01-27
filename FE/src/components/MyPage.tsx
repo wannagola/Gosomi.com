@@ -401,7 +401,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
             {case_.evidences?.length > 0 && (
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4" />
-                <span>증거 {case_.evidences.length}건</span>
+                <span>증거 {case_.evidences?.length}건</span>
               </div>
             )}
           </div>

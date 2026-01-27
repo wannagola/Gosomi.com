@@ -70,8 +70,9 @@ export interface Case {
   defendantId: string;
   
   lawType: LawType;
-  description: string; // content in api_spec
-  evidences: Evidence[];
+  description?: string; // Deprecated, use content instead
+  content?: string; // Main content from API
+  evidences: Evidence[]; // Always returned as array from API
   
   status: CaseStatus;
   displayStatus?: string; // e.g. "재판중"
