@@ -47,7 +47,7 @@ export function CourtHeader({ notifications = [], user, onMarkNotificationsAsRea
               <Gavel className="w-5 h-5" />
               <span className="text-sm font-medium">법원 로비</span>
             </Link>
-            <Link to="/lawbook" className={getNavButtonClass('/lawbook')}>
+            <Link to="/law-book" className={getNavButtonClass('/law-book')}>
               <BookOpen className="w-5 h-5" />
               <span className="text-sm font-medium">법전</span>
             </Link>
