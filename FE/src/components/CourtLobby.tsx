@@ -228,6 +228,10 @@ function CaseCard({ case_, onView }: any) {
   };
 
   const status = statusConfig[case_.status] || statusConfig.SUMMONED;
+  const isAppeal = case_.status.includes('APPEAL') || (case_.appealStatus && case_.appealStatus !== 'NONE');
+  const trialStage = isAppeal ? "항소심" : "1심";
+  const trialColor = isAppeal ? "bg-red-900 text-red-200 border-red-700" : "bg-blue-900 text-blue-200 border-blue-700";
+
   return (
     <button
       onClick={() => onView(case_.id)}
@@ -235,7 +239,10 @@ function CaseCard({ case_, onView }: any) {
     >
       <div className="flex items-start justify-between">
         <div className="flex-1 text-left">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-2 mb-2">
+            <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
+              {trialStage}
+            </span>
             <span className="text-sm font-mono text-[var(--color-gold-primary)]">{case_.caseNumber}</span>
             <span className={`px-3 py-1 ${status.color} bg-opacity-20 text-white text-xs rounded-full border border-current`}>
               {status.label}
