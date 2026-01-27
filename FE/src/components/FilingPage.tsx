@@ -314,7 +314,9 @@ function Step1BasicInfo({
                   : "border-[var(--color-court-border)] hover:border-[var(--color-gold-dark)]"
               }`}
             >
-              <div className="text-3xl mb-2">{law.icon}</div>
+              <div className="mb-2">
+                <img src={law.icon} alt={law.title} className="w-12 h-12 mx-auto object-contain" />
+              </div>
               <div className="text-sm font-medium">{law.title}</div>
             </button>
           ))}

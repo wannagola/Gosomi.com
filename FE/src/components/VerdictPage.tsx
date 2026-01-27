@@ -260,7 +260,9 @@ export function VerdictPage({
             <p className="text-sm text-gray-500 mb-2">적용 법률</p>
             {law ? (
               <div className="flex items-center gap-3">
-                <span className="text-3xl">{law.icon}</span>
+                <div className="w-12 h-12 flex-shrink-0">
+                  <img src={law.icon} alt={law.title} className="w-full h-full object-contain" />
+                </div>
                 <div>
                   <p className="font-bold text-[var(--color-gold-accent)]">
                     {law.title}

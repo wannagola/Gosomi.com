@@ -32,7 +32,9 @@ export function WaitingPage({ case_ }: WaitingPageProps) {
           <div className="bg-[var(--color-court-dark)] border border-[var(--color-gold-dark)] border-opacity-30 rounded-xl p-6 max-w-lg mx-auto">
             <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-4">적용 법률</h3>
             <div className="flex items-center gap-4">
-              <span className="text-5xl">{law.icon}</span>
+              <div className="w-16 h-16 flex-shrink-0">
+                <img src={law.icon} alt={law.title} className="w-full h-full object-contain" />
+              </div>
               <div className="text-left">
                 <p className="font-bold text-xl text-[var(--color-gold-accent)]">{law.title}</p>
                 <p className="text-sm text-gray-400 mt-1">{law.description}</p>
