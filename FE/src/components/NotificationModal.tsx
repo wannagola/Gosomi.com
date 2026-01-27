@@ -65,7 +65,7 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
                         </p>
 
                     </div>
-                    </div>
+
                     {notification.link ? (
                       !notification.read ? (
                         <p className="text-sm text-[var(--color-gold-primary)] mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
