@@ -121,6 +121,9 @@ export function VerdictPage({
 
 
   const law = LAWS.find((l) => l.id === case_.lawType);
+  
+  // Debug: Check if law type is being passed correctly
+  console.log('VerdictPage Debug:', { lawType: case_.lawType, law: law?.title });
 
   // ✅ Prioritize AI-generated penalties from case_, then fallback to static Law data
   const getSeriousPenalty = () => {
@@ -255,15 +258,19 @@ export function VerdictPage({
 
           <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-50 rounded-lg">
             <p className="text-sm text-gray-500 mb-2">적용 법률</p>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">{law?.icon}</span>
-              <div>
-                <p className="font-bold text-[var(--color-gold-accent)]">
-                  {law?.title}
-                </p>
-                <p className="text-xs text-gray-400">{law?.description}</p>
+            {law ? (
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{law.icon}</span>
+                <div>
+                  <p className="font-bold text-[var(--color-gold-accent)]">
+                    {law.title}
+                  </p>
+                  <p className="text-xs text-gray-400">{law.description}</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="text-gray-400">법률 정보: {case_.lawType || '정보 없음'}</p>
+            )}
           </div>
         </div>
 
