@@ -338,9 +338,33 @@ function CaseRouteHandler({
     handleSubmitAppeal: any
 }) {
     const { id } = useParams();
-    const case_ = cases.find(c => c.id === id || c.id.toString() === id);
+    // Prefer fetching fresh data for the specific case to get full details (content, evidences, etc.)
+    const [activeCase, setActiveCase] = useState<Case | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    if (!case_) return <div className="p-8 text-center text-gray-400">사건을 찾을 수 없습니다.</div>;
+    useEffect(() => {
+        const fetchCase = async () => {
+            if (!id) return;
+            try {
+                const data = await caseService.getCase(id);
+                setActiveCase(data);
+            } catch (error) {
+                console.error("Failed to fetch case details", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCase();
+    }, [id]);
+
+    // Fallback to case from list if fetch fails or while loading (optional, but safer to wait for full details)
+    // Actually, we need full details like content/evidences for DefensePage. 
+    // The list might not have them. So we wait.
+    
+    if (loading) return <div className="p-8 text-center text-gray-400">사건 정보를 불러오는 중...</div>;
+    if (!activeCase) return <div className="p-8 text-center text-gray-400">사건을 찾을 수 없습니다.</div>;
+
+    const case_ = activeCase;
 
     const isDefendant = currentUser?.id === case_.defendantId;
     const isSummoned = case_.status === 'SUMMONED' || case_.status === 'FILED';

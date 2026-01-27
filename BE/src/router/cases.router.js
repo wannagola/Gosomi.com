@@ -7,7 +7,7 @@ const router = Router();
 // POST /api/cases : 사건 생성(고발 접수)
 router.post("/", async (req, res) => {
   try {
-    const { title, content, plaintiffId, defendantId, juryEnabled, juryMode, juryInvitedUserIds } = req.body;
+    const { title, content, plaintiffId, defendantId, juryEnabled, juryMode, juryInvitedUserIds, lawType } = req.body;
 
     if (!title || !content || !plaintiffId || !defendantId) {
       return res.status(400).json({
@@ -33,9 +33,9 @@ router.post("/", async (req, res) => {
       : null;
 
     const [result] = await pool.query(
-      `INSERT INTO cases (case_number, title, content, plaintiff_id, defendant_id, jury_enabled, jury_mode, jury_invite_token, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'SUMMONED')`,
-      [caseNumber, title, content, plaintiffId, defendantId, juryEnabled ? 1 : 0, juryMode, inviteToken]
+      `INSERT INTO cases (case_number, title, content, plaintiff_id, defendant_id, jury_enabled, jury_mode, jury_invite_token, status, law_type)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'SUMMONED', ?)`,
+      [caseNumber, title, content, plaintiffId, defendantId, juryEnabled ? 1 : 0, juryMode, inviteToken, lawType || null]
     );
 
     const newId = result.insertId;
@@ -237,6 +237,7 @@ router.get("/:id", async (req, res) => {
               c.verdict_text, c.penalties_json, c.fault_ratio,
               c.penalty_choice, c.penalty_selected,
               c.appeal_status,
+              c.law_type,
               p.nickname AS plaintiff_name,
               d.nickname AS defendant_name
        FROM cases c
@@ -270,6 +271,7 @@ router.get("/:id", async (req, res) => {
       verdictText: c.verdict_text,
       penalties: c.penalties_json,   // { serious:[], funny:[] }
       faultRatio: c.fault_ratio,     // { plaintiff:40, defendant:60 }
+      lawType: c.law_type,
 
       penaltyChoice: c.penalty_choice,
       penaltySelected: c.penalty_selected,

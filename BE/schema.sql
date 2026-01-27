@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS cases (
   plaintiff_id INT NOT NULL,
   defendant_id INT NOT NULL,
   status VARCHAR(50) DEFAULT 'ONGOING',
+  law_type VARCHAR(50),
   verdict_text TEXT,
   penalties_json TEXT, -- JSON
   fault_ratio TEXT, -- JSON
