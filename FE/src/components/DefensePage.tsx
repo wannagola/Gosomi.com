@@ -214,8 +214,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
             <h2 className="text-2xl mb-6">변론서 작성</h2>
 
             {/* 변론 내용 */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-3">
                 변론 내용 *
               </label>
               <textarea
@@ -223,21 +223,21 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                 onChange={(e) => setStatement(e.target.value)}
                 placeholder="원고의 주장에 대한 반박을 작성하세요. 사실 관계를 명확히 하고, 정당한 사유가 있었다면 설명해 주세요."
                 rows={12}
-                className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
+                className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none mb-2"
               />
               <p className="text-xs text-gray-500 mt-2">
                 {statement.length}자 작성됨 (최소 50자 권장)
               </p>
             </div>
 
-            {/* 증거 추가 (통합) */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
+            {/* 증거 자료 제출 */}
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-4">
                 증거 자료 제출
               </label>
               
               {/* 텍스트 증거 입력 */}
-              <div className="flex gap-2 mb-4">
+              <div className="flex gap-3 mb-6">
                 <textarea
                   value={textEvidence}
                   onChange={(e) => setTextEvidence(e.target.value)}
@@ -247,14 +247,14 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                 />
                 <button
                   onClick={addTextEvidence}
-                  className="px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors whitespace-nowrap text-sm font-bold"
+                  className="px-6 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors whitespace-nowrap text-sm font-bold"
                 >
                   텍스트 추가
                 </button>
               </div>
 
               {/* 파일 업로드 버튼 그룹 */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-6">
                 {/* 1. 이미지 업로드 (미리보기 및 AI 분석용) */}
                 <div>
                   <input
@@ -267,11 +267,11 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   />
                   <label
                     htmlFor="defense-image-input"
-                    className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-purple-500 hover:bg-purple-900 hover:bg-opacity-10 cursor-pointer transition-all h-full"
+                    className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-purple-500 hover:bg-purple-900 hover:bg-opacity-10 cursor-pointer transition-all h-full"
                   >
-                    <ImageIcon className="w-6 h-6 text-purple-400 mb-2" />
-                    <span className="text-sm font-bold text-gray-300">이미지 증거 업로드</span>
-                    <span className="text-xs text-gray-500 mt-1">판결에 직접 반영됨 (Max 2MB)</span>
+                    <ImageIcon className="w-8 h-8 text-purple-400 mb-3" />
+                    <span className="text-base font-bold text-gray-300">이미지 증거 업로드</span>
+                    <span className="text-xs text-gray-500 mt-2 text-center">판결에 직접 반영됨<br/>(Max 2MB)</span>
                   </label>
                 </div>
 
@@ -287,11 +287,11 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-orange-500 hover:bg-orange-900 hover:bg-opacity-10 cursor-pointer transition-all"
+                    className="w-full h-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-orange-500 hover:bg-orange-900 hover:bg-opacity-10 cursor-pointer transition-all"
                   >
-                    <Paperclip className="w-6 h-6 text-orange-400 mb-2" />
-                    <span className="text-sm font-bold text-gray-300">기타 파일 첨부</span>
-                    <span className="text-xs text-gray-500 mt-1">문서, PDF 등 참고자료</span>
+                    <Paperclip className="w-8 h-8 text-orange-400 mb-3" />
+                    <span className="text-base font-bold text-gray-300">기타 파일 첨부</span>
+                    <span className="text-xs text-gray-500 mt-2 text-center">문서, PDF 등<br/>참고자료</span>
                   </button>
                 </div>
               </div>
@@ -300,46 +300,46 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               <div className="space-y-4">
                  {/* 이미지/텍스트 증거 목록 */}
                  {evidences.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-gray-400">등록된 증거 ({evidences.length})</p>
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-gray-400 mb-2">등록된 증거 ({evidences.length})</p>
                     {evidences.map((evidence) => (
                       <div
                         key={evidence.id}
-                        className={`p-3 rounded-lg border-2 ${
+                        className={`p-4 rounded-lg border-2 ${
                           evidence.isKeyEvidence
                             ? 'border-purple-500 bg-purple-900 bg-opacity-10'
                             : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
                             {evidence.isKeyEvidence && (
-                              <span className="inline-block px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded mb-1">
+                              <span className="inline-block px-2 py-1 bg-purple-500 text-white text-xs font-bold rounded mb-2">
                                 핵심 증거
                               </span>
                             )}
                             {evidence.type === 'image' ? (
-                              <div className="relative group">
+                              <div className="relative group mt-1">
                                 <img 
                                   src={evidence.content} 
                                   alt="증거 이미지" 
-                                  className="h-20 w-auto rounded border border-[var(--color-court-border)] object-cover"
+                                  className="h-24 w-auto rounded border border-[var(--color-court-border)] object-cover"
                                 />
                               </div>
                             ) : (
-                              <p className="text-sm text-gray-300 break-words">{evidence.content}</p>
+                              <p className="text-base text-gray-300 break-words leading-relaxed">{evidence.content}</p>
                             )}
                           </div>
                           <div className="flex flex-col gap-2">
                            <button
                               onClick={() => toggleKeyEvidence(evidence.id)}
-                              className={`px-2 py-1 text-xs border rounded transition-colors whitespace-nowrap ${evidence.isKeyEvidence ? 'border-purple-500 text-purple-400' : 'border-gray-600 text-gray-500 hover:border-purple-500'}`}
+                              className={`px-3 py-1.5 text-xs border rounded transition-colors whitespace-nowrap ${evidence.isKeyEvidence ? 'border-purple-500 text-purple-400' : 'border-gray-600 text-gray-500 hover:border-purple-500'}`}
                             >
                               {evidence.isKeyEvidence ? '★ 핵심' : '☆ 중요 표시'}
                             </button>
                             <button
                               onClick={() => removeEvidence(evidence.id)}
-                              className="px-2 py-1 text-xs border border-red-900 text-red-500 rounded hover:bg-red-900 hover:bg-opacity-20 transition-colors"
+                              className="px-3 py-1.5 text-xs border border-red-900 text-red-500 rounded hover:bg-red-900 hover:bg-opacity-20 transition-colors"
                             >
                               삭제
                             </button>
@@ -352,13 +352,13 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
 
                 {/* 기타 첨부 파일 목록 */}
                 {attachedFiles && attachedFiles.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    <p className="text-xs font-semibold text-gray-400">첨부된 파일 ({attachedFiles.length})</p>
-                    <ul className="grid grid-cols-1 gap-2">
+                  <div className="mt-4 space-y-3">
+                    <p className="text-sm font-semibold text-gray-400 mb-2">첨부된 파일 ({attachedFiles.length})</p>
+                    <ul className="grid grid-cols-1 gap-3">
                       {Array.from(attachedFiles).map((file, index) => (
-                        <li key={index} className="flex items-center justify-between p-2 bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded text-sm text-gray-300">
-                          <div className="flex items-center gap-2 truncate">
-                            <Paperclip className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        <li key={index} className="flex items-center justify-between p-3 bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded-lg text-sm text-gray-300 hover:border-gray-600 transition-colors">
+                          <div className="flex items-center gap-3 truncate">
+                            <Paperclip className="w-5 h-5 text-gray-500 flex-shrink-0" />
                             <span className="truncate">{file.name}</span>
                             <span className="text-xs text-gray-500 flex-shrink-0">({(file.size / 1024).toFixed(1)} KB)</span>
                           </div>
@@ -371,9 +371,10 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
             </div>
 
             {/* 안내 */}
-            <div className="p-4 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-lg mb-6">
-              <p className="text-sm text-purple-200">
-                <span className="font-bold">💡 변론 팁:</span> 감정적인 반응보다 객관적인 사실과 증거를 제시하세요.
+            <div className="p-5 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-xl mb-8">
+              <p className="text-sm text-purple-200 leading-relaxed">
+                <span className="font-bold text-base block mb-1">💡 변론 팁</span>
+                감정적인 반응보다 객관적인 사실과 증거를 제시하세요.
                 AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.
               </p>
             </div>
@@ -382,10 +383,10 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
             <button
               onClick={handleSubmit}
               disabled={statement.trim().length === 0}
-              className={`w-full px-6 py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-3 ${
+              className={`w-full px-6 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg ${
                 statement.trim().length > 0
-                  ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-lg hover:scale-105'
-                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-xl hover:scale-[1.02]'
+                  : 'bg-gray-800 text-gray-600 cursor-not-allowed border border-gray-700'
               }`}
             >
               <Send className="w-6 h-6" />
