@@ -33,7 +33,13 @@ export function VerdictPage({
   >(null);
   const [confirmedPenalty, setConfirmedPenalty] = useState<
     "serious" | "funny" | null
-  >(case_.penaltySelected as "serious" | "funny" || null);
+  >(() => {
+     const selected = case_.penaltySelected;
+     if (!selected || selected === 'null' || selected === 'undefined') return null;
+     if (selected.toLowerCase() === 'serious') return 'serious';
+     if (selected.toLowerCase() === 'funny') return 'funny';
+     return null;
+  });
   const [showAppealForm, setShowAppealForm] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
 
@@ -551,6 +557,7 @@ export function VerdictPage({
         {!isCapturing && (
           <div className="grid md:grid-cols-3 gap-4">
             <button
+              type="button"
               onClick={handleShare}
               className="px-8 py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-3"
             >
@@ -558,16 +565,17 @@ export function VerdictPage({
               이미지로 저장
             </button>
             <button
+              type="button"
               onClick={shareKakao}
               className="px-8 py-4 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 transition-all flex items-center justify-center gap-2"
             >
               <Share2 className="w-5 h-5" />
               카카오톡 공유
             </button>
-            {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (VERDICT_COMPLETED 상태일 때만 표시) */}
-            {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (VERDICT_COMPLETED 상태이고 항소 이력이 없을 때만 표시) */}
-            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && (
+            {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (VERDICT_READY 상태이고 항소 이력이 없을 때만 표시) */}
+            {case_.status === 'VERDICT_READY' && (!case_.appealStatus || case_.appealStatus === 'NONE') && (
               <button
+                type="button"
                 onClick={() => setShowAppealForm(true)}
                 className="px-8 py-4 border-2 border-orange-600 text-orange-400 font-bold rounded-xl hover:bg-orange-900 hover:bg-opacity-20 transition-all flex items-center justify-center gap-3"
               >
@@ -637,6 +645,7 @@ function PenaltyButton({
       } ${isDisabled ? "opacity-50" : ""}`}
     >
       <button
+        type="button"
         onClick={() => onSelectType(type)}
         disabled={confirmedPenalty !== null}
         className="w-full"
