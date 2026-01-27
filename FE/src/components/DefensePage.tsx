@@ -230,126 +230,142 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               </p>
             </div>
 
-            {/* 증거 추가 */}
+            {/* 증거 추가 (통합) */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
-                반박 증거 추가 (선택)
+                증거 자료 제출
               </label>
-              <div className="flex gap-2 mb-3">
+              
+              {/* 텍스트 증거 입력 */}
+              <div className="flex gap-2 mb-4">
                 <textarea
                   value={textEvidence}
                   onChange={(e) => setTextEvidence(e.target.value)}
-                  placeholder="반박 증거를 작성하세요"
-                  rows={2}
+                  placeholder="텍스트로 된 증거/참료 자료를 입력하세요"
+                  rows={1}
                   className="flex-1 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
                 />
                 <button
                   onClick={addTextEvidence}
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors"
+                  className="px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors whitespace-nowrap text-sm font-bold"
                 >
-                  <Upload className="w-5 h-5" />
+                  텍스트 추가
                 </button>
               </div>
 
-              {/* Image Upload */}
-              <div className="mb-3">
-                <input
-                  type="file"
-                  id="defense-image-input"
-                  accept="image/*"
-                  onChange={addImageEvidence}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="defense-image-input"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-purple-500 hover:text-white transition-colors cursor-pointer"
-                >
-                  <ImageIcon className="w-5 h-5" />
-                  이미지 증거 첨부
-                </label>
-                <span className="ml-3 text-xs text-gray-500">최대 2MB, JPG/PNG/GIF</span>
+              {/* 파일 업로드 버튼 그룹 */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {/* 1. 이미지 업로드 (미리보기 및 AI 분석용) */}
+                <div>
+                  <input
+                    type="file"
+                    id="defense-image-input"
+                    accept="image/*"
+                    onChange={addImageEvidence}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="defense-image-input"
+                    className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-purple-500 hover:bg-purple-900 hover:bg-opacity-10 cursor-pointer transition-all h-full"
+                  >
+                    <ImageIcon className="w-6 h-6 text-purple-400 mb-2" />
+                    <span className="text-sm font-bold text-gray-300">이미지 증거 업로드</span>
+                    <span className="text-xs text-gray-500 mt-1">판결에 직접 반영됨 (Max 2MB)</span>
+                  </label>
+                </div>
+
+                {/* 2. 일반 파일 첨부 (참고자료) */}
+                <div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full h-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-orange-500 hover:bg-orange-900 hover:bg-opacity-10 cursor-pointer transition-all"
+                  >
+                    <Paperclip className="w-6 h-6 text-orange-400 mb-2" />
+                    <span className="text-sm font-bold text-gray-300">기타 파일 첨부</span>
+                    <span className="text-xs text-gray-500 mt-1">문서, PDF 등 참고자료</span>
+                  </button>
+                </div>
               </div>
 
-              {evidences.length > 0 && (
-                <div className="space-y-2">
-                  {evidences.map((evidence) => (
-                    <div
-                      key={evidence.id}
-                      className={`p-3 rounded-lg border-2 ${
-                        evidence.isKeyEvidence
-                          ? 'border-purple-500 bg-purple-900 bg-opacity-10'
-                          : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          {evidence.isKeyEvidence && (
-                            <span className="inline-block px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded mb-1">
-                              핵심 증거
-                            </span>
-                          )}
-                          {evidence.type === 'image' ? (
-                            <img 
-                              src={evidence.content} 
-                              alt="증거 이미지" 
-                              className="max-w-md rounded-lg border border-[var(--color-court-border)]"
-                            />
-                          ) : (
-                            <p className="text-sm text-gray-300">{evidence.content}</p>
-                          )}
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                          <button
-                            onClick={() => toggleKeyEvidence(evidence.id)}
-                            className="px-2 py-1 text-xs border border-purple-600 rounded hover:bg-purple-900 hover:bg-opacity-20 transition-colors"
-                          >
-                            {evidence.isKeyEvidence ? '일반' : '핵심'}
-                          </button>
-                          <button
-                            onClick={() => removeEvidence(evidence.id)}
-                            className="px-2 py-1 text-xs border border-red-700 text-red-400 rounded hover:bg-red-900 hover:bg-opacity-20 transition-colors"
-                          >
-                            ×
-                          </button>
+              {/* 업로드된 항목 표시 목록 */}
+              <div className="space-y-4">
+                 {/* 이미지/텍스트 증거 목록 */}
+                 {evidences.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-gray-400">등록된 증거 ({evidences.length})</p>
+                    {evidences.map((evidence) => (
+                      <div
+                        key={evidence.id}
+                        className={`p-3 rounded-lg border-2 ${
+                          evidence.isKeyEvidence
+                            ? 'border-purple-500 bg-purple-900 bg-opacity-10'
+                            : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            {evidence.isKeyEvidence && (
+                              <span className="inline-block px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded mb-1">
+                                핵심 증거
+                              </span>
+                            )}
+                            {evidence.type === 'image' ? (
+                              <div className="relative group">
+                                <img 
+                                  src={evidence.content} 
+                                  alt="증거 이미지" 
+                                  className="h-20 w-auto rounded border border-[var(--color-court-border)] object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <p className="text-sm text-gray-300 break-words">{evidence.content}</p>
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-2">
+                           <button
+                              onClick={() => toggleKeyEvidence(evidence.id)}
+                              className={`px-2 py-1 text-xs border rounded transition-colors whitespace-nowrap ${evidence.isKeyEvidence ? 'border-purple-500 text-purple-400' : 'border-gray-600 text-gray-500 hover:border-purple-500'}`}
+                            >
+                              {evidence.isKeyEvidence ? '★ 핵심' : '☆ 중요 표시'}
+                            </button>
+                            <button
+                              onClick={() => removeEvidence(evidence.id)}
+                              className="px-2 py-1 text-xs border border-red-900 text-red-500 rounded hover:bg-red-900 hover:bg-opacity-20 transition-colors"
+                            >
+                              삭제
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
-                증거 파일 첨부 (선택)
-              </label>
-              <input
-                type="file"
-                ref={fileInputRef}
-                multiple
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-dashed border-[var(--color-court-border)] rounded-lg text-gray-400 hover:border-orange-500 hover:text-orange-400 transition-colors"
-              >
-                <Upload className="w-5 h-5" />
-                <span>컴퓨터에서 파일 선택</span>
-              </button>
-              {attachedFiles && attachedFiles.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  <p className="text-sm font-semibold text-gray-300">첨부된 파일:</p>
-                  <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
-                    {Array.from(attachedFiles).map((file, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <Paperclip className="w-4 h-4 text-gray-500" />
-                        <span>{file.name} ({(file.size / 1024).toFixed(2)} KB)</span>
-                      </li>
                     ))}
-                  </ul>
-                </div>
-              )}
+                  </div>
+                )}
+
+                {/* 기타 첨부 파일 목록 */}
+                {attachedFiles && attachedFiles.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs font-semibold text-gray-400">첨부된 파일 ({attachedFiles.length})</p>
+                    <ul className="grid grid-cols-1 gap-2">
+                      {Array.from(attachedFiles).map((file, index) => (
+                        <li key={index} className="flex items-center justify-between p-2 bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded text-sm text-gray-300">
+                          <div className="flex items-center gap-2 truncate">
+                            <Paperclip className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            <span className="truncate">{file.name}</span>
+                            <span className="text-xs text-gray-500 flex-shrink-0">({(file.size / 1024).toFixed(1)} KB)</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* 안내 */}

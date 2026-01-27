@@ -244,21 +244,22 @@ export function VerdictPage({
     if (!window.Kakao.isInitialized()) {
       const key = import.meta.env.VITE_KAKAO_JS_KEY;
       if (!key) {
-        alert("VITE_KAKAO_JS_KEY가 없습니다. .env.local 확인!");
+        alert("VITE_KAKAO_JS_KEY가 없습니다.");
         return;
       }
       window.Kakao.init(key);
     }
 
-    const title = case_.status === 'APPEAL_VERDICT_READY' ? `항소심 판결문: ${case_.title}` : `판결문: ${case_.title}`;
-    const description = `원고 ${case_.plaintiff}와 피고 ${case_.defendant}의 사건에 대한 판결이 선고되었습니다.`;
+    const title = case_.status.includes('APPEAL') ? `📜 항소심 판결문 도착` : `⚖️ 판결문 도착`;
+    const description = `[${case_.plaintiff} vs ${case_.defendant}] 사건의 판결이 선고되었습니다.\n\n` + 
+                        `AI 판사와 배심원의 최종 판결을 지금 바로 확인해보세요.`;
 
     window.Kakao.Link.sendDefault({
       objectType: "feed",
       content: {
         title: title,
         description: description,
-        imageUrl: "https://placehold.co/800x400/png", // Replace with a real image URL
+        imageUrl: "https://placehold.co/800x400/5e3aee/ffffff/png?text=Gosomi+Verdict", // Replace with real generated OG image if possible
         link: {
           mobileWebUrl: window.location.href,
           webUrl: window.location.href,
