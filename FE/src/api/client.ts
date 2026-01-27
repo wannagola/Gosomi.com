@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const envUrl = import.meta.env.VITE_API_BASE_URL;
-const baseURL = envUrl !== undefined ? envUrl : 'https://gosomi-com.onrender.com';
+const baseURL = envUrl !== undefined ? envUrl : '';
 
 const apiClient = axios.create({
   baseURL: baseURL,
