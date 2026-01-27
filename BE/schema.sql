@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   nickname VARCHAR(255),
   kakao_id VARCHAR(255),
   profile_image VARCHAR(255),
+  win_rate DECIMAL(5,2) DEFAULT 50.00,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

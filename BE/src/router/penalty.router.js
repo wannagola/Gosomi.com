@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { pool } from "../db.js";
+import { updateWinRatesForCase } from "../services/winRate.service.js";
 
 const router = Router();
 
@@ -82,6 +83,14 @@ router.post("/cases/:id/penalty", async (req, res) => {
        WHERE id=?`,
       [choiceRaw, selected, caseId]
     );
+
+    // Update win rates for both plaintiff and defendant
+    try {
+      await updateWinRatesForCase(caseId);
+    } catch (e) {
+      console.error('Failed to update win rates:', e);
+      // Don't fail the request if win rate update fails
+    }
 
     return res.json({
       ok: true,

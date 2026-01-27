@@ -341,6 +341,12 @@ router.get("/user/:userId/stats", async (req, res) => {
   try {
     const { userId } = req.params;
 
+    // Get user's win_rate from database
+    const [[user]] = await pool.query(
+      'SELECT win_rate FROM users WHERE id = ?',
+      [userId]
+    );
+
     // 완료된 재판 중 해당 유저가 원고/피고로 참여한 건 조회
     const [cases] = await pool.query(
       `SELECT id, plaintiff_id, defendant_id, fault_ratio FROM cases 
@@ -380,7 +386,8 @@ router.get("/user/:userId/stats", async (req, res) => {
       }
     });
 
-    const winningRate = totalResolved > 0 ? ((wins / totalResolved) * 100).toFixed(1) : 0;
+    // Use database win_rate if available, otherwise use calculated value
+    const winningRate = user?.win_rate || (totalResolved > 0 ? ((wins / totalResolved) * 100).toFixed(1) : 50);
 
     res.json({
       ok: true,

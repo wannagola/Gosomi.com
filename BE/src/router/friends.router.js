@@ -39,6 +39,7 @@ router.get("/", async (req, res) => {
                 u.nickname, 
                 u.kakao_id, 
                 u.profile_image,
+                u.win_rate,
                 (
                     SELECT COUNT(*) FROM cases 
                     WHERE (plaintiff_id = u.id OR defendant_id = u.id) AND status = 'COMPLETED'
@@ -57,20 +58,15 @@ router.get("/", async (req, res) => {
             [userId]
         );
 
-        // Calculate winning rate in JS for cleaner SQL
-        const data = rows.map(r => {
-            const wins = Number(r.wins || 0);
-            const total = Number(r.total_resolved || 0);
-            const winningRate = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
-            return {
-                id: r.id,
-                nickname: r.nickname,
-                profileImage: r.profile_image,
-                total_resolved: r.total_resolved,
-                wins: r.wins,
-                winningRate: Number(winningRate)
-            };
-        });
+        // Map data for response
+        const data = rows.map(r => ({
+            id: r.id,
+            nickname: r.nickname,
+            profileImage: r.profile_image,
+            total_resolved: r.total_resolved,
+            wins: r.wins,
+            winRate: r.win_rate || 50 // Use database value
+        }));
 
         return res.json({ ok: true, data });
     } catch (e) {

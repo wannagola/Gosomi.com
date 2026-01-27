@@ -62,6 +62,7 @@ router.post("/kakao", async (req, res) => {
                 username: user.username,
                 nickname: user.nickname,
                 profileImage: user.profile_image,
+                winRate: user.win_rate || 50,
             },
         });
     } catch (e) {
