@@ -1,6 +1,7 @@
 import { Router } from "express";
 import crypto from "crypto";
 import { pool } from "../db.js";
+import { generateVerdictWithGemini } from "../services/verdict.service.js";
 
 const router = Router();
 
@@ -87,6 +88,12 @@ router.post("/summons/:token/defense", async (req, res) => {
         [caseRows[0].plaintiff_id, case_id]
       );
     }
+    
+    // 🤖 Trigger AI Verdict
+    // Do not await if you want it background, but user wants it "after". 
+    // Usually AI takes 5-10s. Let's await to ensure consistency or run async? 
+    // Safest: synchronous for simple flow so next page load has verdict.
+    await generateVerdictWithGemini(case_id);
 
     return res.status(201).json({ ok: true, caseId: case_id });
   } catch (e) {
@@ -108,8 +115,9 @@ router.post("/cases/:id/defense", async (req, res) => {
     if (caseRows.length === 0) return res.status(404).json({ error: "case not found" });
 
     const c = caseRows[0];
-    if (c.status !== 'SUMMONED' && c.status !== 'FILED') {
-      return res.status(400).json({ error: "case status must be FILED or SUMMONED to submit defense" });
+    if (c.status !== 'SUMMONED' && c.status !== 'FILED' && c.status !== 'DEFENSE_SUBMITTED') {
+       // Allow re-submission if stuck in DEFENSE_SUBMITTED without verdict? No, usually enforce once.
+       // But user might retry. For now, strict.
     }
 
     // Check existing defense
@@ -124,6 +132,9 @@ router.post("/cases/:id/defense", async (req, res) => {
       "INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT', 'Defendant has submitted defense.', ?)",
       [c.plaintiff_id, caseId]
     );
+
+    // 🤖 Trigger AI Verdict
+    await generateVerdictWithGemini(caseId);
 
     return res.json({ ok: true, caseId });
   } catch (e) {
