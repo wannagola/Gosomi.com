@@ -126,9 +126,46 @@ export function VerdictPage({
   console.log('VerdictPage Debug:', { lawType: case_.lawType, law: law?.title });
 
   // ✅ Prioritize AI-generated penalties from case_, then fallback to static Law data
+  // Helper functions to parse JSON data safely
+  const parseFaultRatio = () => {
+    if (!case_.faultRatio) return { plaintiff: 50, defendant: 50 };
+    try {
+      const ratio = typeof case_.faultRatio === 'string' 
+        ? JSON.parse(case_.faultRatio) 
+        : case_.faultRatio;
+      return {
+        plaintiff: ratio.plaintiff || 50,
+        defendant: ratio.defendant || 50
+      };
+    } catch {
+      return { plaintiff: 50, defendant: 50 };
+    }
+  };
+
+  const parsePenalties = () => {
+    if (!case_.penalties) return { serious: [], funny: [] };
+    try {
+      const penalties = typeof case_.penalties === 'string'
+        ? JSON.parse(case_.penalties)
+        : case_.penalties;
+      return {
+        serious: penalties.serious || [],
+        funny: penalties.funny || []
+      };
+    } catch {
+      return { serious: [], funny: [] };
+    }
+  };
+
+  const parsedFaultRatio = parseFaultRatio();
+  const parsedPenalties = parsePenalties();
+
+  // Find correct Law object - already declared above
+  // const law = LAWS.find(l => l.id === case_.lawType);
+
   const getSeriousPenalty = () => {
-    if (case_.penalties?.serious && Array.isArray(case_.penalties.serious) && case_.penalties.serious.length > 0) {
-        return case_.penalties.serious.join('\n');
+    if (parsedPenalties.serious && parsedPenalties.serious.length > 0) {
+      return parsedPenalties.serious.map((p: string, i: number) => `${i+1}. ${p}`).join('\n');
     }
     const l: any = law as any;
     return (
@@ -141,8 +178,8 @@ export function VerdictPage({
   };
 
   const getFunnyPenalty = () => {
-    if (case_.penalties?.funny && Array.isArray(case_.penalties.funny) && case_.penalties.funny.length > 0) {
-        return case_.penalties.funny.join('\n');
+    if (parsedPenalties.funny && parsedPenalties.funny.length > 0) {
+      return parsedPenalties.funny.map((p: string, i: number) => `${i+1}. ${p}`).join('\n');
     }
     const l: any = law as any;
     return (
@@ -155,8 +192,8 @@ export function VerdictPage({
   };
 
   const verdict = {
-    plaintiffFault: case_.faultRatio?.plaintiff ?? 50,
-    defendantFault: case_.faultRatio?.defendant ?? 50,
+    plaintiffFault: parsedFaultRatio.plaintiff,
+    defendantFault: parsedFaultRatio.defendant,
     reasoning: case_.verdictText ?? "판결 내용이 없습니다.",
     verdictText: case_.verdictText ?? "판결 내용이 없습니다.",
   };
