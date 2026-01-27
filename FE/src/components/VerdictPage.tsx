@@ -259,7 +259,7 @@ export function VerdictPage({
       content: {
         title: title,
         description: description,
-        imageUrl: "https://placehold.co/800x400/5e3aee/ffffff/png?text=Gosomi+Verdict", // Replace with real generated OG image if possible
+        imageUrl: "https://via.placeholder.com/800x400.png?text=Verdict+Result", // Simple, standard placeholder
         link: {
           mobileWebUrl: window.location.href,
           webUrl: window.location.href,
@@ -564,13 +564,16 @@ export function VerdictPage({
               <Share2 className="w-5 h-5" />
               카카오톡 공유
             </button>
-            <button
-              onClick={() => setShowAppealForm(true)}
-              className="px-8 py-4 border-2 border-orange-600 text-orange-400 font-bold rounded-xl hover:bg-orange-900 hover:bg-opacity-20 transition-all flex items-center justify-center gap-3"
-            >
-              <AlertTriangle className="w-6 h-6" />
-              항소하기 (1회 가능)
-            </button>
+            {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (VERDICT_COMPLETED 상태일 때만 표시) */}
+            {!case_.status.includes('APPEAL') && (
+              <button
+                onClick={() => setShowAppealForm(true)}
+                className="px-8 py-4 border-2 border-orange-600 text-orange-400 font-bold rounded-xl hover:bg-orange-900 hover:bg-opacity-20 transition-all flex items-center justify-center gap-3"
+              >
+                <AlertTriangle className="w-6 h-6" />
+                항소하기 (1회 가능)
+              </button>
+            )}
           </div>
         )}
 
@@ -689,10 +692,9 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-6">
-      <div className="official-document rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-[var(--color-court-gray)] border-b-2 border-[var(--color-gold-dark)] p-6">
-          <div className="flex items-center justify-between">
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+      <div className="official-document rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto custom-scrollbar">
+        <div className="sticky top-0 bg-[#1a1a2e] border-b-2 border-[var(--color-gold-dark)] p-4 flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
               <FileText className="w-8 h-8 text-orange-400" />
               <h2 className="text-2xl">항소장 작성</h2>
@@ -704,8 +706,7 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
               <span className="text-2xl text-gray-400">×</span>
             </button>
           </div>
-        </div>
-
+        
         <div className="p-8 space-y-6">
           <div className="p-4 bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg">
             <p className="text-sm text-orange-200">
