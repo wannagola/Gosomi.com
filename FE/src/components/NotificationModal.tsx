@@ -12,7 +12,9 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
   const navigate = useNavigate();
 
   const handleNotificationClick = (notification: Notification) => {
-    onMarkAsRead(notification.id);
+    if (!notification.read) {
+        onMarkAsRead(notification.id);
+    }
     if (notification.link) {
         navigate(notification.link);
         onClose();
@@ -63,11 +65,18 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
                         </p>
 
                     </div>
-                    {!notification.read && (
+                    </div>
+                    {notification.link ? (
+                      !notification.read ? (
                         <p className="text-sm text-[var(--color-gold-primary)] mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            클릭하여 확인하기 &rarr;
+                          클릭하여 확인하기 &rarr;
                         </p>
-                    )}
+                      ) : (
+                        <p className="text-sm text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          클릭하여 이동하기 &rarr;
+                        </p>
+                      )
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -75,8 +84,6 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
           </div>
         )}
       </div>
-      
-
     </div>
   );
 }
