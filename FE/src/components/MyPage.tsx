@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { User, Friend } from '@/types/user';
 import { Case, CaseStatus, LAWS } from '@/types/court';
-import { User as UserIcon, Check, X, UserPlus, Search, FileText, Clock, AlertCircle, CheckCircle } from 'lucide-react';
+import { User as UserIcon, Check, X, UserPlus, Search, FileText, Clock, AlertCircle, CheckCircle, Plus } from 'lucide-react';
+import { userService } from '@/api/userService';
 
 interface MyPageProps {
   user: User;
@@ -10,6 +11,7 @@ interface MyPageProps {
   cases: Case[];
   onAcceptFriend: (id: string) => void;
   onRejectFriend: (id: string) => void;
+  onAddFriend: (id: string) => void;
   onUnfollow: (id: string) => void; // Unfollow means remove friend
   onViewCase: (caseId: string) => void;
 }
@@ -21,11 +23,13 @@ export function MyPage({
     cases,
     onAcceptFriend, 
     onRejectFriend, 
+    onAddFriend,
     onUnfollow,
     onViewCase
 }: MyPageProps) {
     const [caseFilter, setCaseFilter] = useState<'all' | CaseStatus>('all');
     const [caseSearchQuery, setCaseSearchQuery] = useState('');
+    const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
     // --- Friend Logic ---
     // (Visuals handled in render)
@@ -115,10 +119,20 @@ export function MyPage({
 
                 {/* Friend List Section */}
                 <div className="mb-12">
-                    <h2 className="text-xl font-bold text-[var(--color-gold-primary)] mb-6 flex items-center gap-2">
-                        <UserIcon className="w-6 h-6" />
-                        내 친구 ({friends.length})
-                    </h2>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold text-[var(--color-gold-primary)] flex items-center gap-2">
+                            <UserIcon className="w-6 h-6" />
+                            내 친구 ({friends.length})
+                        </h2>
+                        <button 
+                            onClick={() => setIsSearchModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-[var(--color-court-gray)] border border-[var(--color-court-border)] rounded-lg text-white hover:border-[var(--color-gold-primary)] transition-colors"
+                        >
+                            <UserPlus className="w-4 h-4" />
+                            친구 찾기
+                        </button>
+                    </div>
+                    
                     {friends.length === 0 ? (
                         <div className="p-12 bg-[var(--color-court-gray)]/30 border-2 border-dashed border-[var(--color-court-border)] rounded-2xl text-center">
                             <UserIcon className="w-16 h-16 mx-auto mb-4 text-gray-600" />
@@ -228,6 +242,15 @@ export function MyPage({
                 </div>
 
             </div>
+
+             {/* Search Modal */}
+             {isSearchModalOpen && (
+                <FriendSearchModal 
+                    currentUser={user}
+                    onClose={() => setIsSearchModalOpen(false)}
+                    onAddFriend={onAddFriend}
+                />
+            )}
         </div>
     );
 }
@@ -423,4 +446,76 @@ function getTimeSince(date: Date): string {
   if (diffHours > 0) return `${diffHours}시간 전`;
   if (diffMins > 0) return `${diffMins}분 전`;
   return '방금 전';
+}
+
+function FriendSearchModal({ currentUser, onClose, onAddFriend }: { currentUser: User, onClose: () => void, onAddFriend: (id: string) => void }) {
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState<User[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleSearch = async () => {
+        if (!query.trim()) return;
+        setLoading(true);
+        try {
+            const users = await userService.searchUsers(query, currentUser.id);
+            setResults(users);
+        } catch (error) {
+            console.error(error);
+            alert('검색 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
+            <div className="official-document rounded-2xl w-full max-w-lg p-6">
+                 <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                        <UserPlus className="w-6 h-6 text-[var(--color-gold-accent)]" />
+                        친구 찾기
+                    </h2>
+                    <button onClick={onClose}><X className="text-gray-400" /></button>
+                </div>
+
+                <div className="flex gap-2 mb-6">
+                    <input 
+                        className="flex-1 bg-[var(--color-court-gray)] border border-[var(--color-court-border)] rounded-lg px-4 py-2 text-white"
+                        placeholder="닉네임으로 검색"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    />
+                    <button 
+                        disabled={loading}
+                        onClick={handleSearch}
+                        className="px-4 py-2 bg-[var(--color-gold-dark)] text-black font-bold rounded-lg hover:bg-[var(--color-gold-primary)]"
+                    >
+                        {loading ? '검색...' : '검색'}
+                    </button>
+                </div>
+
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {results.map(user => (
+                        <div key={user.id} className="flex items-center justify-between p-3 bg-[var(--color-court-gray)] rounded-lg">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden">
+                                    {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <UserIcon className="w-6 h-6 m-2 text-gray-400" />}
+                                </div>
+                                <span className="text-white font-medium">{user.nickname}</span>
+                            </div>
+                            <button 
+                                onClick={() => onAddFriend(user.id)}
+                                className="p-2 text-[var(--color-gold-primary)] hover:bg-[var(--color-court-border)] rounded-full"
+                                title="친구 추가"
+                            >
+                                <Plus className="w-5 h-5" />
+                            </button>
+                        </div>
+                    ))}
+                    {results.length === 0 && !loading && <div className="text-center text-gray-500 py-4">검색 결과가 없습니다.</div>}
+                </div>
+            </div>
+        </div>
+    );
 }

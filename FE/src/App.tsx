@@ -287,6 +287,17 @@ export default function App() {
                     cases={cases}
                     onAcceptFriend={handleAcceptFriend}
                     onRejectFriend={handleRejectFriend}
+                    onAddFriend={async (friendId) => {
+                        try {
+                            await userService.requestFriend(currentUser.id, friendId);
+                            // Optimistic update or refresh? Refresh is safer given friend requests logic
+                            await refreshData();
+                            alert('친구 요청을 보냈습니다.');
+                        } catch (error) {
+                            console.error(error);
+                            alert('이미 친구이거나 요청을 보낸 상태입니다.');
+                        }
+                    }}
                     onUnfollow={handleUnfollow}
                     onViewCase={handleViewCase} 
                 />
