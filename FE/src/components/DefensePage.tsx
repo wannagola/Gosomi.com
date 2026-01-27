@@ -87,7 +87,14 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
     }
   };
 
-  const law = LAWS.find(l => l.id === case_.lawType);
+  const law = LAWS.find(l => l.id === case_.lawType) || {
+    id: 'general',
+    title: '생활소송법',
+    description: '일상 생활에서 발생하는 일반적인 분쟁을 다룹니다.',
+    icon: 'placeholder', // Sentinel value to be handled in render
+    severityCriteria: { low: '', medium: '', high: '' },
+    penalties: { low: { serious: '', funny: '' }, medium: { serious: '', funny: '' }, high: { serious: '', funny: '' } }
+  };
   const timeRemaining = 24; // 실제로는 계산 필요
 
   return (
@@ -148,8 +155,12 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-50 rounded-lg">
                 <p className="text-sm text-gray-500 mb-2">적용 법률</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 flex-shrink-0">
-                    <img src={law?.icon} alt={law?.title} className="w-full h-full object-contain" />
+                  <div className="w-12 h-12 flex-shrink-0 bg-gray-800 rounded-lg flex items-center justify-center">
+                    {law?.icon && law.icon !== 'placeholder' ? (
+                      <img src={law.icon} alt={law.title} className="w-full h-full object-contain" />
+                    ) : (
+                      <Shield className="w-8 h-8 text-gray-500" />
+                    )}
                   </div>
                   <div>
                     <p className="font-bold text-[var(--color-gold-accent)]">{law?.title}</p>
@@ -370,14 +381,38 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               </div>
             </div>
 
-            {/* 안내 */}
-            <div className="w-full p-5 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-xl mb-8 box-border">
-              <p className="text-sm text-purple-200 leading-relaxed break-keep">
-                <span className="font-bold text-base block mb-1">💡 변론 팁</span>
-                감정적인 반응보다 객관적인 사실과 증거를 제시하세요.
-                AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.
-              </p>
-            </div>
+              {/* ✨ 개선된 변론 팁 섹션 */}
+              <div className="mt-8 p-5 bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-purple-500/30 rounded-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-3 opacity-10">
+                      <Shield className="w-24 h-24 text-white" />
+                  </div>
+                  
+                  <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-3">
+                          <span className="text-xl">💡</span>
+                          <h3 className="font-bold text-purple-200">AI 판사를 설득하는 변론 꿀팁</h3>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                          <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                              <p className="font-bold text-purple-300 mb-1">✅ 사실 관계를 명확하게</p>
+                              <p className="text-purple-100/80 text-xs">감정적인 호소보다는 날짜, 시간, 상황 등 6하원칙에 맞게 구체적으로 서술하세요.</p>
+                          </div>
+                          <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                              <p className="font-bold text-purple-300 mb-1">✅ 증거의 맥락 설명</p>
+                              <p className="text-purple-100/80 text-xs">제출한 카톡 캡쳐가 어떤 상황이었는지 텍스트로 부연 설명을 덧붙이면 이해도가 올라갑니다.</p>
+                          </div>
+                          <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                              <p className="font-bold text-purple-300 mb-1">✅ 상대방 논리 반박</p>
+                              <p className="text-purple-100/80 text-xs">원고의 주장 중 사실과 다른 부분을 콕 집어서 해명하면 승소 확률이 올라갑니다.</p>
+                          </div>
+                          <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                              <p className="font-bold text-purple-300 mb-1">✅ 정중한 태도</p>
+                              <p className="text-purple-100/80 text-xs">AI 판사는 비속어나 공격적인 언행보다 논리적이고 차분한 진술을 높게 평가합니다.</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
 
             {/* 제출 버튼 */}
             <button
