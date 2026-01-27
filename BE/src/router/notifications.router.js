@@ -18,11 +18,29 @@ router.get("/", async (req, res) => {
             [userId]
         );
 
-        // Map is_read to read for frontend compatibility
-        const notifications = rows.map(row => ({
-            ...row,
-            read: Boolean(row.is_read)
-        }));
+        // Map is_read to read for frontend compatibility AND generate links
+        const notifications = rows.map(row => {
+            let link = null;
+            if (row.case_id) {
+                switch (row.type) {
+                    case 'SUMMON': link = `/case/${row.case_id}`; break;
+                    case 'DEFENSE_SUBMITTED': link = `/case/${row.case_id}`; break;
+                    case 'VERDICT_COMPLETED': link = `/case/${row.case_id}/verdict`; break;
+                    case 'JUROR_INVITED': link = `/case/${row.case_id}/jury`; break;
+                    case 'APPEAL_REQUESTED': link = `/case/${row.case_id}/appeal`; break;
+                    case 'APPEAL_VERDICT_READY': link = `/case/${row.case_id}/verdict`; break;
+                    default: link = `/case/${row.case_id}`;
+                }
+            } else if (row.type === 'FRIEND_REQUEST') {
+                link = '/mypage';
+            }
+
+            return {
+                ...row,
+                read: Boolean(row.is_read),
+                link
+            };
+        });
 
         return res.json({ ok: true, data: notifications });
     } catch (e) {

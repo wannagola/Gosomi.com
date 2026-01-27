@@ -417,7 +417,7 @@ function Step1BasicInfo({
                   <span className="font-bold text-purple-300">랜덤 배정</span>
                 </div>
                 <p className="text-xs text-gray-400">
-                  고소미닷컴의 랜덤 배심원단이 자동으로 배정됩니다
+                  고소미닷컴의 랜덤 배심원단이 자동으로 배정됩니다 (최대 5명)
                 </p>
               </button>
             </div>
