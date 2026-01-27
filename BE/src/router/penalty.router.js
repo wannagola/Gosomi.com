@@ -41,14 +41,13 @@ router.post("/cases/:id/penalty", async (req, res) => {
 
     const c = rows[0];
 
-    // 판결 전이면 선택 불가
-    if (c.status !== "VERDICT_READY" || !c.penalties_json) {
-      return res.status(400).json({ error: "verdict not ready" });
-    }
 
     // 이미 선택되어 있으면: (새로고침/중복 클릭/다른 버튼 클릭 대비)
     if (c.penalty_choice && c.penalty_selected) {
-      if (String(c.penalty_choice).toUpperCase() !== choiceRaw) {
+      if (
+        choiceRaw !== "UNDEFINED" &&
+        String(c.penalty_choice).toUpperCase() !== choiceRaw
+      ) {
         return res.status(409).json({
           error: "penalty already selected",
           caseId,
@@ -64,6 +63,11 @@ router.post("/cases/:id/penalty", async (req, res) => {
         penaltySelected: c.penalty_selected,
         cached: true,
       });
+    }
+
+    // 판결 전이면 선택 불가
+    if (c.status !== "VERDICT_READY" || !c.penalties_json) {
+      return res.status(400).json({ error: "verdict not ready" });
     }
 
     const penalties = parseJsonMaybe(c.penalties_json);

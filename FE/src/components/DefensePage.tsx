@@ -381,13 +381,13 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               </div>
             </div>
 
-            {/* 💡 변론 팁 (심플 버전 - 테두리 제거 & 간격 추가) */}
-            <div className="mt-8 mb-12 p-5 bg-purple-900 bg-opacity-20 rounded-xl flex gap-4 items-start">
+            {/* 💡 변론 팁 (심플 버전 - 테두리 제거 & 간격 추가 & 내부 여백 확보) */}
+            <div className="mt-8 mb-12 p-8 bg-purple-900 bg-opacity-20 rounded-xl flex gap-4 items-start">
                <div className="p-2 bg-purple-500/20 rounded-lg shrink-0">
                   <Shield className="w-6 h-6 text-purple-300" />
                </div>
                <div>
-                  <h3 className="font-bold text-purple-200 mb-1">변론 팁</h3>
+                  <h3 className="font-bold text-lg text-purple-200 mb-2">변론 팁</h3>
                   <p className="text-sm text-purple-300/80 leading-relaxed">
                      감정적인 호소보다는 객관적인 사실과 증거를 제시하세요.<br/>
                      AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.
@@ -402,7 +402,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               className={`w-full px-6 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg ${
                 statement.trim().length > 0
                   ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-xl hover:scale-[1.02]'
-                  : 'bg-gray-800 text-gray-600 cursor-not-allowed border border-gray-700'
+                  : 'bg-gray-800 text-gray-500 cursor-not-allowed'
               }`}
             >
               <Send className="w-6 h-6" />

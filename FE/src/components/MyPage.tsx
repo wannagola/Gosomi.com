@@ -375,11 +375,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
     >
       <div className="flex items-start gap-6">
         {/* 아이콘 */}
-        <div className="flex-shrink-0">
-          <div className="w-16 h-16 bg-[var(--color-gold-dark)] bg-opacity-20 rounded-lg flex items-center justify-center text-4xl">
-            {law?.icon}
-          </div>
-        </div>
+
 
         {/* 메인 정보 */}
         <div className="flex-1 text-left">
