@@ -206,6 +206,9 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
 
   const status = statusConfig[case_.status] || statusConfig['SUMMONED'];
   const timeSince = getTimeSince(case_.createdAt);
+  const isAppeal = case_.status.includes('APPEAL') || (case_.appealStatus && case_.appealStatus !== 'NONE');
+  const trialStage = isAppeal ? "항소심" : "1심";
+  const trialColor = isAppeal ? "bg-red-900 text-red-200 border-red-700" : "bg-blue-900 text-blue-200 border-blue-700";
 
   return (
     <button
@@ -231,9 +234,14 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
                 {case_.title}
               </h3>
             </div>
-            <div className={`flex items-center gap-2 px-4 py-2 ${status.color} bg-opacity-20 rounded-lg border border-current`}>
-              <span className={status.textColor}>{status.icon}</span>
-              <span className={`${status.textColor} font-bold text-sm`}>{status.label}</span>
+            <div className="flex items-center gap-2">
+               <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
+                {trialStage}
+              </span>
+              <div className={`flex items-center gap-2 px-4 py-2 ${status.color} bg-opacity-20 rounded-lg border border-current`}>
+                <span className={status.textColor}>{status.icon}</span>
+                <span className={`${status.textColor} font-bold text-sm`}>{status.label}</span>
+              </div>
             </div>
           </div>
 

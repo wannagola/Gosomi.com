@@ -244,7 +244,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
                   <h4 className="font-bold text-blue-400">진지한 벌칙</h4>
                 </div>
                 <p className="text-sm text-gray-300 leading-relaxed">
-                  {law.penalties[selectedSeverity].serious}
+                  상황에 맞는 진지한 반성을 위한 벌칙이 AI에 의해 생성됩니다.
                 </p>
               </div>
 
@@ -255,7 +255,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
                   <h4 className="font-bold text-purple-400">재미있는 벌칙</h4>
                 </div>
                 <p className="text-sm text-gray-300 leading-relaxed">
-                  {law.penalties[selectedSeverity].funny}
+                  분위기를 풀고 화해할 수 있는 유쾌한 벌칙이 AI에 의해 생성됩니다.
                 </p>
               </div>
             </div>
