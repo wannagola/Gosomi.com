@@ -22,12 +22,12 @@ export const userService = {
   // Friends
   getFriends: async (userId: string): Promise<Friend[]> => {
     const response = await apiClient.get<{ ok: boolean; data: Friend[] }>(`/api/friends?userId=${userId}`);
-    return response.data.data;
+    return response.data?.data || [];
   },
 
   getFriendRequests: async (userId: string): Promise<Friend[]> => {
     const response = await apiClient.get<{ ok: boolean; data: Friend[] }>(`/api/friends/requests?userId=${userId}`);
-    return response.data.data;
+    return response.data?.data || [];
   },
 
   requestFriend: async (userId: string, friendId: string): Promise<void> => {
@@ -45,6 +45,6 @@ export const userService = {
   // Search
   searchUsers: async (query: string, userId: string): Promise<User[]> => {
     const response = await apiClient.get<{ ok: boolean; data: User[] }>(`/api/friends/search?q=${encodeURIComponent(query)}&userId=${userId}`);
-    return response.data.data;
+    return response.data?.data || [];
   }
 };

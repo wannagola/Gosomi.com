@@ -18,7 +18,7 @@ export const caseService = {
     const response = await apiClient.get<GetCasesResponse>('/api/cases', { params });
     // Transform backend data to frontend Case model if necessary
     // for now assuming direct mapping or we might need adapters
-    return response.data.data;
+    return response.data?.data || [];
   },
 
   // Get single case

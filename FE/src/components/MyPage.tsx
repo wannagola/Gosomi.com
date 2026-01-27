@@ -18,9 +18,9 @@ interface MyPageProps {
 
 export function MyPage({ 
     user, 
-    friends, 
-    friendRequests, 
-    cases,
+    friends = [], 
+    friendRequests = [], 
+    cases = [],
     onAcceptFriend, 
     onRejectFriend, 
     onAddFriend,
@@ -35,7 +35,7 @@ export function MyPage({
     // (Visuals handled in render)
 
     // --- Case Logic (Copied/Adapted from MyCasesPage) ---
-    const filteredCases = cases.filter(case_ => {
+    const filteredCases = (cases || []).filter(case_ => {
         const matchesFilter = caseFilter === 'all' || case_.status === caseFilter;
         const matchesSearch = 
             case_.title.toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
