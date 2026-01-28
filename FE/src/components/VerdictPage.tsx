@@ -283,7 +283,7 @@ export function VerdictPage({
       content: {
         title: title,
         description: description,
-        imageUrl: window.location.origin + "/gosomidotcom.png",
+        imageUrl: window.location.origin + "/goguma.png",
         link: {
           mobileWebUrl: window.location.href,
           webUrl: window.location.href,
