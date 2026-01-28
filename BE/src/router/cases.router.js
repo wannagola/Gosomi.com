@@ -405,7 +405,7 @@ router.get("/user/:userId/stats", async (req, res) => {
     });
 
     // Use database win_rate if available, otherwise use calculated value
-    const winningRate = user?.win_rate || (totalResolved > 0 ? ((wins / totalResolved) * 100).toFixed(1) : 50);
+    const winningRate = user?.win_rate || (totalResolved > 0 ? ((wins / totalResolved) * 100).toFixed(1) : 0);
 
     res.json({
       ok: true,

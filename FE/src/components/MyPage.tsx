@@ -7,7 +7,7 @@ import { userService } from '@/api/userService';
 // Helper function to format win rate
 // Shows integer if .00 (e.g., 50), otherwise shows up to 2 decimal places (e.g., 50.5 or 50.56)
 const formatWinRate = (rate: number | undefined): string => {
-    if (rate === undefined || rate === null) return '50';
+    if (rate === undefined || rate === null) return '0';
     const num = Number(rate);
     return num % 1 === 0 ? num.toString() : num.toFixed(2);
 };
