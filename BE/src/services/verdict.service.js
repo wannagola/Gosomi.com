@@ -335,7 +335,7 @@ export async function generateVerdictWithGemini(caseId, isAppeal = false) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return { ok: false, status: 500, error: "GEMINI_API_KEY is missing" };
 
-    const modelName = process.env.GEMINI_MODEL || "models/gemini-2.5-flash"; // updated model name check
+    const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash"; // updated model name check
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: modelName });
 
