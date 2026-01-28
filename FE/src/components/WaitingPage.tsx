@@ -115,7 +115,7 @@ export function WaitingPage({ case_, currentUser, onRequestVerdict, hasVerdict }
                              transition-all flex items-center justify-center gap-3 disabled:opacity-50"
             >
               {requesting ? <Loader className="w-6 h-6 animate-spin" /> : <Gavel className="w-6 h-6" />}
-              {requesting ? "판결 생성 중..." : "재판 종료 및 판결 요청하기"}
+              {requesting ? "판결 생성 중..." : "판결 요청하기"}
             </button>
           </div>
         )}

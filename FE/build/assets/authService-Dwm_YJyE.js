@@ -1,0 +1,1 @@
+import{a as o}from"./index-Ch1ZIloL.js";const r={login:async e=>(await o.post("/api/auth/kakao",e)).data,logout:async()=>{localStorage.removeItem("token"),localStorage.removeItem("currentUser")}};export{r as authService};

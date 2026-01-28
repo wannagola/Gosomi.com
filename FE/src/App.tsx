@@ -297,9 +297,15 @@ export default function App() {
         if (!currentUser) return;
         if (!window.confirm('정말 친구를 삭제하시겠습니까?')) return;
         try {
+            // Optimistic update
+            setFriends(prev => prev.filter(f => f.id !== targetId));
+
             await userService.deleteFriend(currentUser.id, targetId);
             await refreshData();
-        } catch (error) { console.error(error); }
+        } catch (error) {
+            console.error(error);
+            await refreshData(); // Revert on error
+        }
     };
 
     const handleMarkNotifRead = async (id: string) => {
