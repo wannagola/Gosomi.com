@@ -146,16 +146,16 @@ export default function App() {
         navigate('/filing');
     };
 
-    const handleCreateCase = async (newCaseData: { 
-        title: string; 
-        content: string; 
-        plaintiffId: string | number; 
-        defendantId: string | number; 
+    const handleCreateCase = async (newCaseData: {
+        title: string;
+        content: string;
+        plaintiffId: string | number;
+        defendantId: string | number;
         juryEnabled: boolean;
         juryMode: 'RANDOM' | 'INVITE';
         lawType: string;
         evidences?: Evidence[];
-        [key: string]: any 
+        [key: string]: any
     }) => {
         if (!currentUser) return;
         try {
@@ -171,12 +171,12 @@ export default function App() {
             const result = await caseService.createCase(newCaseData);
             console.log('Case created successfully:', result);
             await refreshData();
-            navigate(`/case/${result.caseId}`);
+            return result.caseId;
         } catch (error: any) {
             console.error("Create case failed", error);
             console.error("Error response:", error.response?.data);
             console.error("Error message:", error.message);
-            
+
             const errorMsg = error.response?.data?.error || error.message || "사건 접수에 실패했습니다.";
             alert(`사건 접수 실패: ${errorMsg}`);
         }

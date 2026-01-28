@@ -19,7 +19,7 @@ router.get("/search", async (req, res) => {
         }
 
         const [rows] = await pool.query(query, params);
-        
+
         // Check friendship status for each result could be nice, but simple search first.
         return res.json({ ok: true, data: rows });
     } catch (e) {
@@ -181,7 +181,10 @@ router.post("/accept", async (req, res) => {
 // DELETE /api/friends : Mutual Friend Deletion
 router.delete("/", async (req, res) => {
     try {
-        const { userId, friendId } = req.body;
+        // userId and friendId can be in body or query
+        const userId = req.body.userId || req.query.userId;
+        const friendId = req.body.friendId || req.query.friendId;
+
         if (!userId || !friendId) return res.status(400).json({ error: "userId and friendId required" });
 
         const client = await pool.getConnection();

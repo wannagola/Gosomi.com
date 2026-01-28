@@ -2,14 +2,14 @@ import apiClient from './client';
 import { User, Friend } from '@/types/user';
 
 interface StatsResponse {
-    ok: boolean;
-    stats: {
-        totalResolved: number;
-        wins: number;
-        losses: number;
-        ties: number;
-        winningRate: number;
-    }
+  ok: boolean;
+  stats: {
+    totalResolved: number;
+    wins: number;
+    losses: number;
+    ties: number;
+    winningRate: number;
+  }
 }
 
 export const userService = {
@@ -39,7 +39,7 @@ export const userService = {
   },
 
   deleteFriend: async (userId: string, friendId: string): Promise<void> => {
-    await apiClient.delete('/api/friends', { data: { userId, friendId } });
+    await apiClient.delete(`/api/friends?userId=${userId}&friendId=${friendId}`);
   },
 
   // Search

@@ -88,6 +88,17 @@ router.post("/cases/:id/penalty", async (req, res) => {
       [choiceRaw, selected, caseId]
     );
 
+    // 🔔 Notification: Notify Plaintiff
+    const [caseRows] = await pool.query("SELECT plaintiff_id, defendant_id FROM cases WHERE id=?", [caseId]);
+    if (caseRows.length > 0) {
+      const { plaintiff_id, defendant_id } = caseRows[0];
+      const message = '최종 처벌이 확정되었습니다. 판결문을 확인하세요.';
+      await pool.query(
+        "INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT_COMPLETED', ?, ?), (?, 'VERDICT_COMPLETED', ?, ?)",
+        [plaintiff_id, message, caseId, defendant_id, message, caseId]
+      );
+    }
+
     // Update win rates for both plaintiff and defendant
     try {
       await updateWinRatesForCase(caseId);

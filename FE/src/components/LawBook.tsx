@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LAWS, Law } from "@/types/court";
-import { BookOpen, Scale, X, AlertCircle } from "lucide-react";
+import { BookOpen, Scale, X, AlertCircle, Smile } from "lucide-react";
+import logoImg from "@/assets/gosomidotcom.png";
 
 export function LawBook() {
   const [selectedLaw, setSelectedLaw] = useState<Law | null>(null);
@@ -185,7 +186,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div
-                className="p-4 rounded-lg border-2 transition-all border-green-500 bg-green-900 bg-opacity-20"
+                className="p-4 rounded-lg border-2 transition-all border-[var(--color-court-border)]"
               >
                 <h4 className="font-bold text-green-400 mb-2">하 (경미)</h4>
                 <p className="text-xs text-gray-400">
@@ -193,7 +194,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
                 </p>
               </div>
               <div
-                className="p-4 rounded-lg border-2 transition-all border-yellow-500 bg-yellow-900 bg-opacity-20"
+                className="p-4 rounded-lg border-2 transition-all border-[var(--color-court-border)]"
               >
                 <h4 className="font-bold text-yellow-400 mb-2">중 (보통)</h4>
                 <p className="text-xs text-gray-400">
@@ -201,7 +202,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
                 </p>
               </div>
               <div
-                className="p-4 rounded-lg border-2 transition-all border-red-500 bg-red-900 bg-opacity-20"
+                className="p-4 rounded-lg border-2 transition-all border-[var(--color-court-border)]"
               >
                 <h4 className="font-bold text-red-400 mb-2">상 (중대)</h4>
                 <p className="text-xs text-gray-400">
@@ -234,7 +235,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
               {/* 재미있는 벌칙 */}
               <div className="p-6 bg-gradient-to-br from-purple-900 from-opacity-20 to-transparent rounded-lg border-2 border-purple-800 border-opacity-30">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl">😄</span>
+                  <Smile className="w-5 h-5 text-purple-400" />
                   <h4 className="font-bold text-purple-400">유쾌한 처벌</h4>
                 </div>
                 <p className="text-sm text-gray-300 leading-relaxed">
@@ -267,9 +268,9 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
 
         {/* 공식 인장 */}
         <div className="p-6 border-t-2 border-[var(--color-gold-dark)] text-center">
-          <div className="inline-block court-seal">
-            <div className="w-24 h-24 mx-auto mb-3 rounded-full border-4 border-[var(--color-gold-dark)] flex items-center justify-center bg-gradient-to-br from-[var(--color-gold-dark)] to-[var(--color-gold-primary)]">
-              <Scale className="w-12 h-12 text-white" />
+          <div className="inline-block mb-3">
+            <div className="w-32 h-32 mx-auto flex items-center justify-center overflow-hidden">
+              <img src={logoImg} alt="고소미닷컴" className="w-full h-full object-cover" />
             </div>
           </div>
           <p className="text-sm text-gray-500">

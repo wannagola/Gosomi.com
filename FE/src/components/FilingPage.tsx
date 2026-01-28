@@ -34,7 +34,7 @@ type FormData = {
 
 interface FilingPageProps {
   currentUser?: any; // Add currentUser prop
-  onSubmit: (caseData: FormData & { evidences: Evidence[] }) => void;
+  onSubmit: (caseData: FormData & { evidences: Evidence[] }) => Promise<string | void>;
   onCancel: () => void;
   friends?: Friend[];
 }
@@ -128,16 +128,12 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
     onCancel();
   };
 
-  // ✅ 링크를 "현재 도메인(origin)" 기준으로 생성 (localhost든 배포든 그대로 동작)
-  const generateShareLink = () => {
-    const caseId = `2026-GOSOMI-${Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, "0")}`;
-
+  // ✅ 링크를 "현재 도메인(origin)" 기준으로 생성 (Real ID from submit)
+  const generateShareLink = (realCaseId: string) => {
     const origin = window.location.origin; // 예: http://localhost:5173
-    const link = `${origin}/defense/${caseId}`;
-
+    const link = `${origin}/defense/${realCaseId}`;
     setShareLink(link);
+    return link;
   };
 
   return (
@@ -162,7 +158,7 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
             <div className="w-16 h-0.5 bg-[var(--color-court-border)]" />
             <StepIndicator
               number={3}
-              label="소환장 발송"
+              label="접수 완료"
               active={step === 3}
               completed={false}
             />
@@ -196,9 +192,22 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
             <Step2Evidence
               evidences={evidences}
               setEvidences={setEvidences}
-              onNext={() => {
-                generateShareLink();
-                setStep(3);
+              onNext={async () => {
+                // Submit here!
+                try {
+                  const caseId = await onSubmit({
+                    ...formData,
+                    evidences
+                  });
+                  if (caseId && typeof caseId === 'string') {
+                    generateShareLink(caseId);
+                    clearFilingCache();
+                    setStep(3);
+                  }
+                } catch (e) {
+                  console.error("Submission error", e);
+                  // Alert handled in App.tsx but we can ensure here too if needed
+                }
               }}
               onBack={() => setStep(1)}
             />
@@ -208,8 +217,8 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
             <Step3Summon
               formData={formData}
               shareLink={shareLink}
-              onSubmit={handleSubmit}
-              onBack={() => setStep(2)}
+              onSubmit={handleSubmit} // Unused now basically
+              onBack={() => window.location.href = `/case/${shareLink.split('/').pop()}`} // Go to Waiting
             />
           )}
         </div>
@@ -728,7 +737,7 @@ function Step2Evidence({
           onClick={onNext}
           className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white rounded-lg font-bold hover:shadow-lg transition-all"
         >
-          다음 단계: 소환장 발송
+          다음 단계: 사건 접수 완료 (제출)
         </button>
       </div>
     </div>
@@ -768,7 +777,6 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
     setTimeout(() => setJuryCopied(false), 2000);
   };
 
-  // ✅ 여기서 shareLink / formData를 그대로 사용 가능 (컴포넌트 내부)
   const shareKakao = () => {
     if (!window.Kakao) {
       alert("Kakao SDK가 로드되지 않았습니다. index.html script 태그 확인!");
@@ -813,131 +821,61 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl mb-6">소환장 발송</h2>
-
-      {/* 소환장 미리보기 */}
-      <div className="p-8 bg-gradient-to-br from-[var(--color-court-dark)] to-[#16161f] border-4 border-[var(--color-gold-dark)] rounded-xl">
-        <div className="text-center mb-6">
-          <div className="inline-flex w-20 h-20 rounded-full border-4 border-[var(--color-gold-primary)] items-center justify-center bg-gradient-to-br from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] mb-4 court-seal">
-            <FileText className="w-10 h-10 text-white" />
-          </div>
-          <h3 className="text-3xl text-[var(--color-gold-accent)] mb-2">
-            공식 소환장
-          </h3>
-          <p className="text-sm text-gray-400">고소미 대법원</p>
+    <div className="text-center space-y-8">
+      {/* Top Banner */}
+      <div className="p-8 bg-green-900 bg-opacity-20 border border-green-600 rounded-xl">
+        <div className="w-20 h-20 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-green-500">
+          <CheckCircle className="w-10 h-10 text-white" />
         </div>
-
-        <div className="space-y-4 text-gray-300">
-          <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-50 rounded-lg">
-            <p className="text-sm text-gray-500 mb-1">피고인</p>
-            <p className="text-xl font-bold text-white">
-              {formData.defendant} 귀하
-            </p>
-          </div>
-
-          <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-50 rounded-lg">
-            <p className="text-sm leading-relaxed">
-              귀하는{" "}
-              <span className="text-[var(--color-gold-accent)] font-bold">
-                {formData.plaintiff}
-              </span>
-              가 제기한
-              <span className="text-[var(--color-gold-accent)] font-bold">
-                {" "}
-                {LAWS.find((l) => l.id === formData.lawType)?.title}{" "}
-              </span>
-              위반 혐의로 고소되었습니다.
-            </p>
-          </div>
-
-          {formData.juryEnabled && (
-            <div className="p-4 bg-purple-900 bg-opacity-30 border-2 border-purple-700 border-opacity-50 rounded-lg">
-              <p className="text-sm font-bold text-purple-300 mb-2">
-                👥 배심원 투표 진행
-              </p>
-              <p className="text-xs text-purple-200">
-                {formData.juryMode === "INVITE"
-                  ? "초대된 배심원들의 의견이 수렴됩니다."
-                  : "랜덤 배심원단이 자동으로 배정되어 투표를 진행합니다."}
-              </p>
-            </div>
-          )}
-
-          <div className="p-4 bg-red-900 bg-opacity-20 border-2 border-red-700 border-opacity-30 rounded-lg">
-            <p className="text-sm font-bold text-red-400 mb-2">⚠️ 중요 안내</p>
-            <p className="text-xs text-red-200">
-              소환장 수령 후 24시간 내에 변론하지 않을 경우, 패소 가능성이
-              높아집니다. 아래 링크를 통해 즉시 변론해 주시기 바랍니다.
-            </p>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold text-white mb-2">사건이 성공적으로 접수되었습니다!</h2>
+        <p className="text-gray-300">
+          이제 아래 방법 중 하나를 선택하여<br />
+          피고인(친구)에게 <span className="text-[var(--color-gold-primary)] font-bold">소환장</span>을 보내주세요.
+        </p>
       </div>
 
-
-
-
-
-      {/* 랜덤 배심원 안내 */}
-      {formData.juryEnabled && formData.juryMode === "RANDOM" && (
-        <div className="p-6 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-2 border-purple-700/50 rounded-lg">
-          <div className="flex items-start gap-4">
-            <span className="text-4xl">🎲</span>
-            <div>
-              <h4 className="font-bold text-purple-300 mb-2">
-                랜덤 배심원단 배정
-              </h4>
-              <p className="text-sm text-purple-200 mb-3">
-                판결 시점에 고소미닷컴의 랜덤 배심원 15~30명이 자동으로 배정되어
-                투표를 진행합니다.
-              </p>
-              <ul className="text-xs text-purple-300 space-y-1">
-                <li>• 배심원들은 사건 내용과 증거를 검토합니다</li>
-                <li>• 원고 승/피고 승/쌍방 과실 중 하나로 투표합니다</li>
-                <li>• 투표 결과는 AI 판결과 함께 비교됩니다</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 버튼 */}
-      <div className="flex gap-4 pt-4">
-        <button
-          onClick={onBack}
-          className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"
-        >
-          이전
-        </button>
-        <button
-          onClick={onSubmit}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
-        >
-          <CheckCircle className="w-5 h-5" />
-          사건 접수 완료
-        </button>
-      </div>
-
-      {/* 공유 버튼 */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid gap-4 max-w-md mx-auto">
+        {/* Kakao Share */}
         <button
           onClick={shareKakao}
-          className="px-6 py-4 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-[#FEE500] text-[#000000] rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-3"
         >
-          <Share2 className="w-5 h-5" />
-          카카오톡으로 전송
+          <span className="text-xl">💬</span>
+          카카오톡으로 소환장 보내기
         </button>
 
+        {/* Link Copy */}
         <button
           onClick={copyLink}
-          className="px-6 py-4 border-2 border-[var(--color-gold-dark)] text-[var(--color-gold-accent)] font-bold rounded-lg hover:bg-[var(--color-gold-dark)] hover:bg-opacity-20 transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] text-white rounded-xl font-bold text-lg hover:border-[var(--color-gold-primary)] transition-all flex items-center justify-center gap-3"
         >
-          <Share2 className="w-5 h-5" />
-          다른 방법으로 공유
+          <Share2 className="w-6 h-6" />
+          {copied ? "링크 복사 완료!" : "링크 복사하기 전송"}
+        </button>
+
+        {formData.juryEnabled && formData.juryMode === 'INVITE' && (
+          <button
+            onClick={copyJuryLink}
+            className="w-full py-4 bg-purple-900 bg-opacity-40 border-2 border-purple-600 text-purple-200 rounded-xl font-bold text-lg hover:bg-opacity-60 transition-all flex items-center justify-center gap-3"
+          >
+            <span className="text-xl">👥</span>
+            {juryCopied ? "배심원 초대 링크 복사됨!" : "배심원 초대 링크 복사"}
+          </button>
+        )}
+      </div>
+
+      {/* Waiting Room Navigation */}
+      <div className="pt-8 border-t border-[var(--color-court-border)]">
+        <p className="text-gray-500 mb-4 text-sm">소환장을 보냈다면 대기실로 이동하여 진행 상황을 확인하세요.</p>
+        <button
+          onClick={onBack}
+          className="w-full max-w-sm mx-auto py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white font-bold rounded-full hover:shadow-xl transition-all flex items-center justify-center gap-2"
+        >
+          <span>🐹</span>
+          대기실로 이동하기 (고구마 먹는 중...)
         </button>
       </div>
 
-      {/* Share Success Modal */}
       {showShareModal && (
         <ShareSuccessModal onClose={() => setShowShareModal(false)} />
       )}
