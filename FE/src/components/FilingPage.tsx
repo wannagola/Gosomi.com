@@ -6,6 +6,8 @@ import {
   Share2,
   CheckCircle,
   ImageIcon,
+  Copy,
+  Gavel,
 } from "lucide-react";
 import { LAWS, LawType, Evidence } from "@/types/court";
 import { Friend } from "@/types/user";
@@ -752,7 +754,7 @@ interface Step3Props {
 }
 
 function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
-  const [copied, setCopied] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // 배심원 링크 생성
   const juryLink =
@@ -762,9 +764,9 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
-    setCopied(true);
+    setShowToast(true);
     setTimeout(() => {
-      setCopied(false);
+      setShowToast(false);
     }, 2000);
   };
 
@@ -788,11 +790,15 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
       return;
     }
 
+    const description = formData.juryEnabled
+      ? `${formData.plaintiff}님이 제기한 사건입니다. 배심원 투표와 변론이 진행됩니다.`
+      : `${formData.plaintiff}님이 제기한 사건에 대한 변론을 진행해주세요. (24시간 내)`;
+
     window.Kakao.Link.sendDefault({
       objectType: "feed",
       content: {
-        title: `📩 [고소미] ${formData.title}`,
-        description: `${formData.plaintiff}님이 제기한 사건에 대한 변론을 진행해주세요. (24시간 내)`,
+        title: `⚖️ [고소미] ${formData.title}`,
+        description: description,
         imageUrl: `${window.location.origin}/gosomidotcom.png`,
         link: {
           mobileWebUrl: shareLink,
@@ -801,7 +807,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
       },
       buttons: [
         {
-          title: "지금 변론하러 가기",
+          title: "사건 확인하기",
           link: {
             mobileWebUrl: shareLink,
             webUrl: shareLink,
@@ -812,112 +818,106 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl mb-6">접수 완료</h2>
-
-      {/* 배심원 안내 (조건부) */}
-      {formData.juryEnabled && (
-        <div className="p-6 bg-purple-900 bg-opacity-30 border-2 border-purple-600 rounded-xl">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl">👥</span>
-            <h3 className="text-lg font-bold text-purple-300">배심원 투표 활성화됨</h3>
+    <div className="space-y-8 flex flex-col items-center animate-fade-in-up">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4">
+          <div className="bg-[#1a1a24] text-white px-6 py-3 rounded-full shadow-2xl border border-[var(--color-gold-primary)] flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-500" />
+            <span className="font-bold">링크가 복사되었습니다!</span>
           </div>
-          <p className="text-sm text-gray-300 leading-relaxed">
-            {formData.juryMode === 'INVITE'
-              ? `선택한 친구 ${formData.invitedJurors?.length || 0}명에게 배심원 링크를 공유하여 투표를 받을 수 있습니다.`
-              : '고소미닷컴의 랜덤 배심원 5명이 자동으로 배정되었습니다.'
-            }
-          </p>
         </div>
       )}
 
-      {/* 경고 안내 */}
-      <div className="p-4 bg-red-900 bg-opacity-30 border-2 border-red-700 rounded-lg">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-red-200">
-            <p className="font-semibold mb-1">⚠️ 중요 안내</p>
-            <p className="text-xs leading-relaxed">
-              소환장 수령 후 24시간 내에 변론하지 않을 경우, 패소 기본값이 적용됩니다.
-              반드시 기한을 준수해 주시기 바랍니다.
+      {/* 소환장 카드 (Summons Writ) */}
+      <div className="w-full max-w-md bg-[#f4f1ea] text-black p-8 rounded-lg shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden font-serif">
+        {/* 워터마크/배경 장식 */}
+        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+          <Gavel className="w-32 h-32" />
+        </div>
+        
+        {/* 헤더 */}
+        <div className="text-center border-b-2 border-black pb-6 mb-6">
+          <h2 className="text-4xl font-bold mb-2 tracking-widest text-[#c92a2a]">소 환 장</h2>
+          <p className="text-sm font-bold text-gray-600 tracking-wider">DIGITAL SUPREME COURT</p>
+        </div>
+
+        {/* 본문 */}
+        <div className="space-y-4 text-left">
+          <div className="flex border-b border-gray-300 pb-2">
+            <span className="font-bold w-20 text-gray-700">사 건</span>
+            <span className="flex-1 font-semibold">{formData.title}</span>
+          </div>
+          <div className="flex border-b border-gray-300 pb-2">
+            <span className="font-bold w-20 text-gray-700">원 고</span>
+            <span className="flex-1 font-semibold">{formData.plaintiff}</span>
+          </div>
+          <div className="flex border-b border-gray-300 pb-2">
+            <span className="font-bold w-20 text-gray-700">피 고</span>
+            <span className="flex-1 font-semibold">{formData.defendant}</span>
+          </div>
+
+          <div className="mt-8 text-center text-sm leading-8 font-medium text-gray-800">
+            <p>위 사건에 관하여 귀하를 피고로 소환하오니,</p>
+            <p>본 소환장을 확인하는 즉시 변론기일에 출석하여</p>
+            <p>답변서 및 증거를 제출하시기 바랍니다.</p>
+            <p className="text-[#c92a2a] mt-2 font-bold">
+              ※ 불출석 시 원고의 청구 취지대로 판결될 수 있습니다.
             </p>
           </div>
         </div>
-      </div>
 
-      {/* 링크 복사 */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
-          피고 변론 링크
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={shareLink}
-            readOnly
-            className="flex-1 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white text-sm font-mono focus:outline-none"
-          />
-          <button
-            onClick={copyLink}
-            className="px-6 py-3 bg-[var(--color-gold-dark)] hover:bg-[var(--color-gold-primary)] text-white font-bold rounded-lg transition-colors whitespace-nowrap"
-          >
-            {copied ? '복사됨!' : '복사'}
-          </button>
-        </div>
-      </div>
-
-      {/* 변론 배심원 안내 */}
-      {formData.juryEnabled && formData.juryMode === 'INVITE' && (
-        <div className="p-6 bg-purple-900 bg-opacity-20 border-2 border-purple-700 border-opacity-30 rounded-xl">
-          <div className="flex items-start gap-3 mb-3">
-            <span className="text-3xl">⚖️</span>
-            <div>
-              <h3 className="text-lg font-bold text-purple-300 mb-2">변론 배심원 안내</h3>
-              <p className="text-sm text-gray-300 leading-relaxed mb-3">
-                한쪽 시점의 고소미닷컴이 아닌 배심원 15~30명의 자유로운 투표를 반영하여 투표를 진행합니다.
-              </p>
-              <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside">
-                <li>배심원들은 사건 내용을 확인 후 투표합니다</li>
-                <li>배심 결과는 AI 판결과 함께 비교됩니다</li>
-                <li>투표 결과는 AI 판결에 참고 자료로 활용됩니다</li>
-              </ul>
+        {/* 날짜 및 서명 */}
+        <div className="mt-10 text-center">
+          <p className="text-lg font-bold mb-4">
+            {new Date().getFullYear()}년 {new Date().getMonth() + 1}월 {new Date().getDate()}일
+          </p>
+          <div className="relative inline-block">
+            <span className="text-2xl font-bold border-2 border-black px-6 py-2">
+              고 소 미 닷 컴
+            </span>
+            {/* 도장 효과 */}
+            <div className="absolute -right-6 -top-4 transform rotate-12 opacity-80 mix-blend-multiply">
+              <div className="w-16 h-16 rounded-full border-4 border-[#c92a2a] flex items-center justify-center">
+                <span className="text-[10px] text-[#c92a2a] font-bold">OFFICIAL</span>
+              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* 공유 버튼 */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* 안내 메시지 */}
+      <p className="text-gray-400 text-sm text-center">
+        상대방에게 소환장을 보내 재판을 시작하세요.
+      </p>
+
+      {/* 공유 버튼 영역 */}
+      <div className="w-full max-w-md space-y-3">
         <button
           onClick={shareKakao}
-          className="py-3 bg-[#FEE500] text-[#000000] rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-[#FEE500] text-[#000000] rounded-xl font-bold text-lg hover:shadow-lg hover:bg-[#fae100] transition-all flex items-center justify-center gap-2"
         >
-          <span className="text-lg">💬</span>
-          카카오톡으로 전송
+          <span className="text-xl">💬</span>
+          카카오톡으로 공유하기
         </button>
+
         <button
           onClick={copyLink}
-          className="py-3 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] text-white rounded-lg font-bold hover:border-[var(--color-gold-primary)] transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-[#2a2a35] border border-gray-700 text-white rounded-xl font-bold text-lg hover:bg-[#32323f] hover:border-gray-500 transition-all flex items-center justify-center gap-2"
         >
-          <Share2 className="w-5 h-5" />
-          다른 방법으로 공유
+          <Share2 className="w-5 h-5 text-gray-300" />
+          다른 방법으로 공유하기
         </button>
       </div>
 
-      {/* 버튼 */}
-      <div className="flex gap-4 pt-4">
+      {/* 대기화면 이동 (하단 고정 느낌) */}
+      <div className="pt-8 w-full max-w-md">
         <button
           onClick={onBack}
-          className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"
-        >
-          이전
-        </button>
-        <button
-          onClick={onBack}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-transparent border-2 border-[var(--color-gold-dark)] text-[var(--color-gold-primary)] rounded-xl font-bold hover:bg-[var(--color-gold-dark)] hover:text-white transition-all flex items-center justify-center gap-2"
         >
           <CheckCircle className="w-5 h-5" />
-          사건 접수 완료
+          대기 화면으로 이동
         </button>
       </div>
     </div>
