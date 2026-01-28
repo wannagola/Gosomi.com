@@ -62,10 +62,10 @@ export function CourtLobby({
 
       // Basic Filters
       const matchesSearch = (case_.caseNumber || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (case_.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (case_.plaintiff || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (case_.defendant || "").toLowerCase().includes(searchTerm.toLowerCase());
-      
+        (case_.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (case_.plaintiff || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (case_.defendant || "").toLowerCase().includes(searchTerm.toLowerCase());
+
       const isNotCompleted = case_.status !== 'COMPLETED';
 
       // User Filter: Only show cases where current user is Plaintiff or Defendant
@@ -74,15 +74,15 @@ export function CourtLobby({
       // Given the request context: "Here, leave only cases where the user exists..."
       // If currentUser is present, filter. If not, maybe show empty?
       // Let's assume if currentUser is present, apply filter.
-      const isParticipant = currentUser 
-          ? (String(case_.plaintiffId) === String(currentUser.id) || String(case_.defendantId) === String(currentUser.id))
-          : true; // Or false if we want strict privacy? Original behavior was "recentCases" (all). 
-                  // But user request implies a personalized view. 
-                  // If logged out, "Real-time Trial Status" should probably remain public? 
-                  // But user is "The User". They are likely logged in.
-                  // I will apply filter if currentUser is provided.
+      const isParticipant = currentUser
+        ? (String(case_.plaintiffId) === String(currentUser.id) || String(case_.defendantId) === String(currentUser.id) || case_.juryEnabled)
+        : true; // Or false if we want strict privacy? Original behavior was "recentCases" (all). 
+      // But user request implies a personalized view. 
+      // If logged out, "Real-time Trial Status" should probably remain public? 
+      // But user is "The User". They are likely logged in.
+      // I will apply filter if currentUser is provided.
 
-       return isNotCompleted && matchesSearch && isParticipant;
+      return isNotCompleted && matchesSearch && isParticipant;
     }
   );
 
@@ -181,27 +181,27 @@ export function CourtLobby({
             >
               이용약관 및 면책 조항 동의
             </button>
-            
+
             <span className="px-8 opacity-20 select-none">|</span>
-            
+
             <button
               onClick={() => openModal('개인정보 수집 및 이용 동의', PRIVACY_POLICY)}
               className="hover:text-white transition-colors"
             >
               개인정보 수집 및 이용 동의
             </button>
-            
+
             <span className="px-8 opacity-20 select-none">|</span>
-            
+
             <button
               onClick={() => openModal('제3자 정보 제공 동의', THIRD_PARTY_CONSENT)}
               className="hover:text-white transition-colors"
             >
               제3자 정보 제공 동의
             </button>
-            
+
             <span className="px-8 opacity-20 select-none">|</span>
-            
+
             <button
               onClick={() => openModal('마케팅 정보 수신 동의', MARKETING_CONSENT)}
               className="hover:text-white transition-colors"
@@ -269,7 +269,7 @@ function CaseCard({ case_, onView }: any) {
           <div className="flex items-center gap-3 mb-2">
             <span className="text-sm font-mono text-[var(--color-gold-primary)]">{case_.caseNumber}</span>
             <div className="flex gap-2">
-               <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
+              <span className={`px-2 py-0.5 text-xs font-bold rounded border ${trialColor} bg-opacity-40`}>
                 {trialStage}
               </span>
               <span className={`px-3 py-1 ${status.color} bg-opacity-20 text-white text-xs rounded-full border border-current`}>

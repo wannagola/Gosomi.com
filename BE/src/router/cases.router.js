@@ -118,7 +118,7 @@ router.get("/", async (req, res) => {
 
     let sql = `
       SELECT c.id, c.case_number, c.title, c.status, c.appeal_status, c.created_at,
-             c.plaintiff_id, c.defendant_id,
+             c.plaintiff_id, c.defendant_id, c.jury_enabled, c.jury_mode,
              p.nickname AS plaintiff_name,
              d.nickname AS defendant_name
       FROM cases c
@@ -136,8 +136,8 @@ router.get("/", async (req, res) => {
     }
 
     if (userId) {
-      conditions.push(`(c.plaintiff_id = ? OR c.defendant_id = ?)`);
-      params.push(userId, userId);
+      conditions.push(`(c.plaintiff_id = ? OR c.defendant_id = ? OR EXISTS (SELECT 1 FROM jurors j WHERE j.case_id = c.id AND j.user_id = ?))`);
+      params.push(userId, userId, userId);
     }
 
     if (status) {
@@ -183,6 +183,8 @@ router.get("/", async (req, res) => {
         defendant: r.defendant_name,
         plaintiffId: r.plaintiff_id,
         defendantId: r.defendant_id,
+        juryEnabled: !!r.jury_enabled,
+        juryMode: r.jury_mode,
       };
     });
 
@@ -242,6 +244,7 @@ router.get("/:id", async (req, res) => {
               c.penalty_choice, c.penalty_selected,
               c.appeal_status,
               c.law_type,
+              c.jury_enabled, c.jury_mode, c.jury_invite_token,
               p.nickname AS plaintiff_name,
               d.nickname AS defendant_name
        FROM cases c
@@ -310,6 +313,9 @@ router.get("/:id", async (req, res) => {
       penaltyChoice: c.penalty_choice,
       penaltySelected: c.penalty_selected,
       appealStatus: c.appeal_status,
+      juryEnabled: !!c.jury_enabled,
+      juryMode: c.jury_mode,
+      juryInviteToken: c.jury_invite_token,
       juryVotes, // Added jury votes stats
     });
   } catch (e) {
