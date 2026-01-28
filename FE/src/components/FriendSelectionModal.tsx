@@ -56,7 +56,7 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
               placeholder="친구 검색..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--color-gold-primary)]"
+              className="w-full bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded-lg pl-12 pr-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--color-gold-primary)]"
             />
           </div>
           <div className="mt-2 text-xs text-right text-[var(--color-gold-primary)]">
