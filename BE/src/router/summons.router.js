@@ -90,10 +90,8 @@ router.post("/summons/:token/defense", async (req, res) => {
     }
     
     // 🤖 Trigger AI Verdict
-    // Do not await if you want it background, but user wants it "after". 
-    // Usually AI takes 5-10s. Let's await to ensure consistency or run async? 
-    // Safest: synchronous for simple flow so next page load has verdict.
-    await generateVerdictWithGemini(case_id);
+    // REMOVED: Verdict is now requested manually by the user after defense submission.
+    // await generateVerdictWithGemini(case_id);
 
     return res.status(201).json({ ok: true, caseId: case_id });
   } catch (e) {
@@ -134,7 +132,8 @@ router.post("/cases/:id/defense", async (req, res) => {
     );
 
     // 🤖 Trigger AI Verdict
-    await generateVerdictWithGemini(caseId);
+    // REMOVED: Verdict is now requested manually by the user after defense submission.
+    // await generateVerdictWithGemini(caseId);
 
     return res.json({ ok: true, caseId });
   } catch (e) {

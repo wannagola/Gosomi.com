@@ -10,9 +10,11 @@ import {
   Upload,
 } from "lucide-react";
 import { Case, LAWS } from "@/types/court";
+import { User } from "@/types/user";
 
 interface VerdictPageProps {
   case_: Case;
+  currentUser: User | null;
   onAppeal?: (appellant: 'plaintiff' | 'defendant', data?: { reason: string; evidence: string; files: FileList | null }) => void;
   onSelectPenalty?: (penalty: "serious" | "funny") => void;
 }
@@ -25,6 +27,7 @@ declare global {
 
 export function VerdictPage({
   case_,
+  currentUser,
   onAppeal,
   onSelectPenalty,
 }: VerdictPageProps) {
@@ -42,6 +45,11 @@ export function VerdictPage({
   });
   const [showAppealForm, setShowAppealForm] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
+
+  // Logic for roles
+  const isPlaintiff = currentUser?.id === case_.plaintiffId;
+  const isDefendant = currentUser?.id === case_.defendantId;
+  const isLitigant = isPlaintiff || isDefendant;
 
   // ✅ 캡처 대상(네비게이션 제외하고 “판결문 페이지 내용”만 감싸는 래퍼)
   const captureRef = useRef<HTMLDivElement>(null);
@@ -555,10 +563,11 @@ export function VerdictPage({
 
         {/* 액션 버튼 (캡처 중엔 숨김) */}
         {/* 액션 버튼 (캡처 중엔 숨김) */}
-        {!isCapturing && (
+        {/* 액션 버튼 (캡처 중엔 숨김): 원고/피고만 가능 */}
+        {!isCapturing && isLitigant && (
           <div className={`grid gap-4 ${
-            // 항소 버튼이 보이면 3열, 안 보이면 2열
-            (!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY')
+            // 항소 버튼이 보이면 3열, 안 보이면 2열 (오직 피고만 항소 가능)
+            (!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && isDefendant)
               ? "md:grid-cols-3" 
               : "md:grid-cols-2"
           }`}>
@@ -579,7 +588,8 @@ export function VerdictPage({
               카카오톡 공유
             </button>
             {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (1심이고 항소 이력이 없을 때 무조건 표시) */}
-            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && (
+            {/* ⚠️ 오직 피고(Defendant)만 항소 가능 */}
+            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && isDefendant && (
               <button
                 type="button"
                 onClick={() => setShowAppealForm(true)}
