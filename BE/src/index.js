@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use("/api", apiRouter);
 app.use("/test", testRouter); // Mount test router
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 });
 
 // SPA를 위한 fallback - 모든 경로를 index.html로 라우팅 (API 제외)
-app.get(/.*/,  (req, res) => {
+app.get(/.*/, (req, res) => {
   if (req.path === '/') return; // Handled above
   res.sendFile(path.join(frontendPath, "index.html"));
 });

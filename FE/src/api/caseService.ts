@@ -23,8 +23,10 @@ export const caseService = {
 
   // Get single case
   getCase: async (id: string, userId?: string): Promise<Case> => {
-    const config = userId ? { params: { userId } } : {};
-    const response = await apiClient.get<Case>(`/api/cases/${id}`, config);
+    const params: any = { _t: Date.now() }; // Cache busting
+    if (userId) params.userId = userId;
+
+    const response = await apiClient.get<Case>(`/api/cases/${id}`, { params });
     return response.data;
   },
 

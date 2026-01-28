@@ -71,13 +71,13 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
 
   // Sync plaintiff data with currentUser
   useEffect(() => {
-      if (currentUser) {
-          setFormData(prev => ({
-              ...prev,
-              plaintiff: currentUser.nickname || (currentUser as any).name || "",
-              plaintiffId: currentUser.id
-          }));
-      }
+    if (currentUser) {
+      setFormData(prev => ({
+        ...prev,
+        plaintiff: currentUser.nickname || (currentUser as any).name || "",
+        plaintiffId: currentUser.id
+      }));
+    }
   }, [currentUser]);
 
   const [evidences, setEvidences] = useState<Evidence[]>(() => {
@@ -233,20 +233,18 @@ function StepIndicator({
   return (
     <div className="flex flex-col items-center">
       <div
-        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 transition-all ${
-          completed
+        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 transition-all ${completed
             ? "bg-[var(--color-gold-primary)] border-[var(--color-gold-primary)] text-white"
             : active
               ? "bg-[var(--color-gold-dark)] border-[var(--color-gold-accent)] text-white"
               : "bg-transparent border-[var(--color-court-border)] text-gray-500"
-        }`}
+          }`}
       >
         {completed ? <CheckCircle className="w-6 h-6" /> : number}
       </div>
       <span
-        className={`text-sm mt-2 ${
-          active ? "text-[var(--color-gold-accent)]" : "text-gray-500"
-        }`}
+        className={`text-sm mt-2 ${active ? "text-[var(--color-gold-accent)]" : "text-gray-500"
+          }`}
       >
         {label}
       </span>
@@ -279,16 +277,16 @@ function Step1BasicInfo({
     formData.content;
 
   const handleInviteFriends = () => {
-      setIsFriendModalOpen(true);
+    setIsFriendModalOpen(true);
   };
 
   const handleFriendSelection = (selectedFriends: Friend[]) => {
-      setFormData({
-          ...formData,
-          invitedJurors: selectedFriends.map(f => f.id),
-          juryInvitedUserIds: selectedFriends.map(f => f.id)
-      });
-      setIsFriendModalOpen(false);
+    setFormData({
+      ...formData,
+      invitedJurors: selectedFriends.map(f => f.id),
+      juryInvitedUserIds: selectedFriends.map(f => f.id)
+    });
+    setIsFriendModalOpen(false);
   };
 
   return (
@@ -329,26 +327,26 @@ function Step1BasicInfo({
           <select
             value={formData.defendantId}
             onChange={(e) => {
-                const selectedId = e.target.value;
-                console.log('Selected ID:', selectedId);
-                console.log('Friends:', friends);
-                const selectedFriend = friends.find(f => String(f.id) === String(selectedId));
-                console.log('Selected Friend:', selectedFriend);
-                const defendantName = selectedFriend?.nickname || (selectedFriend as any)?.name || '';
-                console.log('Defendant Name:', defendantName);
-                setFormData({ 
-                    ...formData, 
-                    defendantId: selectedId,
-                    defendant: defendantName
-                });
+              const selectedId = e.target.value;
+              console.log('Selected ID:', selectedId);
+              console.log('Friends:', friends);
+              const selectedFriend = friends.find(f => String(f.id) === String(selectedId));
+              console.log('Selected Friend:', selectedFriend);
+              const defendantName = selectedFriend?.nickname || (selectedFriend as any)?.name || '';
+              console.log('Defendant Name:', defendantName);
+              setFormData({
+                ...formData,
+                defendantId: selectedId,
+                defendant: defendantName
+              });
             }}
             className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white focus:border-[var(--color-gold-primary)] focus:outline-none appearance-none"
           >
             <option value="">친구를 선택하세요</option>
             {friends.map(friend => (
-                <option key={friend.id} value={friend.id}>
-                    {friend.nickname || (friend as any).name || '이름 없음'}
-                </option>
+              <option key={friend.id} value={friend.id}>
+                {friend.nickname || (friend as any).name || '이름 없음'}
+              </option>
             ))}
           </select>
         </div>
@@ -365,11 +363,10 @@ function Step1BasicInfo({
               key={law.id}
               type="button"
               onClick={() => setFormData({ ...formData, lawType: law.id })}
-              className={`p-4 rounded-lg border-2 transition-all ${
-                formData.lawType === law.id
+              className={`p-4 rounded-lg border-2 transition-all ${formData.lawType === law.id
                   ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-20"
                   : "border-[var(--color-court-border)] hover:border-[var(--color-gold-dark)]"
-              }`}
+                }`}
             >
               <div className="mb-2">
                 <img src={law.icon} alt={law.title} className="w-12 h-12 mx-auto object-contain" />
@@ -431,11 +428,10 @@ function Step1BasicInfo({
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, juryMode: "INVITE" })}
-                className={`p-4 rounded-lg border-2 transition-all text-left ${
-                  formData.juryMode === "INVITE"
+                className={`p-4 rounded-lg border-2 transition-all text-left ${formData.juryMode === "INVITE"
                     ? "border-purple-500 bg-purple-900 bg-opacity-30"
                     : "border-purple-800 border-opacity-30 hover:border-purple-700"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl">📨</span>
@@ -445,28 +441,27 @@ function Step1BasicInfo({
                   특정 친구들에게 배심원 링크를 공유하여 투표를 받습니다
                 </p>
                 {formData.juryMode === 'INVITE' && (
-                    <div className="mt-3">
-                        <div 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleInviteFriends();
-                            }}
-                            className="w-full py-2 bg-purple-700 hover:bg-purple-600 rounded text-center text-sm font-bold text-white transition-colors cursor-pointer"
-                        >
-                            친구 초대하기 {formData.invitedJurors && formData.invitedJurors.length > 0 ? `(${formData.invitedJurors.length}명 선택됨)` : ''}
-                        </div>
+                  <div className="mt-3">
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleInviteFriends();
+                      }}
+                      className="w-full py-2 bg-purple-700 hover:bg-purple-600 rounded text-center text-sm font-bold text-white transition-colors cursor-pointer"
+                    >
+                      친구 초대하기 {formData.invitedJurors && formData.invitedJurors.length > 0 ? `(${formData.invitedJurors.length}명 선택됨)` : ''}
                     </div>
+                  </div>
                 )}
               </button>
 
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, juryMode: "RANDOM" })}
-                className={`p-4 rounded-lg border-2 transition-all text-left ${
-                  formData.juryMode === "RANDOM"
+                className={`p-4 rounded-lg border-2 transition-all text-left ${formData.juryMode === "RANDOM"
                     ? "border-purple-500 bg-purple-900 bg-opacity-30"
                     : "border-purple-800 border-opacity-30 hover:border-purple-700"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl">🎲</span>
@@ -482,13 +477,13 @@ function Step1BasicInfo({
       </div>
 
       {isFriendModalOpen && (
-          <FriendSelectionModal 
-            friends={friends.filter(f => String(f.id) !== String(formData.defendantId) && String(f.id) !== String(formData.plaintiffId))}
-            onClose={() => setIsFriendModalOpen(false)}
-            onConfirm={handleFriendSelection}
-            maxSelection={5}
-            initialSelectedIds={formData.invitedJurors}
-          />
+        <FriendSelectionModal
+          friends={friends.filter(f => String(f.id) !== String(formData.defendantId) && String(f.id) !== String(formData.plaintiffId))}
+          onClose={() => setIsFriendModalOpen(false)}
+          onConfirm={handleFriendSelection}
+          maxSelection={5}
+          initialSelectedIds={formData.invitedJurors}
+        />
       )}
 
       {/* 주의사항 */}
@@ -517,11 +512,10 @@ function Step1BasicInfo({
         <button
           onClick={onNext}
           disabled={!isValid}
-          className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all ${
-            isValid
+          className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all ${isValid
               ? "bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white hover:shadow-lg"
               : "bg-gray-700 text-gray-500 cursor-not-allowed"
-          }`}
+            }`}
         >
           다음 단계: 증거 제출
         </button>
@@ -590,7 +584,7 @@ function Step2Evidence({
       ]);
     };
     reader.readAsDataURL(file);
-    
+
     // Reset input
     e.target.value = '';
   };
@@ -632,7 +626,7 @@ function Step2Evidence({
             <Upload className="w-5 h-5" />
           </button>
         </div>
-        
+
         {/* Image Upload */}
         <div className="mt-3">
           <input
@@ -664,11 +658,10 @@ function Step2Evidence({
             {evidences.map((evidence) => (
               <div
                 key={evidence.id}
-                className={`p-4 rounded-lg border-2 ${
-                  evidence.isKeyEvidence
+                className={`p-4 rounded-lg border-2 ${evidence.isKeyEvidence
                     ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-10"
                     : "border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30"
-                }`}
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -678,9 +671,9 @@ function Step2Evidence({
                       </span>
                     )}
                     {evidence.type === 'image' ? (
-                      <img 
-                        src={evidence.content} 
-                        alt="증거 이미지" 
+                      <img
+                        src={evidence.content}
+                        alt="증거 이미지"
                         className="max-w-md rounded-lg border border-[var(--color-court-border)]"
                       />
                     ) : (
@@ -884,36 +877,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
 
 
-      {/* 배심원 초대 링크 (초대 모드일 때만) */}
-      {formData.juryEnabled && formData.juryMode === "INVITE" && (
-        <div>
-          <label className="block text-sm font-medium text-purple-400 mb-2">
-            👥 배심원 초대 링크
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={juryLink}
-              readOnly
-              className="flex-1 px-4 py-3 bg-purple-900 bg-opacity-20 border-2 border-purple-700 border-opacity-30 rounded-lg text-purple-200 font-mono text-sm"
-            />
-            <button
-              onClick={copyJuryLink}
-              className={`px-6 py-3 rounded-lg font-bold transition-all ${
-                juryCopied
-                  ? "bg-green-600 text-white"
-                  : "bg-purple-700 text-white hover:bg-purple-600"
-              }`}
-            >
-              {juryCopied ? "복사됨!" : "복사"}
-            </button>
-          </div>
-          <p className="text-xs text-purple-300 mt-2">
-            💡 이 링크를 친구들에게 공유하여 배심원으로 초대하세요. 투표 결과는
-            AI 판결과 함께 공개됩니다.
-          </p>
-        </div>
-      )}
+
 
       {/* 랜덤 배심원 안내 */}
       {formData.juryEnabled && formData.juryMode === "RANDOM" && (
@@ -976,7 +940,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
       {/* Toast Notification */}
       {showToast && (
-        <div 
+        <div
           className="fixed z-[9999] animate-fade-in-up"
           style={{
             top: '2rem',

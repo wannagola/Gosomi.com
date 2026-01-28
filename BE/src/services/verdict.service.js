@@ -30,7 +30,9 @@ async function getCase(caseId) {
   const [rows] = await pool.query(
     `SELECT id, case_number, title, content, status, plaintiff_id, defendant_id,
             verdict_text, penalties_json, fault_ratio,
-            penalty_choice, penalty_selected
+            penalty_choice, penalty_selected,
+            appellant_id, appeal_reason, appeal_response, appeal_status,
+            law_type
      FROM cases
      WHERE id=?`,
     [caseId]
@@ -378,16 +380,21 @@ export async function generateVerdictWithGemini(caseId, isAppeal = false) {
 
     // 5. Save Result
     // If appeal, we overwrite verdict_text.
+    const newStatus = isAppeal ? 'APPEAL_VERDICT_READY' : 'VERDICT_READY';
+    const appealUpdate = isAppeal ? ", appeal_status='DONE'" : "";
+
     await pool.query(
       `UPDATE cases
-       SET status='VERDICT_READY',
+       SET status=?,
            verdict_text=?,
            penalties_json=?,
            fault_ratio=?,
            penalty_choice=NULL,
            penalty_selected=NULL
+           ${appealUpdate}
        WHERE id=?`,
       [
+        newStatus,
         verdict.oneLine + "\n\n" + verdict.reasoning,
         JSON.stringify(verdict.penalties),
         JSON.stringify(verdict.faultRatio),

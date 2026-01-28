@@ -321,10 +321,10 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
             style={{ paddingTop: '80px', paddingBottom: '80px' }} // Add safe area for nav bar
           >
             <div
-              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-full flex flex-col relative shadow-2xl"
+              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col relative shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6 sticky top-0 bg-[var(--color-court-gray)] z-10 pb-4 border-b border-[var(--color-court-border)]">
+              <div className="flex-none flex items-center justify-between mb-0 bg-[var(--color-court-gray)] z-10 p-6 pb-4 border-b border-[var(--color-court-border)]">
                 <div className="flex items-center gap-3">
                   {law.icon && (
                     <img src={law.icon} alt={law.title} className="w-16 h-16 object-contain" />
@@ -342,14 +342,14 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
                 </button>
               </div>
 
-              <div className="pt-2">
+              <div className="flex-1 overflow-y-auto p-6">
                 <h3 className="text-xl font-bold text-white mb-4">법률 조항</h3>
                 <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
                   {law.content || '조항 정보가 없습니다.'}
                 </div>
               </div>
 
-              <div className="mt-8 flex justify-end sticky bottom-0 bg-[var(--color-court-gray)] pt-4 border-t border-[var(--color-court-border)]">
+              <div className="flex-none p-6 pt-4 border-t border-[var(--color-court-border)] bg-[var(--color-court-gray)] flex justify-end">
                 <button
                   onClick={() => setShowLawModal(false)}
                   className="px-6 py-2 bg-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] text-black font-bold rounded-lg transition-colors"

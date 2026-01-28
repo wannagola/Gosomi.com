@@ -168,13 +168,14 @@ export default function App() {
             // Logic says: if defendant submits, status becomes DEFENSE_SUBMITTED. 
             // CaseRouteHandler will show WaitingPage (since no verdict yet).
             // So navigate to main case path seems correct.
-            navigate(`/case/${caseId}`);
+            // navigate(`/case/${caseId}`); // Navigation alone might not trigger re-render correctly
+            window.location.reload(); // Force reload to update UI state immediately
         } catch (error: any) {
             console.error("Defense submission failed", error);
             // 만약 이미 제출된 상태라면, 성공한 것으로 간주하고 이동
             if (error.response?.data?.error === "defense already submitted" || error.message?.includes("defense already submitted")) {
                 await refreshData();
-                navigate(`/case/${caseId}`);
+                window.location.reload(); // Force reload to ensure fresh state
                 return;
             }
             alert("변론 제출에 실패했습니다.");
@@ -403,6 +404,7 @@ function CaseRouteHandler({
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true); // Show loading while fetching new data
         const fetchCase = async () => {
             if (!id) return;
             try {

@@ -239,7 +239,7 @@ export function VerdictPage({
     verdictText: case_.verdictText ?? "판결 내용이 없습니다.",
   };
 
-  const appellant: 'plaintiff' | 'defendant' = verdict.plaintiffFault > verdict.defendantFault ? 'plaintiff' : 'defendant';
+  const appellant: 'plaintiff' | 'defendant' = isPlaintiff ? 'plaintiff' : 'defendant';
 
   const juryVotes = case_.juryVotes || {
     plaintiffWins: 15,
@@ -540,115 +540,131 @@ export function VerdictPage({
         )}
 
         {/* 벌칙 선택 (최종) */}
-        <div className="official-document rounded-2xl p-8 mb-8 border-2 border-red-900 bg-red-950 bg-opacity-20">
-          <div className="flex items-center gap-3 mb-6">
-            <Gavel className="w-8 h-8 text-red-500" />
-            <h2 className="text-2xl text-red-100">최종 처벌 선택</h2>
-          </div>
+        {/* 벌칙 선택 (최종) - 벌칙 데이터가 있을 때만 표시 */}
+        {(parsedPenalties.serious.length > 0 || parsedPenalties.funny.length > 0) ? (
+          <div className="official-document rounded-2xl p-8 mb-8 border-2 border-red-900 bg-red-950 bg-opacity-20">
+            <div className="flex items-center gap-3 mb-6">
+              <Gavel className="w-8 h-8 text-red-500" />
+              <h2 className="text-2xl text-red-100">최종 처벌 선택</h2>
+            </div>
 
-          <p className="text-gray-400 mb-6">
-            AI 판사가 제안한 두 가지 처벌 중 하나를 피고인이 직접 선택합니다.<br />
-            선택된 처벌은 즉시 효력을 가집니다.
-          </p>
+            <p className="text-gray-400 mb-6">
+              AI 판사가 제안한 두 가지 처벌 중 하나를 피고인이 직접 선택합니다.<br />
+              선택된 처벌은 즉시 효력을 가집니다.
+            </p>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* 진지한 벌칙 */}
-            <div
-              className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* 진지한 벌칙 */}
+              <div
+                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
                     ${confirmedPenalty === 'serious' ? 'border-red-500 bg-red-900 bg-opacity-30' : 'border-gray-700 hover:border-red-500 bg-black bg-opacity-40'}
                     ${!isDefendant && confirmedPenalty !== 'serious' ? 'opacity-50 grayscale pointer-events-none' : ''}
                 `}
-              onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
-            >
-              {confirmedPenalty === 'serious' && (
-                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                  확정됨
-                </div>
-              )}
-              <h3 className="text-xl font-bold text-red-400 mb-3">⚖️ 엄중한 처벌</h3>
-              {confirmedPenalty === 'serious' ? (
-                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getSeriousPenalty()}</p>
-              ) : (
-                <div className="h-24 flex items-center justify-center bg-black bg-opacity-30 rounded-lg border border-red-900 border-dashed">
-                  <p className="text-red-700 font-mono text-sm">⛔ SECURED CONTENT</p>
-                </div>
-              )}
+                onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
+              >
+                {confirmedPenalty === 'serious' && (
+                  <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                    확정됨
+                  </div>
+                )}
+                <h3 className="text-xl font-bold text-red-400 mb-3">⚖️ 엄중한 처벌</h3>
+                {confirmedPenalty === 'serious' ? (
+                  <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getSeriousPenalty()}</p>
+                ) : (
+                  <div className="h-24 flex items-center justify-center bg-black bg-opacity-30 rounded-lg border border-red-900 border-dashed">
+                    <p className="text-red-700 font-mono text-sm">⛔ SECURED CONTENT</p>
+                  </div>
+                )}
 
-              {isDefendant && !confirmedPenalty && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('serious'); }}
-                  className="mt-4 w-full py-3 rounded-lg bg-red-900 hover:bg-red-800 text-red-100 font-bold border border-red-700 transition-colors"
-                >
-                  이 처벌을 받아들이겠습니다
-                </button>
-              )}
-            </div>
+                {isDefendant && !confirmedPenalty && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('serious'); }}
+                    className="mt-4 w-full py-3 rounded-lg bg-red-900 hover:bg-red-800 text-red-100 font-bold border border-red-700 transition-colors"
+                  >
+                    이 처벌을 받아들이겠습니다
+                  </button>
+                )}
+              </div>
 
-            {/* 재미있는 벌칙 */}
-            <div
-              className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
+              {/* 재미있는 벌칙 */}
+              <div
+                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
                     ${confirmedPenalty === 'funny' ? 'border-yellow-500 bg-yellow-900 bg-opacity-30' : 'border-gray-700 hover:border-yellow-500 bg-black bg-opacity-40'}
                     ${!isDefendant && confirmedPenalty !== 'funny' ? 'opacity-50 grayscale pointer-events-none' : ''}
                 `}
-              onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
-            >
-              {confirmedPenalty === 'funny' && (
-                <div className="absolute top-2 right-2 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                  확정됨
-                </div>
-              )}
-              <h3 className="text-xl font-bold text-yellow-500 mb-3">🎭 유쾌한 처벌</h3>
-              {confirmedPenalty === 'funny' ? (
-                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getFunnyPenalty()}</p>
-              ) : (
-                <div className="h-24 flex items-center justify-center bg-black bg-opacity-30 rounded-lg border border-yellow-900 border-dashed">
-                  <p className="text-yellow-700 font-mono text-sm">🔒 HIDDEN CONTENT</p>
-                </div>
-              )}
+                onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
+              >
+                {confirmedPenalty === 'funny' && (
+                  <div className="absolute top-2 right-2 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                    확정됨
+                  </div>
+                )}
+                <h3 className="text-xl font-bold text-yellow-500 mb-3">🎭 유쾌한 처벌</h3>
+                {confirmedPenalty === 'funny' ? (
+                  <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getFunnyPenalty()}</p>
+                ) : (
+                  <div className="h-24 flex items-center justify-center bg-black bg-opacity-30 rounded-lg border border-yellow-900 border-dashed">
+                    <p className="text-yellow-700 font-mono text-sm">🔒 HIDDEN CONTENT</p>
+                  </div>
+                )}
 
-              {isDefendant && !confirmedPenalty && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('funny'); }}
-                  className="mt-4 w-full py-3 rounded-lg bg-yellow-600 hover:bg-yellow-500 text-black font-bold transition-colors"
-                >
-                  이 처벌을 선택하겠습니다
-                </button>
-              )}
+                {isDefendant && !confirmedPenalty && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('funny'); }}
+                    className="mt-4 w-full py-3 rounded-lg bg-yellow-600 hover:bg-yellow-500 text-black font-bold transition-colors"
+                  >
+                    이 처벌을 선택하겠습니다
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Messages based on state */}
-          {confirmedPenalty ? (
-            <div className="mt-8 p-6 bg-gradient-to-r from-green-900 to-green-800 bg-opacity-30 border-2 border-green-600 rounded-xl">
-              <h3 className="text-xl font-bold text-green-400 mb-3">✅ 최종 처벌 확정</h3>
-              <p className="text-green-200 mb-4">
-                피고인이 <strong>{confirmedPenalty === 'serious' ? '⚖️ 엄중한 처벌' : '🎭 유쾌한 처벌'}</strong>을 선택하였습니다.
-              </p>
-              <div className="bg-black bg-opacity-40 p-4 rounded-lg border-l-4 border-green-500">
-                <p className="text-sm font-semibold text-green-300 mb-2">확정된 벌칙 내용:</p>
-                <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">
-                  {confirmedPenalty === 'serious' ? getSeriousPenalty() : getFunnyPenalty()}
+            {/* Messages based on state */}
+            {confirmedPenalty ? (
+              <div className="mt-8 p-6 bg-gradient-to-r from-green-900 to-green-800 bg-opacity-30 border-2 border-green-600 rounded-xl">
+                <h3 className="text-xl font-bold text-green-400 mb-3">✅ 최종 처벌 확정</h3>
+                <p className="text-green-200 mb-4">
+                  피고인이 <strong>{confirmedPenalty === 'serious' ? '⚖️ 엄중한 처벌' : '🎭 유쾌한 처벌'}</strong>을 선택하였습니다.
+                </p>
+                <div className="bg-black bg-opacity-40 p-4 rounded-lg border-l-4 border-green-500">
+                  <p className="text-sm font-semibold text-green-300 mb-2">확정된 벌칙 내용:</p>
+                  <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+                    {confirmedPenalty === 'serious' ? getSeriousPenalty() : getFunnyPenalty()}
+                  </p>
+                </div>
+                <p className="text-xs text-green-300 mt-4 text-center">
+                  ⚠️ 확정된 처벌은 변경할 수 없습니다.
                 </p>
               </div>
-              <p className="text-xs text-green-300 mt-4 text-center">
-                ⚠️ 확정된 처벌은 변경할 수 없습니다.
+            ) : isDefendant ? (
+              <div className="mt-8 p-6 bg-orange-900 bg-opacity-20 border-2 border-orange-600 rounded-xl text-center">
+                <p className="text-orange-200 text-lg font-semibold">
+                  👆 위 두 가지 처벌 중 하나를 선택하세요
+                </p>
+                <p className="text-orange-300 text-sm mt-2">
+                  각 처벌 카드를 클릭하거나 버튼을 눌러 확정하세요.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-8 p-4 bg-gray-800 rounded-lg text-center text-gray-400">
+                피고인이 처벌을 선택하기를 기다리고 있습니다...
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="official-document rounded-2xl p-8 mb-8 text-center bg-[var(--color-court-dark)] bg-opacity-50">
+            <h2 className="text-2xl mb-4 text-gray-300">판결 결과안내</h2>
+            <div className="p-6 rounded-xl border border-gray-700 bg-black bg-opacity-30">
+              <p className="text-gray-400 leading-relaxed">
+                AI 판사와 법률 검토 결과, <strong className="text-white">별도의 벌칙 부과 없음</strong>으로 판결되었습니다.<br />
+                (쌍방 과실, 기각, 또는 합의 권고 등)
+              </p>
+              <p className="text-sm text-gray-500 mt-4">
+                이것으로 모든 재판 절차가 종료되었습니다.
               </p>
             </div>
-          ) : isDefendant ? (
-            <div className="mt-8 p-6 bg-orange-900 bg-opacity-20 border-2 border-orange-600 rounded-xl text-center">
-              <p className="text-orange-200 text-lg font-semibold">
-                👆 위 두 가지 처벌 중 하나를 선택하세요
-              </p>
-              <p className="text-orange-300 text-sm mt-2">
-                각 처벌 카드를 클릭하거나 버튼을 눌러 확정하세요.
-              </p>
-            </div>
-          ) : (
-            <div className="mt-8 p-4 bg-gray-800 rounded-lg text-center text-gray-400">
-              피고인이 처벌을 선택하기를 기다리고 있습니다...
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* 액션 버튼 (캡처 중엔 숨김) */}
         {/* 액션 버튼 (캡처 중엔 숨김) */}
@@ -677,8 +693,8 @@ export function VerdictPage({
               카카오톡 공유
             </button>
             {/* 항소 중이거나 완료된 상태가 아닐 때만 항소 버튼 표시 (1심이고 항소 이력이 없을 때 무조건 표시) */}
-            {/* ⚠️ 오직 피고(Defendant)만 항소 가능 */}
-            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && isDefendant && (
+            {/* ⚠️ 소송 당사자(Litigant)만 항소 가능 */}
+            {!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && isLitigant && (
               <button
                 type="button"
                 onClick={() => setShowAppealForm(true)}
