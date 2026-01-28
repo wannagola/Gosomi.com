@@ -34,8 +34,9 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
       </div>
 
       <div
-        className="max-h-[min(500px,70vh)] overflow-y-auto custom-scrollbar"
+        className="overflow-y-auto custom-scrollbar"
         style={{
+          maxHeight: 'min(500px, 60vh)',
           scrollbarWidth: 'auto',
           scrollbarColor: 'var(--color-gold-primary) var(--color-court-gray)'
         }}
