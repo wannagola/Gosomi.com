@@ -428,7 +428,7 @@ function CaseRouteHandler({
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true); // Show loading while fetching new data
+        if (!activeCase) setLoading(true); // Only show full loading screen if we don't have data yet
         const fetchCase = async () => {
             if (!id) return;
             try {
