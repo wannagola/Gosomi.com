@@ -22,8 +22,8 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
   };
 
   return (
-    <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[500px] bg-[#1a1a24] border border-[#233554] rounded-xl shadow-2xl z-50 overflow-hidden text-white" style={{ backgroundColor: '#1a1a24', width: '500px', left: '50%', transform: 'translateX(-50%)' }}>
-      <div className="px-8 py-4 border-b border-[#233554] flex justify-between items-center bg-[#1a1a24]" style={{ backgroundColor: '#1a1a24' }}>
+    <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[500px] bg-[#1a1a24] border border-[var(--color-court-border)] rounded-xl shadow-2xl z-50 overflow-hidden text-white" style={{ backgroundColor: '#1a1a24', width: '500px', left: '50%', transform: 'translateX(-50%)' }}>
+      <div className="px-8 py-4 border-b border-[var(--color-court-border)] flex justify-between items-center bg-[#1a1a24]" style={{ backgroundColor: '#1a1a24' }}>
         <div className="flex items-center gap-2 text-[var(--color-gold-primary)]">
           <Bell className="w-5 h-5" />
           <span className="font-bold text-base">알림 센터</span>
@@ -40,15 +40,15 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
             <p>새로운 알림이 없습니다.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 divide-y divide-[#233554]">
+          <div className="grid grid-cols-1 divide-y divide-[var(--color-court-border)]">
             {notifications.map((notification) => (
               <div
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className={`group px-8 py-5 hover:bg-[#233554] cursor-pointer transition-all border-l-4 ${
+                className={`group px-8 py-5 hover:bg-white/5 cursor-pointer transition-all border-l-4 ${
                   !notification.read 
-                    ? 'bg-[#233554]/50 border-l-[var(--color-gold-accent)]' 
-                    : 'border-l-transparent hover:border-l-blue-400'
+                    ? 'bg-white/10 border-l-[var(--color-gold-accent)]' 
+                    : 'border-l-transparent hover:border-l-[var(--color-gold-primary)]'
                 }`}
               >
                 <div className="flex items-start gap-4">
