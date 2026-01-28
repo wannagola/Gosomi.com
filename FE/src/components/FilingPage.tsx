@@ -431,6 +431,7 @@ function Step1BasicInfo({
             onClose={() => setIsFriendModalOpen(false)}
             onConfirm={handleFriendSelection}
             maxSelection={5}
+            initialSelectedIds={formData.invitedJurors}
           />
       )}
 
