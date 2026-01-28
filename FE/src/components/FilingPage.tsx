@@ -427,7 +427,7 @@ function Step1BasicInfo({
 
       {isFriendModalOpen && (
           <FriendSelectionModal 
-            friends={friends}
+            friends={friends.filter(f => f.id !== formData.defendantId && f.id !== formData.plaintiffId)}
             onClose={() => setIsFriendModalOpen(false)}
             onConfirm={handleFriendSelection}
             maxSelection={5}
