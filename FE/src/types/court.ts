@@ -98,6 +98,8 @@ export interface Case {
   juryMode?: 'invite' | 'random'; // 배심원 모드: 초대 또는 랜덤
   juryInviteLink?: string; // 배심원 초대 링크
   juryInvitedUserIds?: number[];
+  juryStatus?: 'INVITED' | 'VOTED'; // 배심원으로서의 투표 상태
+  juryVote?: 'PLAINTIFF' | 'DEFENDANT' | 'BOTH' | null; // 배심원으로서의 투표 내용
 
   juryVotes?: {
     plaintiffWins: number;
