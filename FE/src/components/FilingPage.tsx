@@ -753,9 +753,6 @@ interface Step3Props {
 
 function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const [copied, setCopied] = useState(false);
-  const [juryCopied, setJuryCopied] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [showHamsterModal, setShowHamsterModal] = useState(false);
 
   // 배심원 링크 생성
   const juryLink =
@@ -766,16 +763,9 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
     setCopied(true);
-    setShowShareModal(true);
     setTimeout(() => {
       setCopied(false);
     }, 2000);
-  };
-
-  const copyJuryLink = () => {
-    navigator.clipboard.writeText(juryLink);
-    setJuryCopied(true);
-    setTimeout(() => setJuryCopied(false), 2000);
   };
 
   const shareKakao = () => {
@@ -822,80 +812,114 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   };
 
   return (
-    <div className="text-center space-y-8">
-      {/* Top Banner */}
-      <div className="p-8 bg-green-900 bg-opacity-20 border border-green-600 rounded-xl">
-        <div className="w-20 h-20 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-green-500">
-          <CheckCircle className="w-10 h-10 text-white" />
+    <div className="space-y-6">
+      <h2 className="text-2xl mb-6">접수 완료</h2>
+
+      {/* 배심원 안내 (조건부) */}
+      {formData.juryEnabled && (
+        <div className="p-6 bg-purple-900 bg-opacity-30 border-2 border-purple-600 rounded-xl">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">👥</span>
+            <h3 className="text-lg font-bold text-purple-300">배심원 투표 활성화됨</h3>
+          </div>
+          <p className="text-sm text-gray-300 leading-relaxed">
+            {formData.juryMode === 'INVITE'
+              ? `선택한 친구 ${formData.invitedJurors?.length || 0}명에게 배심원 링크를 공유하여 투표를 받을 수 있습니다.`
+              : '고소미닷컴의 랜덤 배심원 5명이 자동으로 배정되었습니다.'
+            }
+          </p>
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">사건이 성공적으로 접수되었습니다!</h2>
-        <p className="text-gray-300">
-          이제 아래 방법 중 하나를 선택하여<br />
-          피고인(친구)에게 <span className="text-[var(--color-gold-primary)] font-bold">소환장</span>을 보내주세요.
-        </p>
+      )}
+
+      {/* 경고 안내 */}
+      <div className="p-4 bg-red-900 bg-opacity-30 border-2 border-red-700 rounded-lg">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-red-200">
+            <p className="font-semibold mb-1">⚠️ 중요 안내</p>
+            <p className="text-xs leading-relaxed">
+              소환장 수령 후 24시간 내에 변론하지 않을 경우, 패소 기본값이 적용됩니다.
+              반드시 기한을 준수해 주시기 바랍니다.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-4 max-w-md mx-auto">
-        {/* Kakao Share */}
+      {/* 링크 복사 */}
+      <div>
+        <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
+          피고 변론 링크
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={shareLink}
+            readOnly
+            className="flex-1 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white text-sm font-mono focus:outline-none"
+          />
+          <button
+            onClick={copyLink}
+            className="px-6 py-3 bg-[var(--color-gold-dark)] hover:bg-[var(--color-gold-primary)] text-white font-bold rounded-lg transition-colors whitespace-nowrap"
+          >
+            {copied ? '복사됨!' : '복사'}
+          </button>
+        </div>
+      </div>
+
+      {/* 변론 배심원 안내 */}
+      {formData.juryEnabled && formData.juryMode === 'INVITE' && (
+        <div className="p-6 bg-purple-900 bg-opacity-20 border-2 border-purple-700 border-opacity-30 rounded-xl">
+          <div className="flex items-start gap-3 mb-3">
+            <span className="text-3xl">⚖️</span>
+            <div>
+              <h3 className="text-lg font-bold text-purple-300 mb-2">변론 배심원 안내</h3>
+              <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                한쪽 시점의 고소미닷컴이 아닌 배심원 15~30명의 자유로운 투표를 반영하여 투표를 진행합니다.
+              </p>
+              <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside">
+                <li>배심원들은 사건 내용을 확인 후 투표합니다</li>
+                <li>배심 결과는 AI 판결과 함께 비교됩니다</li>
+                <li>투표 결과는 AI 판결에 참고 자료로 활용됩니다</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 공유 버튼 */}
+      <div className="grid grid-cols-2 gap-4">
         <button
           onClick={shareKakao}
-          className="w-full py-4 bg-[#FEE500] text-[#000000] rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-3"
+          className="py-3 bg-[#FEE500] text-[#000000] rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
         >
-          <span className="text-xl">💬</span>
-          카카오톡으로 소환장 보내기
+          <span className="text-lg">💬</span>
+          카카오톡으로 전송
         </button>
-
-        {/* Link Copy */}
         <button
           onClick={copyLink}
-          className="w-full py-4 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] text-white rounded-xl font-bold text-lg hover:border-[var(--color-gold-primary)] transition-all flex items-center justify-center gap-3"
+          className="py-3 bg-[var(--color-court-gray)] border-2 border-[var(--color-court-border)] text-white rounded-lg font-bold hover:border-[var(--color-gold-primary)] transition-all flex items-center justify-center gap-2"
         >
-          <Share2 className="w-6 h-6" />
-          {copied ? "링크 복사 완료!" : "링크 복사하기 전송"}
+          <Share2 className="w-5 h-5" />
+          다른 방법으로 공유
         </button>
-
-        {formData.juryEnabled && formData.juryMode === 'INVITE' && (
-          <button
-            onClick={copyJuryLink}
-            className="w-full py-4 bg-purple-900 bg-opacity-40 border-2 border-purple-600 text-purple-200 rounded-xl font-bold text-lg hover:bg-opacity-60 transition-all flex items-center justify-center gap-3"
-          >
-            <span className="text-xl">👥</span>
-            {juryCopied ? "배심원 초대 링크 복사됨!" : "배심원 초대 링크 복사"}
-          </button>
-        )}
       </div>
 
-      {/* Waiting Room Navigation */}
-      <div className="pt-8 border-t border-[var(--color-court-border)]">
-        <p className="text-gray-500 mb-4 text-sm">소환장을 보냈다면 대기실로 이동하여 진행 상황을 확인하세요.</p>
+      {/* 버튼 */}
+      <div className="flex gap-4 pt-4">
         <button
           onClick={onBack}
-          className="w-full max-w-sm mx-auto py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white font-bold rounded-full hover:shadow-xl transition-all flex items-center justify-center gap-2 mb-3"
+          className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"
         >
-          <span>⏳</span>
-          대기실로 이동 (피고 답변 대기 중)
+          이전
         </button>
-
-        {/* Hamster Button */}
         <button
-          onClick={() => setShowHamsterModal(true)}
-          className="w-full max-w-sm mx-auto py-3 bg-orange-900 bg-opacity-40 border-2 border-orange-600 text-orange-200 font-bold rounded-full hover:bg-opacity-60 transition-all flex items-center justify-center gap-2"
+          onClick={onBack}
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
         >
-          <span>🐹</span>
-          잠깐! 고구마 먹는 햄스터 보고 가기
+          <CheckCircle className="w-5 h-5" />
+          사건 접수 완료
         </button>
       </div>
-
-      {showShareModal && (
-        <ShareSuccessModal onClose={() => setShowShareModal(false)} />
-      )}
-
-      {showHamsterModal && (
-        <HamsterModal onClose={() => {
-          setShowHamsterModal(false);
-          setTimeout(() => onBack(), 300);
-        }} />
-      )}
     </div>
   );
 }

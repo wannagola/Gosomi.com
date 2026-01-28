@@ -191,19 +191,20 @@ export default function App() {
             await caseService.submitDefense(caseId, response.statement, response.evidences);
             // Verdict is NO LONGER auto-generated.
             // User must explicitly request it now.
+            
+            // First refresh data to get the updated case state
             await refreshData();
-            // Stay on page or navigate to waiting? 
-            // Logic says: if defendant submits, status becomes DEFENSE_SUBMITTED. 
-            // CaseRouteHandler will show WaitingPage (since no verdict yet).
-            // So navigate to main case path seems correct.
-            // navigate(`/case/${caseId}`); // Navigation alone might not trigger re-render correctly
-            navigate(`/case/${caseId}`);
+            
+            // Then navigate to the case page
+            // The CaseRouteHandler will evaluate the updated state and show WaitingPage
+            // since defendantResponse now exists
+            navigate(`/case/${caseId}`, { replace: true });
         } catch (error: any) {
             console.error("Defense submission failed", error);
             // 만약 이미 제출된 상태라면, 성공한 것으로 간주하고 이동
             if (error.response?.data?.error === "defense already submitted" || error.message?.includes("defense already submitted")) {
                 await refreshData();
-                navigate(`/case/${caseId}`);
+                navigate(`/case/${caseId}`, { replace: true });
                 return;
             }
             alert("변론 제출에 실패했습니다.");

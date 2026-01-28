@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Shield, Upload, AlertTriangle, Send, Paperclip, ImageIcon } from 'lucide-react';
 import { Case, Evidence, LAWS } from '@/types/court';
+import { useNavigate } from 'react-router-dom';
 
 interface DefensePageProps {
   case_: Case;
@@ -8,12 +9,21 @@ interface DefensePageProps {
 }
 
 export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statement, setStatement] = useState('');
   const [evidences, setEvidences] = useState<Evidence[]>([]);
   const [textEvidence, setTextEvidence] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<FileList | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Redirect if defense has already been submitted
+  useEffect(() => {
+    if (case_.defendantResponse) {
+      // Defense already submitted, redirect to waiting page
+      navigate(`/case/${case_.id}`, { replace: true });
+    }
+  }, [case_.defendantResponse, case_.id, navigate]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAttachedFiles(e.target.files);
