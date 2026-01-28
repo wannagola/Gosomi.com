@@ -66,10 +66,10 @@ export function MyPage({
     const filteredCases = (cases || []).filter(case_ => {
         const matchesFilter = caseFilter === 'all' || case_.status === caseFilter;
         const matchesSearch = 
-            case_.title.toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
-            case_.caseNumber.toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
-            case_.plaintiff.toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
-            case_.defendant.toLowerCase().includes(caseSearchQuery.toLowerCase());
+            (case_.title || "").toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
+            (case_.caseNumber || "").toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
+            (case_.plaintiff || "").toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
+            (case_.defendant || "").toLowerCase().includes(caseSearchQuery.toLowerCase());
         
         // Filter: Only show cases where user is Plaintiff or Defendant
         const isParticipant = String(case_.plaintiffId) === String(user.id) || String(case_.defendantId) === String(user.id);
