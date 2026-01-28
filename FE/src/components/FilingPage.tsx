@@ -234,10 +234,10 @@ function StepIndicator({
     <div className="flex flex-col items-center">
       <div
         className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 transition-all ${completed
-            ? "bg-[var(--color-gold-primary)] border-[var(--color-gold-primary)] text-white"
-            : active
-              ? "bg-[var(--color-gold-dark)] border-[var(--color-gold-accent)] text-white"
-              : "bg-transparent border-[var(--color-court-border)] text-gray-500"
+          ? "bg-[var(--color-gold-primary)] border-[var(--color-gold-primary)] text-white"
+          : active
+            ? "bg-[var(--color-gold-dark)] border-[var(--color-gold-accent)] text-white"
+            : "bg-transparent border-[var(--color-court-border)] text-gray-500"
           }`}
       >
         {completed ? <CheckCircle className="w-6 h-6" /> : number}
@@ -364,8 +364,8 @@ function Step1BasicInfo({
               type="button"
               onClick={() => setFormData({ ...formData, lawType: law.id })}
               className={`p-4 rounded-lg border-2 transition-all ${formData.lawType === law.id
-                  ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-20"
-                  : "border-[var(--color-court-border)] hover:border-[var(--color-gold-dark)]"
+                ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-20"
+                : "border-[var(--color-court-border)] hover:border-[var(--color-gold-dark)]"
                 }`}
             >
               <div className="mb-2">
@@ -429,8 +429,8 @@ function Step1BasicInfo({
                 type="button"
                 onClick={() => setFormData({ ...formData, juryMode: "INVITE" })}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${formData.juryMode === "INVITE"
-                    ? "border-purple-500 bg-purple-900 bg-opacity-30"
-                    : "border-purple-800 border-opacity-30 hover:border-purple-700"
+                  ? "border-purple-500 bg-purple-900 bg-opacity-30"
+                  : "border-purple-800 border-opacity-30 hover:border-purple-700"
                   }`}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -459,8 +459,8 @@ function Step1BasicInfo({
                 type="button"
                 onClick={() => setFormData({ ...formData, juryMode: "RANDOM" })}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${formData.juryMode === "RANDOM"
-                    ? "border-purple-500 bg-purple-900 bg-opacity-30"
-                    : "border-purple-800 border-opacity-30 hover:border-purple-700"
+                  ? "border-purple-500 bg-purple-900 bg-opacity-30"
+                  : "border-purple-800 border-opacity-30 hover:border-purple-700"
                   }`}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -513,8 +513,8 @@ function Step1BasicInfo({
           onClick={onNext}
           disabled={!isValid}
           className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all ${isValid
-              ? "bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white hover:shadow-lg"
-              : "bg-gray-700 text-gray-500 cursor-not-allowed"
+            ? "bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white hover:shadow-lg"
+            : "bg-gray-700 text-gray-500 cursor-not-allowed"
             }`}
         >
           다음 단계: 증거 제출
@@ -659,8 +659,8 @@ function Step2Evidence({
               <div
                 key={evidence.id}
                 className={`p-4 rounded-lg border-2 ${evidence.isKeyEvidence
-                    ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-10"
-                    : "border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30"
+                  ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-10"
+                  : "border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30"
                   }`}
               >
                 <div className="flex items-start justify-between">
@@ -943,9 +943,9 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         <div
           className="fixed z-[9999] animate-fade-in-up"
           style={{
-            top: '2rem',
+            top: '50%',
             left: '50%',
-            transform: 'translateX(-50%)'
+            transform: 'translate(-50%, -50%)'
           }}
         >
           <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
