@@ -460,7 +460,7 @@ function CaseRouteHandler({
                         onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)}
                     />
                 ) : (
-                    isDefendant && !hasVerdict ? <Navigate to="defense" replace /> :
+                    isDefendant && !hasVerdict && !case_.defendantResponse ? <Navigate to="defense" replace /> :
                         <WaitingPage
                             case_={case_}
                             currentUser={currentUser}

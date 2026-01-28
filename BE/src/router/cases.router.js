@@ -259,12 +259,33 @@ router.get("/:id", async (req, res) => {
 
     //프론트에 필요한 형태만 내려줌
     // Fetch Defense Content if available (for Jury View)
-    const [dRows] = await pool.query("SELECT content FROM defenses WHERE case_id=? ORDER BY created_at DESC LIMIT 1", [id]);
-    const defenseContent = dRows[0]?.content || null;
+    const [dRows] = await pool.query("SELECT id, content, created_at FROM defenses WHERE case_id=? ORDER BY created_at DESC LIMIT 1", [id]);
+    const defense = dRows[0] || null;
 
-    // Fetch evidences - always return array (empty if none)
+    let defendantResponse = null;
+    if (defense) {
+      // Fetch defense evidences
+      const [defEvRows] = await pool.query(
+        "SELECT id, type, text_content, file_path FROM evidences WHERE case_id=? AND submitted_by='DEFENDANT' ORDER BY created_at",
+        [id]
+      );
+      const defenseEvidences = defEvRows.map(e => ({
+        id: String(e.id),
+        type: e.type,
+        content: e.text_content || e.file_path || '',
+        isKeyEvidence: false
+      }));
+
+      defendantResponse = {
+        statement: defense.content,
+        evidences: defenseEvidences,
+        submittedAt: defense.created_at
+      };
+    }
+
+    // Fetch plaintiff evidences - always return array (empty if none)
     const [evRows] = await pool.query(
-      "SELECT id, type, text_content, file_path, submitted_by FROM evidences WHERE case_id=? ORDER BY created_at",
+      "SELECT id, type, text_content, file_path FROM evidences WHERE case_id=? AND submitted_by='PLAINTIFF' ORDER BY created_at",
       [id]
     );
     const evidences = evRows.map(e => ({
@@ -303,8 +324,8 @@ router.get("/:id", async (req, res) => {
       caseNumber: c.case_number,
       title: c.title,
       content: c.content,
-      evidences, // Always an array
-      defenseContent, // Added for Jury
+      evidences, // Plaintiff evidences
+      defendantResponse, // Defense with evidences
       status: c.status,
       plaintiffId: c.plaintiff_id,
       defendantId: c.defendant_id,
