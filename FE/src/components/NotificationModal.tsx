@@ -13,11 +13,11 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.read) {
-        onMarkAsRead(notification.id);
+      onMarkAsRead(notification.id);
     }
     if (notification.link) {
-        navigate(notification.link);
-        onClose();
+      navigate(notification.link);
+      onClose();
     }
   };
 
@@ -33,7 +33,14 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
         </button>
       </div>
 
-      <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+      <div
+        className="max-h-[min(500px,70vh)] overflow-y-auto custom-scrollbar"
+        style={{
+          scrollbarWidth: 'auto',
+          scrollbarColor: 'var(--color-gold-primary) var(--color-court-gray)'
+        }}
+      >
+        {/* Style for Webkit scrollbars is globally defined, but we ensure it works here */}
         {notifications.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
             <Bell className="w-12 h-12 mx-auto mb-3 opacity-20" />
@@ -45,19 +52,17 @@ export function NotificationModal({ notifications, onClose, onMarkAsRead }: Noti
               <div
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
-                className={`group px-8 py-5 hover:bg-white/5 cursor-pointer transition-all border-l-4 ${
-                  !notification.read 
-                    ? 'bg-white/10 border-l-[var(--color-gold-accent)]' 
-                    : 'border-l-transparent hover:border-l-[var(--color-gold-primary)]'
-                }`}
+                className={`group px-8 py-5 hover:bg-white/5 cursor-pointer transition-all border-l-4 ${!notification.read
+                  ? 'bg-white/10 border-l-[var(--color-gold-accent)]'
+                  : 'border-l-transparent hover:border-l-[var(--color-gold-primary)]'
+                  }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`mt-1.5 p-2 rounded-full flex-shrink-0 ${
-                     !notification.read ? 'bg-[var(--color-gold-primary)] text-black' : 'bg-slate-700 text-gray-400'
-                  }`}>
+                  <div className={`mt-1.5 p-2 rounded-full flex-shrink-0 ${!notification.read ? 'bg-[var(--color-gold-primary)] text-black' : 'bg-slate-700 text-gray-400'
+                    }`}>
                     <Bell className="w-4 h-4" />
                   </div>
-                  
+
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-1">
                       <p className={`text-base ${!notification.read ? 'text-white font-bold' : 'text-gray-300'}`}>

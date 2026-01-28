@@ -317,7 +317,26 @@ router.get("/:id", async (req, res) => {
     voteRows.forEach(r => {
       if (r.vote === 'PLAINTIFF') juryVotes.plaintiffWins = Number(r.cnt);
       else if (r.vote === 'DEFENDANT') juryVotes.defendantWins = Number(r.cnt);
+      else if (r.vote === 'BOTH') juryVotes.bothGuilty = Number(r.cnt);
     });
+
+    // Check if current user is a juror and has voted
+    const userId = Number(req.query.userId);
+    let userVote = null;
+
+    if (userId && !isNaN(userId)) {
+      const [myVoteRows] = await pool.query(
+        "SELECT status, vote FROM jurors WHERE case_id=? AND id=?",
+        [id, userId]
+      );
+      if (myVoteRows.length > 0) {
+        userVote = {
+          isJuror: true,
+          hasVoted: myVoteRows[0].status === 'VOTED',
+          vote: myVoteRows[0].vote
+        };
+      }
+    }
 
     return res.json({
       id: c.id,
@@ -334,6 +353,9 @@ router.get("/:id", async (req, res) => {
       createdAt: c.created_at,
 
       verdictText: c.verdict_text,
+      juryVotes,
+      userVote,
+      penaltyMode: c.penalty_choice ? true : false,
       penalties: c.penalties_json,   // { serious:[], funny:[] }
       faultRatio: c.fault_ratio,     // { plaintiff:40, defendant:60 }
       lawType: c.law_type,
@@ -454,29 +476,6 @@ router.get("/user/:userId/stats", async (req, res) => {
         winningRate: Number(winningRate)
       }
     });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// POST /api/cases/:id/select-penalty - 벌칙 선택
-router.post('/:id/select-penalty', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { penalty } = req.body; // "serious" or "funny"
-
-    if (!penalty || !['serious', 'funny'].includes(penalty)) {
-      return res.status(400).json({ error: 'Invalid penalty choice' });
-    }
-
-    // Update penalty_choice in database
-    const choice = penalty.toUpperCase(); // "SERIOUS" or "FUNNY"
-    await pool.query(
-      'UPDATE cases SET penalty_choice = ? WHERE id = ?',
-      [choice, id]
-    );
-
-    res.json({ ok: true, penaltyChoice: choice });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

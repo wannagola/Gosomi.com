@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Users, ThumbsUp, ThumbsDown, Scale, TrendingUp } from 'lucide-react';
 import { Case, LAWS } from '@/types/court';
 
@@ -11,6 +12,18 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
   const [selectedVote, setSelectedVote] = useState<'plaintiff' | 'defendant' | 'both' | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [showLawModal, setShowLawModal] = useState(false);
+
+  useEffect(() => {
+    // Check for server-provided vote status
+    // @ts-ignore - userVote added to backend response but maybe not in Case type yet
+    const userVote = case_.userVote;
+    if (userVote && userVote.hasVoted) {
+      setHasVoted(true);
+      if (userVote.vote === 'PLAINTIFF') setSelectedVote('plaintiff');
+      else if (userVote.vote === 'DEFENDANT') setSelectedVote('defendant');
+      else if (userVote.vote === 'BOTH') setSelectedVote('both');
+    }
+  }, [case_]);
 
   const law = LAWS.find(l => l.id === case_.lawType);
 
@@ -80,6 +93,56 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
                 <span className="text-sm text-gray-400">피고 입장 {case_.defendantResponse ? '✓' : '대기 중'}</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 투표 완료 화면
+  if (hasVoted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10 flex items-center justify-center" style={{ paddingTop: '150px' }}>
+        <div className="max-w-2xl w-full text-center">
+          <div className="official-document rounded-2xl p-12">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center animate-bounce">
+              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+              투표 완료!
+            </h1>
+
+            <p className="text-xl text-gray-300 mb-6">
+              배심원 참여가 성공적으로 완료되었습니다.
+            </p>
+
+            <div className="bg-[var(--color-court-dark)] bg-opacity-50 rounded-xl p-6 mb-8">
+              <p className="text-lg font-semibold text-green-400 mb-3">
+                당신의 선택: {selectedVote === 'plaintiff' ? '원고 승' : selectedVote === 'defendant' ? '피고 승' : '쌍방 과실'}
+              </p>
+              <p className="text-sm text-gray-400">
+                당신의 의견이 최종 판결에 반영됩니다.<br />
+                AI 판사가 모든 증거와 배심원 의견을 종합하여 판결을 내릴 것입니다.
+              </p>
+            </div>
+
+            <div className="bg-purple-900 bg-opacity-20 border border-purple-700 rounded-xl p-6 mb-6">
+              <p className="text-purple-200 text-sm">
+                💡 <strong>다음 단계</strong><br />
+                원고 또는 피고가 "판결 요청" 버튼을 누르면<br />
+                AI 판사의 최종 판결이 선고됩니다.
+              </p>
+            </div>
+
+            <button
+              onClick={() => window.location.href = '/'}
+              className="px-8 py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white font-bold rounded-xl hover:shadow-lg transition-all"
+            >
+              로비로 돌아가기
+            </button>
           </div>
         </div>
       </div>
@@ -251,16 +314,16 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
         </div>
 
         {/* Law Details Modal */}
-        {showLawModal && law && (
+        {showLawModal && law && createPortal(
           <div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] p-4"
             onClick={() => setShowLawModal(false)}
           >
             <div
-              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-[80vh] overflow-y-auto p-8"
+              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-[80vh] overflow-y-auto p-8 relative shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 sticky top-0 bg-[var(--color-court-gray)] z-10 pb-4 border-b border-[var(--color-court-border)]">
                 <div className="flex items-center gap-3">
                   {law.icon && (
                     <img src={law.icon} alt={law.title} className="w-16 h-16 object-contain" />
@@ -272,20 +335,20 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
                 </div>
                 <button
                   onClick={() => setShowLawModal(false)}
-                  className="text-gray-400 hover:text-white text-2xl font-bold"
+                  className="text-gray-400 hover:text-white text-2xl font-bold p-2"
                 >
                   ×
                 </button>
               </div>
 
-              <div className="border-t border-[var(--color-court-border)] pt-6">
+              <div className="pt-2">
                 <h3 className="text-xl font-bold text-white mb-4">법률 조항</h3>
                 <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
                   {law.content || '조항 정보가 없습니다.'}
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-end">
+              <div className="mt-8 flex justify-end sticky bottom-0 bg-[var(--color-court-gray)] pt-4 border-t border-[var(--color-court-border)]">
                 <button
                   onClick={() => setShowLawModal(false)}
                   className="px-6 py-2 bg-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] text-black font-bold rounded-lg transition-colors"
@@ -294,7 +357,8 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </div>

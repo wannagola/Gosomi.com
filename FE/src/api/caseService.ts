@@ -68,7 +68,7 @@ export const caseService = {
 
   // Select Penalty
   selectPenalty: async (caseId: string, choice: 'SERIOUS' | 'FUNNY'): Promise<void> => {
-    await apiClient.post(`/api/cases/${caseId}/select-penalty`, { penalty: choice.toLowerCase() });
+    await apiClient.post(`/api/cases/${caseId}/penalty`, { choice: choice });
   },
 
   // Appeal

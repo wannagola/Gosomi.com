@@ -37,21 +37,21 @@ export function VerdictPage({
   const [confirmedPenalty, setConfirmedPenalty] = useState<
     "serious" | "funny" | null
   >(() => {
-     // Use penaltyChoice ("SERIOUS" | "FUNNY") instead of penaltySelected (Text)
-     const choice = case_.penaltyChoice;
-     if (!choice) return null;
-     if (choice.toUpperCase() === 'SERIOUS') return 'serious';
-     if (choice.toUpperCase() === 'FUNNY') return 'funny';
-     return null;
+    // Use penaltyChoice ("SERIOUS" | "FUNNY") instead of penaltySelected (Text)
+    const choice = case_.penaltyChoice;
+    if (!choice) return null;
+    if (choice.toUpperCase() === 'SERIOUS') return 'serious';
+    if (choice.toUpperCase() === 'FUNNY') return 'funny';
+    return null;
   });
 
   // Sync state with prop changes (e.g. initial load or refetch)
   useEffect(() => {
-     const choice = case_.penaltyChoice;
-     if (choice) {
-        if (choice.toUpperCase() === 'SERIOUS') setConfirmedPenalty('serious');
-        else if (choice.toUpperCase() === 'FUNNY') setConfirmedPenalty('funny');
-     }
+    const choice = case_.penaltyChoice;
+    if (choice) {
+      if (choice.toUpperCase() === 'SERIOUS') setConfirmedPenalty('serious');
+      else if (choice.toUpperCase() === 'FUNNY') setConfirmedPenalty('funny');
+    }
   }, [case_.penaltyChoice]);
   const [showAppealForm, setShowAppealForm] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -145,7 +145,7 @@ export function VerdictPage({
 
 
   const law = LAWS.find((l) => l.id === case_.lawType);
-  
+
   // Debug: Check if law type is being passed correctly
   console.log('VerdictPage Debug:', { lawType: case_.lawType, law: law?.title });
 
@@ -155,13 +155,13 @@ export function VerdictPage({
     let ratio = { plaintiff: 50, defendant: 50 };
     if (case_.faultRatio) {
       try {
-        const parsed = typeof case_.faultRatio === 'string' 
-          ? JSON.parse(case_.faultRatio) 
+        const parsed = typeof case_.faultRatio === 'string'
+          ? JSON.parse(case_.faultRatio)
           : case_.faultRatio;
-        
+
         ratio = {
-            plaintiff: parsed.plaintiff || 50,
-            defendant: parsed.defendant || 50
+          plaintiff: parsed.plaintiff || 50,
+          defendant: parsed.defendant || 50
         };
       } catch {
         ratio = { plaintiff: 50, defendant: 50 };
@@ -178,8 +178,8 @@ export function VerdictPage({
     const defendantPercent = 100 - plaintiffPercent;
 
     return {
-        plaintiff: plaintiffPercent,
-        defendant: defendantPercent
+      plaintiff: plaintiffPercent,
+      defendant: defendantPercent
     };
   };
 
@@ -206,7 +206,7 @@ export function VerdictPage({
 
   const getSeriousPenalty = () => {
     if (parsedPenalties.serious && parsedPenalties.serious.length > 0) {
-      return parsedPenalties.serious.map((p: string, i: number) => `${i+1}. ${p}`).join('\n');
+      return parsedPenalties.serious.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n');
     }
     const l: any = law as any;
     return (
@@ -220,7 +220,7 @@ export function VerdictPage({
 
   const getFunnyPenalty = () => {
     if (parsedPenalties.funny && parsedPenalties.funny.length > 0) {
-      return parsedPenalties.funny.map((p: string, i: number) => `${i+1}. ${p}`).join('\n');
+      return parsedPenalties.funny.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n');
     }
     const l: any = law as any;
     return (
@@ -252,7 +252,7 @@ export function VerdictPage({
 
   const juryMajority =
     juryVotes.plaintiffWins > juryVotes.defendantWins &&
-    juryVotes.plaintiffWins > juryVotes.bothGuilty
+      juryVotes.plaintiffWins > juryVotes.bothGuilty
       ? "원고 승"
       : juryVotes.defendantWins > juryVotes.bothGuilty
         ? "피고 승"
@@ -275,8 +275,8 @@ export function VerdictPage({
     }
 
     const title = case_.status.includes('APPEAL') ? `📜 항소심 판결문 도착` : `⚖️ 판결문 도착`;
-    const description = `[${case_.plaintiff} vs ${case_.defendant}] 사건의 판결이 선고되었습니다.\n\n` + 
-                        `AI 판사와 배심원의 최종 판결을 지금 바로 확인해보세요.`;
+    const description = `[${case_.plaintiff} vs ${case_.defendant}] 사건의 판결이 선고되었습니다.\n\n` +
+      `AI 판사와 배심원의 최종 판결을 지금 바로 확인해보세요.`;
 
     window.Kakao.Link.sendDefault({
       objectType: "feed",
@@ -362,7 +362,7 @@ export function VerdictPage({
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-purple-400 mb-2">항소 이유 ({case_.appeal.requester === 'plaintiff' ? '원고' : '피고'})</h3>
                 <div className="p-4 bg-purple-900 bg-opacity-20 rounded-lg border-l-4 border-purple-600">
-                    <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{case_.appeal.reason}</p>
+                  <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{case_.appeal.reason}</p>
                 </div>
               </div>
             )}
@@ -370,7 +370,7 @@ export function VerdictPage({
               <div>
                 <h3 className="text-lg font-semibold text-orange-400 mb-2">반론 ({case_.appeal.requester === 'plaintiff' ? '피고' : '원고'})</h3>
                 <div className="p-4 bg-orange-900 bg-opacity-20 rounded-lg border-l-4 border-orange-600">
-                    <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{case_.appeal.defenseContent}</p>
+                  <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{case_.appeal.defenseContent}</p>
                 </div>
               </div>
             )}
@@ -525,11 +525,11 @@ export function VerdictPage({
                         ? juryVotes.defendantWins
                         : juryVotes.plaintiffWins) /
                         totalJuryVotes) *
-                        100 -
-                        Math.max(
-                          verdict.defendantFault,
-                          verdict.plaintiffFault,
-                        ),
+                      100 -
+                      Math.max(
+                        verdict.defendantFault,
+                        verdict.plaintiffFault,
+                      ),
                     ) < 20
                       ? "✅ AI 판결과 배심원 여론이 일치합니다!"
                       : "⚠️ AI 판결과 배심원 여론에 차이가 있습니다. 항소를 고려해보세요."}
@@ -547,68 +547,94 @@ export function VerdictPage({
           </div>
 
           <p className="text-gray-400 mb-6">
-            AI 판사가 제안한 두 가지 처벌 중 하나를 피고인이 직접 선택합니다.<br/>
+            AI 판사가 제안한 두 가지 처벌 중 하나를 피고인이 직접 선택합니다.<br />
             선택된 처벌은 즉시 효력을 가집니다.
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* 진지한 벌칙 */}
-            <div 
-                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
+            <div
+              className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
                     ${confirmedPenalty === 'serious' ? 'border-red-500 bg-red-900 bg-opacity-30' : 'border-gray-700 hover:border-red-500 bg-black bg-opacity-40'}
                     ${!isDefendant && confirmedPenalty !== 'serious' ? 'opacity-50 grayscale pointer-events-none' : ''}
                 `}
-                onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
+              onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
             >
-                {confirmedPenalty === 'serious' && (
-                    <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                        확정됨
-                    </div>
-                )}
-                <h3 className="text-xl font-bold text-red-400 mb-3">⚖️ 엄중한 처벌</h3>
-                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getSeriousPenalty()}</p>
-                
-                {isDefendant && !confirmedPenalty && (
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('serious'); }}
-                        className="mt-4 w-full py-3 rounded-lg bg-red-900 hover:bg-red-800 text-red-100 font-bold border border-red-700 transition-colors"
-                    >
-                        이 처벌을 받아들이겠습니다
-                    </button>
-                )}
+              {confirmedPenalty === 'serious' && (
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                  확정됨
+                </div>
+              )}
+              <h3 className="text-xl font-bold text-red-400 mb-3">⚖️ 엄중한 처벌</h3>
+              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getSeriousPenalty()}</p>
+
+              {isDefendant && !confirmedPenalty && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('serious'); }}
+                  className="mt-4 w-full py-3 rounded-lg bg-red-900 hover:bg-red-800 text-red-100 font-bold border border-red-700 transition-colors"
+                >
+                  이 처벌을 받아들이겠습니다
+                </button>
+              )}
             </div>
 
             {/* 재미있는 벌칙 */}
-            <div 
-                className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
+            <div
+              className={`p-6 rounded-xl border-2 transition-all cursor-pointer relative overflow-hidden
                     ${confirmedPenalty === 'funny' ? 'border-yellow-500 bg-yellow-900 bg-opacity-30' : 'border-gray-700 hover:border-yellow-500 bg-black bg-opacity-40'}
                     ${!isDefendant && confirmedPenalty !== 'funny' ? 'opacity-50 grayscale pointer-events-none' : ''}
                 `}
-                onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
+              onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
             >
-                {confirmedPenalty === 'funny' && (
-                    <div className="absolute top-2 right-2 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                        확정됨
-                    </div>
-                )}
-                <h3 className="text-xl font-bold text-yellow-500 mb-3">🎭 유쾌한 처벌</h3>
-                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getFunnyPenalty()}</p>
-                
-                {isDefendant && !confirmedPenalty && (
-                    <button 
-                         onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('funny'); }}
-                         className="mt-4 w-full py-3 rounded-lg bg-yellow-600 hover:bg-yellow-500 text-black font-bold transition-colors"
-                    >
-                        이 처벌을 선택하겠습니다
-                    </button>
-                )}
+              {confirmedPenalty === 'funny' && (
+                <div className="absolute top-2 right-2 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                  확정됨
+                </div>
+              )}
+              <h3 className="text-xl font-bold text-yellow-500 mb-3">🎭 유쾌한 처벌</h3>
+              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getFunnyPenalty()}</p>
+
+              {isDefendant && !confirmedPenalty && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleConfirmPenalty('funny'); }}
+                  className="mt-4 w-full py-3 rounded-lg bg-yellow-600 hover:bg-yellow-500 text-black font-bold transition-colors"
+                >
+                  이 처벌을 선택하겠습니다
+                </button>
+              )}
             </div>
           </div>
-          
-          {!isDefendant && !confirmedPenalty && (
-              <div className="mt-8 p-4 bg-gray-800 rounded-lg text-center text-gray-400">
-                  피고인이 처벌을 선택하기를 기다리고 있습니다...
+
+          {/* Messages based on state */}
+          {confirmedPenalty ? (
+            <div className="mt-8 p-6 bg-gradient-to-r from-green-900 to-green-800 bg-opacity-30 border-2 border-green-600 rounded-xl">
+              <h3 className="text-xl font-bold text-green-400 mb-3">✅ 최종 처벌 확정</h3>
+              <p className="text-green-200 mb-4">
+                피고인이 <strong>{confirmedPenalty === 'serious' ? '⚖️ 엄중한 처벌' : '🎭 유쾌한 처벌'}</strong>을 선택하였습니다.
+              </p>
+              <div className="bg-black bg-opacity-40 p-4 rounded-lg border-l-4 border-green-500">
+                <p className="text-sm font-semibold text-green-300 mb-2">확정된 벌칙 내용:</p>
+                <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+                  {confirmedPenalty === 'serious' ? getSeriousPenalty() : getFunnyPenalty()}
+                </p>
               </div>
+              <p className="text-xs text-green-300 mt-4 text-center">
+                ⚠️ 확정된 처벌은 변경할 수 없습니다.
+              </p>
+            </div>
+          ) : isDefendant ? (
+            <div className="mt-8 p-6 bg-orange-900 bg-opacity-20 border-2 border-orange-600 rounded-xl text-center">
+              <p className="text-orange-200 text-lg font-semibold">
+                👆 위 두 가지 처벌 중 하나를 선택하세요
+              </p>
+              <p className="text-orange-300 text-sm mt-2">
+                각 처벌 카드를 클릭하거나 버튼을 눌러 확정하세요.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 p-4 bg-gray-800 rounded-lg text-center text-gray-400">
+              피고인이 처벌을 선택하기를 기다리고 있습니다...
+            </div>
           )}
         </div>
 
@@ -619,9 +645,9 @@ export function VerdictPage({
           <div className={`grid gap-4 ${
             // 항소 버튼이 보이면 3열, 안 보이면 2열 (오직 피고만 항소 가능)
             (!case_.status.includes('APPEAL') && (!case_.appealStatus || case_.appealStatus === 'NONE') && case_.status === 'VERDICT_READY' && isDefendant)
-              ? "md:grid-cols-3" 
+              ? "md:grid-cols-3"
               : "md:grid-cols-2"
-          }`}>
+            }`}>
             <button
               type="button"
               onClick={handleShare}
@@ -707,9 +733,8 @@ function PenaltyButton({
 
   return (
     <div
-      className={`p-6 rounded-xl border-2 transition-all text-left ${
-        isSelected || isConfirmed ? selectedClass : defaultClass
-      } ${isDisabled ? "opacity-50" : ""}`}
+      className={`p-6 rounded-xl border-2 transition-all text-left ${isSelected || isConfirmed ? selectedClass : defaultClass
+        } ${isDisabled ? "opacity-50" : ""}`}
     >
       <button
         type="button"
@@ -772,18 +797,18 @@ function AppealModal({ onClose, onSubmit }: AppealModalProps) {
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
       <div className="official-document rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto custom-scrollbar">
         <div className="sticky top-0 bg-[#1a1a2e] border-b-2 border-[var(--color-gold-dark)] p-4 flex items-center justify-between z-10">
-            <div className="flex items-center gap-3">
-              <FileText className="w-6 h-6 text-orange-400" />
-              <h2 className="text-xl">항소장 작성</h2>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-[var(--color-court-border)] rounded-lg transition-colors"
-            >
-              <span className="text-xl text-gray-400">×</span>
-            </button>
+          <div className="flex items-center gap-3">
+            <FileText className="w-6 h-6 text-orange-400" />
+            <h2 className="text-xl">항소장 작성</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-[var(--color-court-border)] rounded-lg transition-colors"
+          >
+            <span className="text-xl text-gray-400">×</span>
+          </button>
         </div>
-        
+
         <div className="p-6 space-y-5">
           <div className="p-3 bg-orange-900 bg-opacity-20 border border-orange-700 rounded-lg">
             <p className="text-sm text-orange-200">
