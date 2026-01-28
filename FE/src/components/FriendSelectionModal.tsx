@@ -37,7 +37,7 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
       <div className="w-full max-w-md bg-[#0F172A] bg-opacity-100 backdrop-blur-none border-2 border-[var(--color-gold-dark)] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
         {/* Header */}
         <div className="p-4 border-b border-[var(--color-court-border)] flex justify-between items-center bg-[#0F172A] bg-opacity-100">
