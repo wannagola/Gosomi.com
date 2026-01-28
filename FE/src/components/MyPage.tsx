@@ -63,7 +63,13 @@ export function MyPage({
   // (Visuals handled in render)
 
   // --- Case Logic (Copied/Adapted from MyCasesPage) ---
-  const filteredCases = (cases || []).filter(case_ => {
+  // First filter to only include cases where user is plaintiff or defendant (exclude jury cases)
+  const myCases = (cases || []).filter(case_ => {
+    const isParticipant = String(case_.plaintiffId) === String(user.id) || String(case_.defendantId) === String(user.id);
+    return isParticipant;
+  });
+
+  const filteredCases = myCases.filter(case_ => {
     const matchesFilter = caseFilter === 'all' || case_.status === caseFilter;
     const matchesSearch =
       (case_.title || "").toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
@@ -71,20 +77,18 @@ export function MyPage({
       (case_.plaintiff || "").toLowerCase().includes(caseSearchQuery.toLowerCase()) ||
       (case_.defendant || "").toLowerCase().includes(caseSearchQuery.toLowerCase());
 
-    // Filter: Only show cases where user is Plaintiff or Defendant
-    const isParticipant = String(case_.plaintiffId) === String(user.id) || String(case_.defendantId) === String(user.id);
-
-    return matchesFilter && matchesSearch && isParticipant;
+    return matchesFilter && matchesSearch;
   });
 
+  // Count only cases where user is plaintiff or defendant
   const statusStats = {
-    all: cases.length,
-    'SUMMONED': cases.filter(c => c.status === 'SUMMONED').length,
-    'DEFENSE_SUBMITTED': cases.filter(c => c.status === 'DEFENSE_SUBMITTED').length,
-    'VERDICT_READY': cases.filter(c => c.status === 'VERDICT_READY').length,
-    'COMPLETED': cases.filter(c => c.status === 'COMPLETED').length,
-    'UNDER_APPEAL': cases.filter(c => c.status === 'UNDER_APPEAL').length,
-    'APPEAL_VERDICT_READY': cases.filter(c => c.status === 'APPEAL_VERDICT_READY').length,
+    all: myCases.length,
+    'SUMMONED': myCases.filter(c => c.status === 'SUMMONED').length,
+    'DEFENSE_SUBMITTED': myCases.filter(c => c.status === 'DEFENSE_SUBMITTED').length,
+    'VERDICT_READY': myCases.filter(c => c.status === 'VERDICT_READY').length,
+    'COMPLETED': myCases.filter(c => c.status === 'COMPLETED').length,
+    'UNDER_APPEAL': myCases.filter(c => c.status === 'UNDER_APPEAL').length,
+    'APPEAL_VERDICT_READY': myCases.filter(c => c.status === 'APPEAL_VERDICT_READY').length,
   };
 
   return (
@@ -308,8 +312,8 @@ function StatCard({ label, count, color, active, onClick }: StatCardProps) {
     <button
       onClick={onClick}
       className={`p-4 rounded-lg border-2 transition-all ${active
-          ? `${colorClasses[color]} bg-opacity-30 scale-105`
-          : 'border-[var(--color-court-border)] bg-[var(--color-court-gray)] hover:border-[var(--color-gold-dark)]'
+        ? `${colorClasses[color]} bg-opacity-30 scale-105`
+        : 'border-[var(--color-court-border)] bg-[var(--color-court-gray)] hover:border-[var(--color-gold-dark)]'
         }`}
     >
       <p className="text-2xl font-bold text-white mb-1">{count}</p>

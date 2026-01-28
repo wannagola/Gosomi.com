@@ -755,6 +755,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const [copied, setCopied] = useState(false);
   const [juryCopied, setJuryCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showHamsterModal, setShowHamsterModal] = useState(false);
 
   // 배심원 링크 생성
   const juryLink =
@@ -869,16 +870,68 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         <p className="text-gray-500 mb-4 text-sm">소환장을 보냈다면 대기실로 이동하여 진행 상황을 확인하세요.</p>
         <button
           onClick={onBack}
-          className="w-full max-w-sm mx-auto py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white font-bold rounded-full hover:shadow-xl transition-all flex items-center justify-center gap-2"
+          className="w-full max-w-sm mx-auto py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white font-bold rounded-full hover:shadow-xl transition-all flex items-center justify-center gap-2 mb-3"
+        >
+          <span>⏳</span>
+          대기실로 이동 (피고 답변 대기 중)
+        </button>
+
+        {/* Hamster Button */}
+        <button
+          onClick={() => setShowHamsterModal(true)}
+          className="w-full max-w-sm mx-auto py-3 bg-orange-900 bg-opacity-40 border-2 border-orange-600 text-orange-200 font-bold rounded-full hover:bg-opacity-60 transition-all flex items-center justify-center gap-2"
         >
           <span>🐹</span>
-          대기실로 이동하기 (고구마 먹는 중...)
+          잠깐! 고구마 먹는 햄스터 보고 가기
         </button>
       </div>
 
       {showShareModal && (
         <ShareSuccessModal onClose={() => setShowShareModal(false)} />
       )}
+
+      {showHamsterModal && (
+        <HamsterModal onClose={() => {
+          setShowHamsterModal(false);
+          setTimeout(() => onBack(), 300);
+        }} />
+      )}
+    </div>
+  );
+}
+
+// Hamster Modal Component
+function HamsterModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6 animate-in fade-in duration-200">
+      <div className="bg-[#1a1a24] border-2 border-orange-500 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+        <div className="p-6 flex flex-col items-center text-center">
+          <div className="w-full mb-4 rounded-xl overflow-hidden bg-gradient-to-b from-orange-100 to-orange-50">
+            <img
+              src="/hamster.png"
+              alt="고구마 먹는 햄스터"
+              className="w-full h-auto"
+            />
+          </div>
+
+          <h3 className="text-2xl font-bold text-white mb-2">
+            🐹 잠시만요!
+          </h3>
+
+          <p className="text-gray-300 mb-6 leading-relaxed">
+            피고가 답변을 준비하는 동안<br />
+            귀여운 햄스터가 고구마를 먹고 있어요!<br />
+            <span className="text-orange-400 font-bold">조금만 기다려주세요 💕</span>
+          </p>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold rounded-lg transition-all"
+          >
+            대기실로 이동하기
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

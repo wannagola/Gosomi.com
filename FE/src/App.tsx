@@ -301,13 +301,19 @@ export default function App() {
         if (!currentUser) return;
         if (!window.confirm('정말 친구를 삭제하시겠습니까?')) return;
         try {
+            console.log('Deleting friend:', { currentUserId: currentUser.id, targetId });
+
             // Optimistic update
             setFriends(prev => prev.filter(f => f.id !== targetId));
 
             await userService.deleteFriend(currentUser.id, targetId);
+            console.log('Friend deleted successfully');
             await refreshData();
-        } catch (error) {
-            console.error(error);
+            alert('친구가 삭제되었습니다.');
+        } catch (error: any) {
+            console.error('Friend deletion failed:', error);
+            console.error('Error details:', error.response?.data);
+            alert(`친구 삭제 실패: ${error.response?.data?.error || error.message || '알 수 없는 오류'}`);
             await refreshData(); // Revert on error
         }
     };
@@ -437,6 +443,8 @@ function CaseRouteHandler({
     const [activeCase, setActiveCase] = useState<Case | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const location = useLocation();
+
     useEffect(() => {
         if (!activeCase) setLoading(true); // Only show full loading screen if we don't have data yet
         const fetchCase = async () => {
@@ -451,7 +459,7 @@ function CaseRouteHandler({
             }
         };
         fetchCase();
-    }, [id, cases]);
+    }, [id, cases, location.pathname]);
 
     // Fallback to case from list if fetch fails or while loading (optional, but safer to wait for full details)
     // Actually, we need full details like content/evidences for DefensePage. 

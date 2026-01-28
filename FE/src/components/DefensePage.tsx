@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Shield, Upload, AlertTriangle, Send, Eye, Paperclip, ImageIcon } from 'lucide-react';
+import { Shield, Upload, AlertTriangle, Send, Paperclip, ImageIcon } from 'lucide-react';
 import { Case, Evidence, LAWS } from '@/types/court';
 
 interface DefensePageProps {
@@ -12,7 +12,6 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
   const [statement, setStatement] = useState('');
   const [evidences, setEvidences] = useState<Evidence[]>([]);
   const [textEvidence, setTextEvidence] = useState('');
-  const [showOriginal, setShowOriginal] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<FileList | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -125,16 +124,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
         <div className="grid lg:grid-cols-2 gap-8">
           {/* 왼쪽: 원고의 고소장 */}
           <div className="official-document rounded-2xl p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl">고소장</h2>
-              <button
-                onClick={() => setShowOriginal(!showOriginal)}
-                className="flex items-center gap-2 px-4 py-2 border border-[var(--color-gold-dark)] rounded-lg hover:bg-[var(--color-gold-dark)] hover:bg-opacity-20 transition-all"
-              >
-                <Eye className="w-4 h-4" />
-                <span className="text-sm">{showOriginal ? '요약 보기' : '전체 보기'}</span>
-              </button>
-            </div>
+            <h2 className="text-2xl mb-6">고소장</h2>
 
             {/* 사건 정보 */}
             <div className="space-y-4 mb-6">
@@ -182,10 +172,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-3">고소 내용</h3>
               <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-30 rounded-lg border-l-4 border-purple-600">
                 <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {showOriginal
-                    ? (case_.content || '소송 내용이 없습니다.')
-                    : ((case_.content || '').slice(0, 200) + ((case_.content?.length ?? 0) > 200 ? '...' : ''))
-                  }
+                  {case_.content || '소송 내용이 없습니다.'}
                 </p>
               </div>
             </div>
@@ -201,8 +188,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                     <div
                       key={evidence.id}
                       className={`p-3 rounded-lg border ${evidence.isKeyEvidence
-                          ? 'border-yellow-600 bg-yellow-900 bg-opacity-20'
-                          : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
+                        ? 'border-yellow-600 bg-yellow-900 bg-opacity-20'
+                        : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
                         }`}
                     >
                       {evidence.isKeyEvidence && (
@@ -323,8 +310,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                       <div
                         key={evidence.id}
                         className={`p-4 rounded-lg border-2 ${evidence.isKeyEvidence
-                            ? 'border-purple-500 bg-purple-900 bg-opacity-10'
-                            : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
+                          ? 'border-purple-500 bg-purple-900 bg-opacity-10'
+                          : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
                           }`}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -405,8 +392,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               onClick={handleSubmit}
               disabled={statement.trim().length === 0 || isSubmitting}
               className={`w-full px-6 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg ${statement.trim().length > 0 && !isSubmitting
-                  ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-xl hover:scale-[1.02]'
-                  : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-xl hover:scale-[1.02]'
+                : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                 }`}
             >
               <Send className="w-6 h-6" />

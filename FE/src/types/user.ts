@@ -8,7 +8,7 @@ export interface User {
 export type FriendStatus = 'pending' | 'friend' | 'blocked';
 
 export interface Friend extends User {
-  status: FriendStatus;
+  status?: FriendStatus;
   requestedAt?: Date; // When the request was sent/received
 }
 

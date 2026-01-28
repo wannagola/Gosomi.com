@@ -1,8 +1,9 @@
 import { Case, LAWS } from '@/types/court';
 import { User } from '@/types/user';
-import { Clock, Gavel, Loader } from 'lucide-react';
+import { Clock, Gavel, Loader, X } from 'lucide-react';
 import { useState } from 'react';
 import dapDapGif from '@/assets/답답해.gif';
+import hamsterImg from '@/assets/hamster.png';
 
 interface WaitingPageProps {
   case_: Case;

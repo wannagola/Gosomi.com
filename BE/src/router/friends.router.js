@@ -185,6 +185,8 @@ router.delete("/", async (req, res) => {
         const userId = req.body.userId || req.query.userId;
         const friendId = req.body.friendId || req.query.friendId;
 
+        console.log('DELETE /api/friends called with:', { userId, friendId, body: req.body, query: req.query });
+
         if (!userId || !friendId) return res.status(400).json({ error: "userId and friendId required" });
 
         const client = await pool.getConnection();
@@ -192,26 +194,31 @@ router.delete("/", async (req, res) => {
             await client.beginTransaction();
 
             // 1. Delete friendship (Both ways)
-            await client.query(
+            const [deleteResult] = await client.query(
                 "DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)",
                 [userId, friendId, friendId, userId]
             );
+            console.log('Deleted friendships:', deleteResult.affectedRows, 'rows');
 
             // 2. Delete related friend requests (to allow re-requesting later)
-            await client.query(
+            const [requestResult] = await client.query(
                 "DELETE FROM friend_requests WHERE (from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)",
                 [userId, friendId, friendId, userId]
             );
+            console.log('Deleted friend requests:', requestResult.affectedRows, 'rows');
 
             await client.commit();
+            console.log('Friend deletion successful');
             return res.json({ ok: true, message: "Friendship deleted mutually." });
         } catch (err) {
             await client.rollback();
+            console.error('Transaction error:', err);
             throw err;
         } finally {
             client.release();
         }
     } catch (e) {
+        console.error('DELETE /api/friends error:', e.message);
         return res.status(500).json({ error: e.message });
     }
 });
