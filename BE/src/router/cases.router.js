@@ -404,6 +404,53 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// POST /api/cases/:id/defense : 피고인 변론 제출
+router.post("/:id/defense", async (req, res) => {
+  try {
+    const caseId = Number(req.params.id);
+    const { content, evidences } = req.body;
+
+    if (!content) return res.status(400).json({ error: "Content is required" });
+
+    // 1. Check if case exists
+    const [cases] = await pool.query("SELECT id, status FROM cases WHERE id=?", [caseId]);
+    if (cases.length === 0) return res.status(404).json({ error: "Case not found" });
+
+    const currentStatus = cases[0].status;
+    if (currentStatus === 'DEFENSE_SUBMITTED' || currentStatus === 'VERDICT_READY' || currentStatus === 'COMPLETED') {
+        return res.status(400).json({ error: "defense already submitted" });
+    }
+
+    // 2. Insert into defenses table
+    // Check if defenses table exists or created automatically? Assuming it exists based on GET handler
+    await pool.query(
+      "INSERT INTO defenses (case_id, content) VALUES (?, ?)",
+      [caseId, content]
+    );
+
+    // 3. Save Evidences
+    if (evidences && Array.isArray(evidences)) {
+      for (const ev of evidences) {
+        await pool.query(
+          "INSERT INTO evidences (case_id, submitted_by, type, text_content) VALUES (?, 'DEFENDANT', ?, ?)",
+          [caseId, ev.type || 'text', ev.content]
+        );
+      }
+    }
+
+    // 4. Update Case Status
+    await pool.query(
+      "UPDATE cases SET status='DEFENSE_SUBMITTED' WHERE id=?", 
+      [caseId]
+    );
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("Defense submission error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Jury Vote (POST /api/cases/:id/jury/vote)
 router.post("/:id/jury/vote", async (req, res) => {
   try {
