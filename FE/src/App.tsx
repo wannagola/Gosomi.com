@@ -390,25 +390,29 @@ function CaseRouteHandler({
     const isJuror = !isPlaintiff && !isDefendant;
     
     // ✅ Core logic: Show verdict page ONLY when verdict exists
-    // Otherwise: Plaintiff sees waiting, Defendant sees defense page
+    // otherwise: Plaintiff sees waiting, Defendant sees defense page
     // Jurors: Always redirect to Jury page for voting (or view verdict if we want, but user said "just vote")
-    // User requested "Jurors just vote... making a page that shows that is right"
+    
     const hasVerdict = case_.verdictText != null && case_.verdictText !== '';
-    const hasDefense = case_.defenseContent != null && case_.defenseContent !== '';
+    const hasPenalty = case_.penaltySelected != null && case_.penaltySelected !== 'null' && case_.penaltySelected !== 'undefined';
+    const isDefenseSubmitted = case_.status === 'DEFENSE_SUBMITTED';
+
+    // Visibility Rule: 
+    // - Defendant: Can see verdict immediately (to select penalty).
+    // - Others (Plaintiff/Juror): Can ONLY see verdict after penalty is selected.
+    const canViewVerdict = hasVerdict && (isDefendant || hasPenalty);
 
     // Debugging logs
     console.log('🔍 CaseRouteHandler Debug:', {
         caseId: case_.id,
         caseStatus: case_.status,
         currentUserId: currentUser?.id,
-        plaintiffId: case_.plaintiffId,
-        defendantId: case_.defendantId,
         isDefendant,
         isPlaintiff,
-        isJuror,
         hasVerdict,
-        hasDefense,
-        willShow: isJuror ? 'jury page' : (hasVerdict ? 'verdict page' : isDefendant ? 'defense page' : 'waiting page')
+        hasPenalty,
+        canViewVerdict,
+        willShow: isJuror ? 'jury page' : (canViewVerdict ? 'verdict page' : isDefendant && !hasVerdict ? 'defense page' : 'waiting page')
     });
 
     return (
@@ -416,7 +420,7 @@ function CaseRouteHandler({
             <Route path="" element={
                 isJuror ? (
                      <Navigate to="jury" replace />
-                ) : hasVerdict ? (
+                ) : canViewVerdict ? (
                     <VerdictPage 
                         case_={case_} 
                         currentUser={currentUser}
@@ -424,11 +428,12 @@ function CaseRouteHandler({
                         onSelectPenalty={(p) => handleSelectPenalty(case_.id, p)} 
                     />
                 ) : (
-                    isDefendant ? <Navigate to="defense" replace /> : 
+                    isDefendant && !hasVerdict ? <Navigate to="defense" replace /> : 
                     <WaitingPage 
                         case_={case_} 
                         currentUser={currentUser} 
                         onRequestVerdict={() => handleRequestVerdict(case_.id)}
+                        hasVerdict={hasVerdict} // Pass this to show "Penalty Selection Waiting" state
                     />
                 )
             } /> 

@@ -7,9 +7,10 @@ interface WaitingPageProps {
   case_: Case;
   currentUser: User | null;
   onRequestVerdict?: () => void;
+  hasVerdict?: boolean;
 }
 
-export function WaitingPage({ case_, currentUser, onRequestVerdict }: WaitingPageProps) {
+export function WaitingPage({ case_, currentUser, onRequestVerdict, hasVerdict }: WaitingPageProps) {
   const [requesting, setRequesting] = useState(false);
   const law = LAWS.find(l => l.id === case_.lawType);
   
@@ -38,12 +39,20 @@ export function WaitingPage({ case_, currentUser, onRequestVerdict }: WaitingPag
         
         <div className="space-y-4">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            {isDefenseSubmitted 
-                ? "재판 진행 중 (배심원 투표)" 
-                : "피고인의 답변을 기다리는 중입니다"}
+            {hasVerdict 
+                ? "판결 완료 (처벌 선택 대기 중)"
+                : isDefenseSubmitted 
+                    ? "재판 진행 중 (배심원 투표)" 
+                    : "피고인의 답변을 기다리는 중입니다"}
           </h1>
           <p className="text-gray-400 text-lg">
-            {isDefenseSubmitted ? (
+            {hasVerdict ? (
+                <>  
+                    AI 판사의 판결이 완료되었습니다.<br/>
+                    피고인이 <strong className="text-white">최종 처벌을 선택</strong>하고 있습니다.<br/>
+                    선택이 완료되면 판결문이 공개됩니다.
+                </>
+            ) : isDefenseSubmitted ? (
                 <>
                     피고인이 답변을 제출하여 재판이 진행 중입니다.<br/>
                     배심원들이 투표를 진행하고 있습니다.
@@ -58,8 +67,8 @@ export function WaitingPage({ case_, currentUser, onRequestVerdict }: WaitingPag
           </p>
         </div>
 
-        {/* Action Button for Litigants when Defense Submitted */}
-        {isDefenseSubmitted && isLitigant && (
+        {/* Action Button for Litigants when Defense Submitted (Only if no verdict yet) */}
+        {!hasVerdict && isDefenseSubmitted && isLitigant && (
             <div className="bg-[var(--color-court-dark)] border border-[var(--color-gold-dark)] rounded-xl p-8 max-w-lg mx-auto animate-fade-in-up">
                 <h3 className="text-xl font-bold text-[var(--color-gold-accent)] mb-4">판결 요청</h3>
                 <p className="text-gray-400 mb-6 text-sm">
