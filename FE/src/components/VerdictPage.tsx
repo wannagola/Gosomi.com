@@ -37,12 +37,22 @@ export function VerdictPage({
   const [confirmedPenalty, setConfirmedPenalty] = useState<
     "serious" | "funny" | null
   >(() => {
-     const selected = case_.penaltySelected;
-     if (!selected || selected === 'null' || selected === 'undefined') return null;
-     if (selected.toLowerCase() === 'serious') return 'serious';
-     if (selected.toLowerCase() === 'funny') return 'funny';
+     // Use penaltyChoice ("SERIOUS" | "FUNNY") instead of penaltySelected (Text)
+     const choice = case_.penaltyChoice;
+     if (!choice) return null;
+     if (choice.toUpperCase() === 'SERIOUS') return 'serious';
+     if (choice.toUpperCase() === 'FUNNY') return 'funny';
      return null;
   });
+
+  // Sync state with prop changes (e.g. initial load or refetch)
+  useEffect(() => {
+     const choice = case_.penaltyChoice;
+     if (choice) {
+        if (choice.toUpperCase() === 'SERIOUS') setConfirmedPenalty('serious');
+        else if (choice.toUpperCase() === 'FUNNY') setConfirmedPenalty('funny');
+     }
+  }, [case_.penaltyChoice]);
   const [showAppealForm, setShowAppealForm] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
 

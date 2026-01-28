@@ -112,6 +112,7 @@ export interface Case {
     defendant: number;
   };
   penaltySelected?: string; 
+  penaltyChoice?: string; // "SERIOUS" | "FUNNY" from DB
   penalties?: { 
       serious: string[]; 
       funny: string[] 
