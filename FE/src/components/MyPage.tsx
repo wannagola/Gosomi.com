@@ -190,7 +190,7 @@ export function MyPage({
                   {/* Info */}
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-xl font-bold text-white group-hover:text-[var(--color-gold-primary)] transition-colors">
+                      <h3 className="text-xl font-bold text-[var(--color-gold-accent)] group-hover:brightness-110 transition-all">
                         {friend.nickname}
                       </h3>
                     </div>
@@ -400,7 +400,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
             </div>
           </div>
 
-          <h3 className="text-xl font-bold text-white group-hover:text-[var(--color-gold-accent)] transition-colors mb-2">
+          <h3 className="text-xl font-bold text-[var(--color-gold-accent)] group-hover:brightness-110 transition-all mb-2">
             {case_.title}
           </h3>
 

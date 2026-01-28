@@ -277,7 +277,7 @@ function CaseCard({ case_, onView }: any) {
               </span>
             </div>
           </div>
-          <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[var(--color-gold-accent)] transition-colors">{case_.title}</h3>
+          <h3 className="text-lg font-bold text-[var(--color-gold-accent)] mb-2 group-hover:brightness-110 transition-all">{case_.title}</h3>
           <p className="text-sm text-gray-400">원고: {case_.plaintiff} vs 피고: {case_.defendant}</p>
         </div>
         <div className="text-right text-sm text-gray-500">

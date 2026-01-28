@@ -140,8 +140,8 @@ function StatCard({ label, count, color, active, onClick }: StatCardProps) {
     <button
       onClick={onClick}
       className={`p-4 rounded-lg border-2 transition-all ${active
-          ? `${colorClasses[color]} bg-opacity-30 scale-105`
-          : 'border-[var(--color-court-border)] bg-[var(--color-court-gray)] hover:border-[var(--color-gold-dark)]'
+        ? `${colorClasses[color]} bg-opacity-30 scale-105`
+        : 'border-[var(--color-court-border)] bg-[var(--color-court-gray)] hover:border-[var(--color-gold-dark)]'
         }`}
     >
       <p className="text-2xl font-bold text-white mb-1">{count}</p>
@@ -229,7 +229,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
               <p className="text-sm font-mono text-[var(--color-gold-primary)] mb-1">
                 {case_.caseNumber}
               </p>
-              <h3 className="text-xl font-bold text-white group-hover:text-[var(--color-gold-accent)] transition-colors">
+              <h3 className="text-xl font-bold text-[var(--color-gold-accent)] group-hover:brightness-110 transition-all">
                 {case_.title}
               </h3>
             </div>
