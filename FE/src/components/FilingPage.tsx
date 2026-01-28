@@ -39,20 +39,34 @@ interface FilingPageProps {
 }
 
 export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: FilingPageProps) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  // Load from localStorage on mount
+  const [step, setStep] = useState<1 | 2 | 3>(() => {
+    const saved = localStorage.getItem('filingStep');
+    return saved ? (parseInt(saved) as 1 | 2 | 3) : 1;
+  });
 
-  const [formData, setFormData] = useState<FormData>({
-    title: "",
-    plaintiff: currentUser?.nickname || "",
-    plaintiffId: currentUser?.id || "",
-    defendant: "",
-    defendantId: "",
-    lawType: "" as LawType,
-    content: "",
-    juryEnabled: false,
-    juryMode: "INVITE",
-    invitedJurors: [],
-    juryInvitedUserIds: []
+  const [formData, setFormData] = useState<FormData>(() => {
+    const saved = localStorage.getItem('filingFormData');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved form data', e);
+      }
+    }
+    return {
+      title: "",
+      plaintiff: currentUser?.nickname || "",
+      plaintiffId: currentUser?.id || "",
+      defendant: "",
+      defendantId: "",
+      lawType: "" as LawType,
+      content: "",
+      juryEnabled: false,
+      juryMode: "INVITE",
+      invitedJurors: [],
+      juryInvitedUserIds: []
+    };
   });
 
   // Sync plaintiff data with currentUser
@@ -66,15 +80,51 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
       }
   }, [currentUser]);
 
-  const [evidences, setEvidences] = useState<Evidence[]>([]);
+  const [evidences, setEvidences] = useState<Evidence[]>(() => {
+    const saved = localStorage.getItem('filingEvidences');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved evidences', e);
+      }
+    }
+    return [];
+  });
   const [shareLink, setShareLink] = useState("");
+
+  // Save to localStorage whenever state changes
+  useEffect(() => {
+    localStorage.setItem('filingStep', String(step));
+  }, [step]);
+
+  useEffect(() => {
+    localStorage.setItem('filingFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  useEffect(() => {
+    localStorage.setItem('filingEvidences', JSON.stringify(evidences));
+  }, [evidences]);
+
+  // Clear localStorage on unmount or completion
+  const clearFilingCache = () => {
+    localStorage.removeItem('filingStep');
+    localStorage.removeItem('filingFormData');
+    localStorage.removeItem('filingEvidences');
+  };
 
   const handleSubmit = () => {
     if (step !== 3) return;
+    clearFilingCache();
     onSubmit({
       ...formData,
       evidences,
     });
+  };
+
+  const handleCancel = () => {
+    clearFilingCache();
+    onCancel();
   };
 
   // ✅ 링크를 "현재 도메인(origin)" 기준으로 생성 (localhost든 배포든 그대로 동작)
@@ -136,7 +186,7 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
               formData={formData}
               setFormData={setFormData}
               onNext={() => setStep(2)}
-              onCancel={onCancel}
+              onCancel={handleCancel}
               friends={friends}
             />
           )}
@@ -279,11 +329,17 @@ function Step1BasicInfo({
           <select
             value={formData.defendantId}
             onChange={(e) => {
-                const selectedFriend = friends.find(f => f.id === e.target.value);
+                const selectedId = e.target.value;
+                console.log('Selected ID:', selectedId);
+                console.log('Friends:', friends);
+                const selectedFriend = friends.find(f => String(f.id) === String(selectedId));
+                console.log('Selected Friend:', selectedFriend);
+                const defendantName = selectedFriend?.nickname || (selectedFriend as any)?.name || '';
+                console.log('Defendant Name:', defendantName);
                 setFormData({ 
                     ...formData, 
-                    defendantId: e.target.value,
-                    defendant: selectedFriend?.nickname || (selectedFriend as any)?.name || '' 
+                    defendantId: selectedId,
+                    defendant: defendantName
                 });
             }}
             className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white focus:border-[var(--color-gold-primary)] focus:outline-none appearance-none"
@@ -291,7 +347,7 @@ function Step1BasicInfo({
             <option value="">친구를 선택하세요</option>
             {friends.map(friend => (
                 <option key={friend.id} value={friend.id}>
-                    {friend.nickname}
+                    {friend.nickname || (friend as any).name || '이름 없음'}
                 </option>
             ))}
           </select>
