@@ -246,18 +246,18 @@ function StatCard({ icon, label, value, subtext }: any) {
 
 function CaseCard({ case_, onView }: any) {
   const statusConfig: any = {
-    SUMMONED: { label: "소환 완료", color: "bg-purple-500" },
-    DEFENSE_SUBMITTED: { label: "변론 제출", color: "bg-yellow-500" },
+    SUMMONED: { label: "소환 완료", color: "bg-indigo-500" },
+    DEFENSE_SUBMITTED: { label: "변론 제출", color: "bg-amber-500" },
     VERDICT_READY: { label: "판결 대기", color: "bg-orange-500" },
-    APPEAL_VERDICT_READY: { label: "항소 판결 대기", color: "bg-orange-600" },
-    COMPLETED: { label: "판결 완료", color: "bg-green-500" },
-    UNDER_APPEAL: { label: "항소 중", color: "bg-red-500" },
+    APPEAL_VERDICT_READY: { label: "항소 판결 대기", color: "bg-rose-500" },
+    COMPLETED: { label: "판결 완료", color: "bg-emerald-500" },
+    UNDER_APPEAL: { label: "항소 중", color: "bg-pink-500" },
   };
 
   const status = statusConfig[case_.status] || statusConfig.SUMMONED;
   const isAppeal = case_.status.includes('APPEAL') || (case_.appealStatus && case_.appealStatus !== 'NONE');
   const trialStage = isAppeal ? "항소심" : "1심";
-  const trialColor = isAppeal ? "bg-red-900 text-red-200 border-red-700" : "bg-blue-900 text-blue-200 border-blue-700";
+  const trialColor = isAppeal ? "bg-rose-900/40 text-rose-300 border-rose-600/50" : "bg-cyan-900/40 text-cyan-300 border-cyan-600/50";
 
   return (
     <button

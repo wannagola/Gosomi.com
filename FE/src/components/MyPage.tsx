@@ -333,39 +333,39 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const statusConfig: Record<string, { label: string; color: string; icon: ReactNode; textColor: string }> = {
     'SUMMONED': {
       label: '소환 완료',
-      color: 'bg-purple-500',
+      color: 'bg-indigo-500',
       icon: <AlertCircle className="w-5 h-5" />,
-      textColor: 'text-purple-400'
+      textColor: 'text-indigo-300'
     },
     'DEFENSE_SUBMITTED': {
       label: '변론 제출됨',
-      color: 'bg-yellow-500',
+      color: 'bg-amber-500',
       icon: <Clock className="w-5 h-5" />,
-      textColor: 'text-yellow-400'
+      textColor: 'text-amber-300'
     },
     'VERDICT_READY': {
       label: '판결 대기(벌칙)',
       color: 'bg-orange-500',
       icon: <Clock className="w-5 h-5" />,
-      textColor: 'text-orange-400'
+      textColor: 'text-orange-300'
     },
     'COMPLETED': {
       label: '종료됨',
-      color: 'bg-green-500',
+      color: 'bg-emerald-500',
       icon: <CheckCircle className="w-5 h-5" />,
-      textColor: 'text-green-400'
+      textColor: 'text-emerald-300'
     },
     'UNDER_APPEAL': {
       label: '항소 진행 중',
-      color: 'bg-red-500',
+      color: 'bg-pink-500',
       icon: <AlertCircle className="w-5 h-5" />,
-      textColor: 'text-red-400'
+      textColor: 'text-pink-300'
     },
     'APPEAL_VERDICT_READY': {
       label: '항소심 선고',
-      color: 'bg-green-600',
+      color: 'bg-rose-500',
       icon: <CheckCircle className="w-5 h-5" />,
-      textColor: 'text-green-300'
+      textColor: 'text-rose-300'
     }
   };
 
@@ -373,7 +373,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const timeSince = getTimeSince(case_.createdAt);
   const isAppeal = case_.status.includes('APPEAL') || (case_.appealStatus && case_.appealStatus !== 'NONE');
   const trialStage = isAppeal ? "항소심" : "1심";
-  const trialColor = isAppeal ? "bg-red-900 text-red-200 border-red-700" : "bg-blue-900 text-blue-200 border-blue-700";
+  const trialColor = isAppeal ? "bg-rose-900/40 text-rose-300 border-rose-600/50" : "bg-cyan-900/40 text-cyan-300 border-cyan-600/50";
 
   return (
     <button
