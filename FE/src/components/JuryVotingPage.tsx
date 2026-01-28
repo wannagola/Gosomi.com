@@ -10,8 +10,12 @@ interface JuryVotingPageProps {
 export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
   const [selectedVote, setSelectedVote] = useState<'plaintiff' | 'defendant' | 'both' | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [showLawModal, setShowLawModal] = useState(false);
 
   const law = LAWS.find(l => l.id === case_.lawType);
+
+  // Check if both parties have submitted their statements
+  const bothPartiesSubmitted = case_.content && case_.defendantResponse;
 
   // 투표 데이터 (실제로는 서버에서)
   const votes = case_.juryVotes || {
@@ -42,6 +46,40 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
             <p className="text-gray-400">
               이 사건은 배심원 투표 없이 AI 판사의 판결만으로 진행됩니다.
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 양측 모두 입장을 제출하지 않은 경우
+  if (!bothPartiesSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10" style={{ paddingTop: '150px' }}>
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-3 mb-4">
+              <Users className="w-10 h-10 text-purple-400" />
+              <h1 className="text-4xl">배심원 광장</h1>
+            </div>
+          </div>
+
+          <div className="official-document rounded-2xl p-12 text-center">
+            <div className="text-6xl mb-6 opacity-30">⏳</div>
+            <h2 className="text-3xl mb-4">양측 입장 작성 대기 중</h2>
+            <p className="text-gray-400 mb-6">
+              원고와 피고가 모두 입장을 작성해야 배심원 투표가 시작됩니다.
+            </p>
+            <div className="flex justify-center gap-8 mt-8">
+              <div className="flex items-center gap-2">
+                <div className={`w-4 h-4 rounded-full ${case_.content ? 'bg-green-500' : 'bg-gray-600'}`} />
+                <span className="text-sm text-gray-400">원고 입장 {case_.content ? '✓' : '대기 중'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`w-4 h-4 rounded-full ${case_.defendantResponse ? 'bg-green-500' : 'bg-gray-600'}`} />
+                <span className="text-sm text-gray-400">피고 입장 {case_.defendantResponse ? '✓' : '대기 중'}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -142,16 +180,19 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
           </div>
 
           <div className="mt-6 pt-6 border-t border-[var(--color-court-border)]">
-            <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowLawModal(true)}
+              className="flex items-center gap-3 w-full hover:bg-[var(--color-court-gray)] p-3 rounded-lg transition-colors cursor-pointer"
+            >
               {law?.icon && (
                 <img src={law.icon} alt={law.title} className="w-12 h-12 object-contain" />
               )}
-              <div>
-                <p className="text-sm text-gray-500">적용 법률</p>
+              <div className="text-left">
+                <p className="text-sm text-gray-500">적용 법률 (클릭하여 조항 보기)</p>
                 <p className="font-bold text-[var(--color-gold-accent)]">{law?.title}</p>
                 <p className="text-xs text-gray-400 mt-1">{law?.description}</p>
               </div>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -208,6 +249,53 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
             </div>
           </div>
         </div>
+
+        {/* Law Details Modal */}
+        {showLawModal && law && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowLawModal(false)}
+          >
+            <div
+              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-[80vh] overflow-y-auto p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  {law.icon && (
+                    <img src={law.icon} alt={law.title} className="w-16 h-16 object-contain" />
+                  )}
+                  <div>
+                    <h2 className="text-3xl font-bold text-[var(--color-gold-accent)]">{law.title}</h2>
+                    <p className="text-sm text-gray-400 mt-1">{law.description}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowLawModal(false)}
+                  className="text-gray-400 hover:text-white text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="border-t border-[var(--color-court-border)] pt-6">
+                <h3 className="text-xl font-bold text-white mb-4">법률 조항</h3>
+                <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
+                  {law.content || '조항 정보가 없습니다.'}
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowLawModal(false)}
+                  className="px-6 py-2 bg-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] text-black font-bold rounded-lg transition-colors"
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
