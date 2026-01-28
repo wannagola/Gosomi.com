@@ -695,6 +695,7 @@ interface Step3Props {
 function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const [copied, setCopied] = useState(false);
   const [juryCopied, setJuryCopied] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // 배심원 링크 생성
   const juryLink =
@@ -705,7 +706,11 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setShowToast(true);
+    setTimeout(() => {
+      setCopied(false);
+      setShowToast(false);
+    }, 2000);
   };
 
   const copyJuryLink = () => {
@@ -912,6 +917,16 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
           사건 접수 완료
         </button>
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in-up">
+          <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            링크가 복사 되었습니다!
+          </div>
+        </div>
+      )}
     </div>
   );
 }
