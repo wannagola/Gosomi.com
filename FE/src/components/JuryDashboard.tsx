@@ -1,4 +1,4 @@
-import { Users, Gavel } from 'lucide-react';
+import { Users, Gavel, CheckCircle } from 'lucide-react';
 import { Case } from '@/types/court';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,12 +46,22 @@ export function JuryDashboard({ cases }: JuryDashboardProps) {
                       <span>피고: {case_.defendant}</span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => navigate(`/case/${case_.id}/jury`)}
-                    className="px-6 py-2 bg-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] text-black font-bold rounded-lg transition-colors"
-                  >
-                    참여하기
-                  </button>
+                  {case_.juryStatus === 'VOTED' ? (
+                    <button
+                      disabled
+                      className="px-6 py-2 bg-gray-600 text-gray-300 font-bold rounded-lg cursor-not-allowed flex items-center gap-2 opacity-60"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      참여 완료
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => navigate(`/case/${case_.id}/jury`)}
+                      className="px-6 py-2 bg-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] text-black font-bold rounded-lg transition-colors"
+                    >
+                      참여하기
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

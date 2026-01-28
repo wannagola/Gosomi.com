@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Case, LAWS } from "@/types/court";
 import { User } from "@/types/user";
+import ciderGif from "@/assets/사이다.gif";
 
 interface VerdictPageProps {
   case_: Case;
@@ -283,7 +284,7 @@ export function VerdictPage({
       content: {
         title: title,
         description: description,
-        imageUrl: window.location.origin + "/gosomidotcom.png",
+        imageUrl: window.location.origin + "/goguma.png",
         link: {
           mobileWebUrl: window.location.href,
           webUrl: window.location.href,
@@ -311,8 +312,8 @@ export function VerdictPage({
         {/* 헤더 */}
         <div className="text-center mb-12">
           <div className="inline-block mb-6">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] rounded-full flex items-center justify-center border-4 border-[var(--color-gold-accent)] court-seal">
-              <Gavel className="w-12 h-12 text-white" />
+            <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center overflow-hidden">
+              <img src={ciderGif} alt="사이다" className="w-full h-full object-cover" />
             </div>
           </div>
           <h1 className="text-5xl mb-4">{case_.status === 'APPEAL_VERDICT_READY' ? "항소심 판결문" : "판결문"}</h1>
@@ -709,8 +710,8 @@ export function VerdictPage({
 
         {/* 공식 인장 */}
         <div className="mt-12 text-center">
-          <div className="inline-flex w-32 h-32 rounded-full border-4 border-[var(--color-gold-dark)] bg-gradient-to-br from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] items-center justify-center mb-4 court-seal">
-            <Scale className="w-16 h-16 text-white" />
+          <div className="inline-flex w-32 h-32 rounded-full border-4 border-[var(--color-gold-dark)] items-center justify-center mb-4 overflow-hidden">
+            <img src={ciderGif} alt="사이다" className="w-full h-full object-cover" />
           </div>
           <p className="text-sm text-gray-500">고소미 대법원 공식 판결</p>
           <p className="text-xs text-gray-600 mt-1">
