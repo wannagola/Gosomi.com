@@ -416,8 +416,9 @@ router.post("/:id/defense", async (req, res) => {
     const [cases] = await pool.query("SELECT id, status FROM cases WHERE id=?", [caseId]);
     if (cases.length === 0) return res.status(404).json({ error: "Case not found" });
 
-    const currentStatus = cases[0].status;
-    if (currentStatus === 'DEFENSE_SUBMITTED' || currentStatus === 'VERDICT_READY' || currentStatus === 'COMPLETED') {
+    // Check if defense already exists in DB (to prevent duplicates but allow recovery if status mismatched)
+    const [existingDefenses] = await pool.query("SELECT id FROM defenses WHERE case_id=?", [caseId]);
+    if (existingDefenses.length > 0) {
         return res.status(400).json({ error: "defense already submitted" });
     }
 

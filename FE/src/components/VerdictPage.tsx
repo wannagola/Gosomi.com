@@ -207,7 +207,8 @@ export function VerdictPage({
 
   const getSeriousPenalty = () => {
     if (parsedPenalties.serious && parsedPenalties.serious.length > 0) {
-      return parsedPenalties.serious.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n');
+      // Limit to 1 penalty
+      return parsedPenalties.serious[0];
     }
     const l: any = law as any;
     return (
@@ -221,7 +222,8 @@ export function VerdictPage({
 
   const getFunnyPenalty = () => {
     if (parsedPenalties.funny && parsedPenalties.funny.length > 0) {
-      return parsedPenalties.funny.map((p: string, i: number) => `${i + 1}. ${p}`).join('\n');
+      // Limit to 1 penalty
+      return parsedPenalties.funny[0];
     }
     const l: any = law as any;
     return (
@@ -564,7 +566,7 @@ export function VerdictPage({
                 onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
               >
                 {confirmedPenalty === 'serious' && (
-                  <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                  <div className="absolute top-4 right-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
                     확정됨
                   </div>
                 )}
@@ -596,7 +598,7 @@ export function VerdictPage({
                 onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
               >
                 {confirmedPenalty === 'funny' && (
-                  <div className="absolute top-2 right-2 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                  <div className="absolute top-4 right-4 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
                     확정됨
                   </div>
                 )}
@@ -710,9 +712,6 @@ export function VerdictPage({
 
         {/* 공식 인장 */}
         <div className="mt-12 text-center">
-          <div className="inline-flex w-48 h-48 rounded-full border-4 border-[var(--color-gold-dark)] items-center justify-center mb-4 overflow-hidden">
-            <img src={ciderGif} alt="사이다" className="w-full h-full object-cover" />
-          </div>
           <p className="text-sm text-gray-500">고소미 대법원 공식 판결</p>
           <p className="text-xs text-gray-600 mt-1">
             AI JUSTICE | {new Date().toLocaleDateString("ko-KR")}
