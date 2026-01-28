@@ -523,8 +523,8 @@ function FriendSearchModal({ currentUser, onClose, onAddFriend }: { currentUser:
                     {results.map(user => (
                         <div key={user.id} className="flex items-center justify-between p-3 bg-[var(--color-court-gray)] rounded-lg">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden">
-                                    {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <UserIcon className="w-6 h-6 m-2 text-gray-400" />}
+                                <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden flex items-center justify-center flex-shrink-0">
+                                    {user.profileImage ? <img src={user.profileImage} className="w-full h-full object-cover" /> : <UserIcon className="w-6 h-6 text-gray-400" />}
                                 </div>
                                 <span className="text-white font-medium">{user.nickname}</span>
                             </div>
