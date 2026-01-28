@@ -13,6 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use("/api", apiRouter);
 app.use("/test", testRouter); // Mount test router
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));

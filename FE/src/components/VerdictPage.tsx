@@ -312,11 +312,7 @@ export function VerdictPage({
         {/* 헤더 */}
         <div className="text-center mb-12">
           <div className="inline-block mb-6">
-<<<<<<< HEAD
             <div className="w-40 h-40 mx-auto rounded-full flex items-center justify-center overflow-hidden">
-=======
-            <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center overflow-hidden">
->>>>>>> 3b8ccd6517c97c83131d231f68a59e53249e9386
               <img src={ciderGif} alt="사이다" className="w-full h-full object-cover" />
             </div>
           </div>
@@ -714,11 +710,7 @@ export function VerdictPage({
 
         {/* 공식 인장 */}
         <div className="mt-12 text-center">
-<<<<<<< HEAD
           <div className="inline-flex w-48 h-48 rounded-full border-4 border-[var(--color-gold-dark)] items-center justify-center mb-4 overflow-hidden">
-=======
-          <div className="inline-flex w-32 h-32 rounded-full border-4 border-[var(--color-gold-dark)] items-center justify-center mb-4 overflow-hidden">
->>>>>>> 3b8ccd6517c97c83131d231f68a59e53249e9386
             <img src={ciderGif} alt="사이다" className="w-full h-full object-cover" />
           </div>
           <p className="text-sm text-gray-500">고소미 대법원 공식 판결</p>
