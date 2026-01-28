@@ -146,12 +146,22 @@ export default function App() {
         navigate('/filing');
     };
 
-    const handleCreateCase = async (newCaseData: any) => {
+    const handleCreateCase = async (newCaseData: { 
+        title: string; 
+        content: string; 
+        plaintiffId: string | number; 
+        defendantId: string | number; 
+        juryEnabled: boolean;
+        juryMode: 'RANDOM' | 'INVITE';
+        lawType: string;
+        evidences?: Evidence[];
+        [key: string]: any 
+    }) => {
         if (!currentUser) return;
         try {
             console.log('Creating case with data:', {
                 ...newCaseData,
-                evidences: newCaseData.evidences?.map((e: any) => ({
+                evidences: newCaseData.evidences?.map((e: Evidence) => ({
                     type: e.type,
                     contentLength: e.content?.length,
                     isKeyEvidence: e.isKeyEvidence

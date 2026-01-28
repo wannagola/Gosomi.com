@@ -940,14 +940,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
       {/* Toast Notification */}
       {showToast && (
-        <div
-          className="fixed z-[9999] animate-fade-in-up"
-          style={{
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] animate-bounce">
           <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
             링크가 복사 되었습니다!
