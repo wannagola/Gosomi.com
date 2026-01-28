@@ -37,10 +37,10 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
-      <div className="w-full max-w-md bg-[#0F172A] border border-[var(--color-court-border)] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
+      <div className="w-full max-w-md bg-[#0F172A] bg-opacity-100 backdrop-blur-none border-2 border-[var(--color-gold-dark)] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
         {/* Header */}
-        <div className="p-4 border-b border-[var(--color-court-border)] flex justify-between items-center bg-[#0F172A]">
+        <div className="p-4 border-b border-[var(--color-court-border)] flex justify-between items-center bg-[#0F172A] bg-opacity-100">
           <h3 className="font-bold text-white text-lg">배심원 초대하기</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="w-5 h-5" />
@@ -104,7 +104,7 @@ export function FriendSelectionModal({ friends, onClose, onConfirm, maxSelection
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[var(--color-court-border)] bg-[#0F172A]">
+        <div className="p-4 border-t border-[var(--color-court-border)] bg-[#0F172A] bg-opacity-100">
             <button
                 onClick={handleConfirm}
                 className="w-full py-3 bg-[var(--color-gold-dark)] hover:bg-[var(--color-gold-primary)] text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
