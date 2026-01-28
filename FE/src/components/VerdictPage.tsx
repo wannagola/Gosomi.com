@@ -463,30 +463,7 @@ export function VerdictPage({
                   </p>
                 </div>
               </div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Gavel className="w-6 h-6 text-[var(--color-gold-accent)]" />
-                  <h3 className="text-lg font-bold text-[var(--color-gold-accent)]">
-                    AI 판사의 판결
-                  </h3>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-400">원고 과실</span>
-                    <span className="text-xl font-bold text-purple-400">
-                      {verdict.plaintiffFault}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-400">피고 과실</span>
-                    <span className="text-xl font-bold text-orange-400">
-                      {verdict.defendantFault}%
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-400 pt-3 border-t border-[var(--color-court-border)]">
-                    논리적 분석과 증거 기반 판결
-                  </p>
-                </div>
-              </div>
+
 
               <div className="p-6 bg-gradient-to-br from-purple-900 from-opacity-20 to-transparent rounded-lg border-2 border-purple-700">
                 <div className="flex items-center gap-3 mb-4">
