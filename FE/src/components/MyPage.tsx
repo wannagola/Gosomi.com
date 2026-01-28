@@ -201,10 +201,13 @@ export function MyPage({
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 relative z-10">
 
                     <button
-                      onClick={() => onUnfollow(friend.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUnfollow(friend.id);
+                      }}
                       className="p-3 rounded-xl bg-[var(--color-court-gray)] hover:bg-red-500/20 hover:text-red-400 text-gray-400 transition-colors"
                       title="친구 끊기"
                     >
