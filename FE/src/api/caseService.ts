@@ -57,8 +57,8 @@ export const caseService = {
   },
 
   // Submit Defense
-  submitDefense: async (caseId: string, content: string): Promise<void> => {
-    await apiClient.post(`/api/cases/${caseId}/defense`, { content });
+  submitDefense: async (caseId: string, content: string, evidences?: Evidence[]): Promise<void> => {
+    await apiClient.post(`/api/cases/${caseId}/defense`, { content, evidences });
   },
 
   // AI Verdict

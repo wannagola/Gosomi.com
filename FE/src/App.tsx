@@ -128,7 +128,7 @@ export default function App() {
 
   const handleSubmitDefense = async (caseId: string, response: { statement: string; evidences: Evidence[] }) => {
     try {
-        await caseService.submitDefense(caseId, response.statement);
+        await caseService.submitDefense(caseId, response.statement, response.evidences);
         // Verdict is NO LONGER auto-generated.
         // User must explicitly request it now.
         await refreshData();

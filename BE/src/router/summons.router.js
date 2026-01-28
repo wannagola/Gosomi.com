@@ -101,10 +101,18 @@ router.post("/summons/:token/defense", async (req, res) => {
 
 // ✅ POST /api/cases/:id/defense
 // Direct defense submission (for logged-in defendants)
+import { saveBase64Image } from "../utils/fileHelper.js";
+
+// ... (existing imports)
+
+// ...
+
+// ✅ POST /api/cases/:id/defense
+// Direct defense submission (for logged-in defendants)
 router.post("/cases/:id/defense", async (req, res) => {
   try {
     const caseId = Number(req.params.id);
-    const { content } = req.body;
+    const { content, evidences } = req.body;
 
     if (!content) return res.status(400).json({ error: "content is required" });
 
@@ -113,27 +121,44 @@ router.post("/cases/:id/defense", async (req, res) => {
     if (caseRows.length === 0) return res.status(404).json({ error: "case not found" });
 
     const c = caseRows[0];
-    if (c.status !== 'SUMMONED' && c.status !== 'DEFENSE_SUBMITTED') {
-       // Allow re-submission if stuck in DEFENSE_SUBMITTED without verdict? No, usually enforce once.
-       // But user might retry. For now, strict.
-    }
+    // if (c.status !== 'SUMMONED' && c.status !== 'DEFENSE_SUBMITTED') { ... } 
 
     // Check existing defense
+    // const [existing] = await pool.query("SELECT id FROM defenses WHERE case_id = ?", [caseId]);
+    // if (existing.length > 0) return res.status(409).json({ error: "defense already submitted" });
+    // Allow upsert/update? Or just fail? 
+    // Spec says strict, but for debugging/usability, ignoring repeated might be better or returning 409 is fine.
+    // Preserving existing logic:
     const [existing] = await pool.query("SELECT id FROM defenses WHERE case_id = ?", [caseId]);
     if (existing.length > 0) return res.status(409).json({ error: "defense already submitted" });
 
     await pool.query("INSERT INTO defenses (case_id, content) VALUES (?, ?)", [caseId, content]);
     await pool.query("UPDATE cases SET status='DEFENSE_SUBMITTED' WHERE id=?", [caseId]);
 
+    // Handle Evidence
+    if (evidences && Array.isArray(evidences)) {
+        for (const ev of evidences) {
+            let filePath = null;
+             // Only save image content if it looks like base64
+            if (ev.type === 'image' && ev.content && ev.content.startsWith('data:')) {
+                filePath = saveBase64Image(ev.content);
+            }
+
+            // If it's text, we store in text_content. If image, filePath.
+            // DB schema: type, text_content, file_path, submitted_by
+            await pool.query(
+                `INSERT INTO evidences (case_id, type, text_content, file_path, submitted_by, stage) 
+                 VALUES (?, ?, ?, ?, 'DEFENDANT', 'INITIAL')`,
+                [caseId, ev.type, ev.type === 'text' ? ev.content : null, filePath]
+            );
+        }
+    }
+
     // 🔔 Notification: Notify Plaintiff
     await pool.query(
-      "INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT_COMPLETED', 'Defendant has submitted defense.', ?)",
+      "INSERT INTO notifications (user_id, type, message, case_id) VALUES (?, 'VERDICT', 'Defendant has submitted defense.', ?)",
       [c.plaintiff_id, caseId]
     );
-
-    // 🤖 Trigger AI Verdict
-    // REMOVED: Verdict is now requested manually by the user after defense submission.
-    // await generateVerdictWithGemini(caseId);
 
     return res.json({ ok: true, caseId });
   } catch (e) {

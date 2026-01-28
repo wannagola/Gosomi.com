@@ -34,7 +34,7 @@ async function run() {
     // Wait a bit?
     
     // 2. Submit Defense
-    console.log(`Attempting to submit defense for case ${caseId}...`);
+    console.log(`Attempting to submit defense with evidence for case ${caseId}...`);
     
     const response = await fetch(`http://localhost:3000/api/cases/${caseId}/defense`, {
       method: 'POST',
@@ -42,7 +42,17 @@ async function run() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        content: "This is a test defense statement."
+        content: "This is a test defense statement with evidence.",
+        evidences: [
+            {
+                type: 'image',
+                content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+            },
+            {
+                type: 'text',
+                content: 'This is a text evidence.'
+            }
+        ]
       })
     });
 
