@@ -574,7 +574,7 @@ export function VerdictPage({
                 onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
               >
                 {confirmedPenalty === 'serious' && (
-                  <div className="absolute top-4 left-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
+                  <div className="absolute top-4 right-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
                     확정됨
                   </div>
                 )}
@@ -606,7 +606,7 @@ export function VerdictPage({
                 onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
               >
                 {confirmedPenalty === 'funny' && (
-                  <div className="absolute top-4 left-4 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
+                  <div className="absolute top-4 right-4 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
                     확정됨
                   </div>
                 )}

@@ -87,14 +87,18 @@ export default function App() {
 
         const pollData = async () => {
             try {
-                const [fetchedCases, fetchedJuryCases, fetchedNotifs] = await Promise.all([
+                const [fetchedCases, fetchedJuryCases, fetchedFriends, fetchedRequests, fetchedNotifs] = await Promise.all([
                     caseService.getCases({ userId: String(currentUser.id) }),
                     juryService.getJuryCases(String(currentUser.id)),
+                    userService.getFriends(currentUser.id),
+                    userService.getFriendRequests(currentUser.id),
                     notificationService.getNotifications(currentUser.id)
                 ]);
 
                 setCases(fetchedCases);
                 setJuryCases(fetchedJuryCases);
+                setFriends(fetchedFriends);
+                setFriendRequests(fetchedRequests);
                 setNotifications(fetchedNotifs);
             } catch (error) {
                 console.error("Failed to poll data", error);
@@ -102,7 +106,7 @@ export default function App() {
         };
 
         // Poll every 10 seconds
-        const intervalId = setInterval(pollData, 10000);
+        const intervalId = setInterval(pollData, 5000);
 
         // Cleanup on unmount
         return () => clearInterval(intervalId);

@@ -199,8 +199,8 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
                     ...formData,
                     evidences
                   });
-                  if (caseId && typeof caseId === 'string') {
-                    generateShareLink(caseId);
+                  if (caseId) {
+                    generateShareLink(String(caseId));
                     clearFilingCache();
                     setStep(3);
                   }
@@ -737,7 +737,7 @@ function Step2Evidence({
           onClick={onNext}
           className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white rounded-lg font-bold hover:shadow-lg transition-all"
         >
-          다음 단계: 사건 접수 완료 (제출)
+          사건 접수 완료하기
         </button>
       </div>
     </div>
