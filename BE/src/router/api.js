@@ -9,6 +9,7 @@ import authRouter from "./auth.router.js";
 import appealsRouter from "./appeals.router.js";
 import notificationsRouter from "./notifications.router.js";
 import friendsRouter from "./friends.router.js";
+import juryRouter from "./jury.router.js";
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.get("/db-ping", async (req, res) => {
 
 router.use("/notifications", notificationsRouter); // /api/notifications
 router.use("/friends", friendsRouter); // /api/friends
+router.use("/jury", juryRouter); // /api/jury
 router.use("/cases", casesRouter);
 router.use("/auth", authRouter);
 router.use("/", appealsRouter); // Mount on root so /cases/:id/appeal works

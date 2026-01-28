@@ -22,6 +22,7 @@ import { notificationService } from '@/api/notificationService';
 
 export default function App() {
     const [cases, setCases] = useState<Case[]>([]);
+    const [juryCases, setJuryCases] = useState<Case[]>([]);
 
     const [currentUser, setCurrentUser] = useState<User | null>(() => {
         try {
@@ -49,14 +50,16 @@ export default function App() {
             if (!currentUser) return;
 
             try {
-                const [fetchedCases, fetchedFriends, fetchedRequests, fetchedNotifs] = await Promise.all([
+                const [fetchedCases, fetchedJuryCases, fetchedFriends, fetchedRequests, fetchedNotifs] = await Promise.all([
                     caseService.getCases({ userId: String(currentUser.id) }),
+                    juryService.getJuryCases(String(currentUser.id)),
                     userService.getFriends(currentUser.id),
                     userService.getFriendRequests(currentUser.id),
                     notificationService.getNotifications(currentUser.id)
                 ]);
 
                 setCases(fetchedCases);
+                setJuryCases(fetchedJuryCases);
                 setFriends(fetchedFriends);
                 setFriendRequests(fetchedRequests);
                 setNotifications(fetchedNotifs);
@@ -87,13 +90,15 @@ export default function App() {
     const refreshData = async () => {
         if (!currentUser) return;
         try {
-            const [fetchedCases, fetchedFriends, fetchedRequests, fetchedNotifs] = await Promise.all([
+            const [fetchedCases, fetchedJuryCases, fetchedFriends, fetchedRequests, fetchedNotifs] = await Promise.all([
                 caseService.getCases({ userId: String(currentUser.id) }),
+                juryService.getJuryCases(String(currentUser.id)),
                 userService.getFriends(currentUser.id),
                 userService.getFriendRequests(currentUser.id),
                 notificationService.getNotifications(currentUser.id)
             ]);
             setCases(fetchedCases);
+            setJuryCases(fetchedJuryCases);
             setFriends(fetchedFriends);
             setFriendRequests(fetchedRequests);
             setNotifications(fetchedNotifs);
@@ -329,7 +334,7 @@ export default function App() {
                     ) : <div />
                 } />
 
-                <Route path="/jury" element={<JuryDashboard cases={cases} />} />
+                <Route path="/jury" element={<JuryDashboard cases={juryCases} />} />
             </Routes>
         </div>
     );
