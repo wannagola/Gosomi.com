@@ -57,6 +57,9 @@ export function CourtLobby({
 
   const filteredCases = recentCases.filter(
     (case_) => {
+      // Null check for case object
+      if (!case_) return false;
+
       // Basic Filters
       const matchesSearch = (case_.caseNumber || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (case_.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
