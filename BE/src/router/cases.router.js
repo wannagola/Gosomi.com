@@ -264,7 +264,7 @@ router.get("/:id", async (req, res) => {
 
     // Fetch evidences - always return array (empty if none)
     const [evRows] = await pool.query(
-      "SELECT id, type, text_content, file_path, submitted_by FROM evidences WHERE case_id=? ORDER BY created_at", 
+      "SELECT id, type, text_content, file_path, submitted_by FROM evidences WHERE case_id=? ORDER BY created_at",
       [id]
     );
     const evidences = evRows.map(e => ({
@@ -279,11 +279,18 @@ router.get("/:id", async (req, res) => {
       "SELECT vote, COUNT(*) as cnt FROM jurors WHERE case_id=? AND status='VOTED' GROUP BY vote",
       [id]
     );
-    
+
+    // Get total juror count
+    const [[{ totalJurors }]] = await pool.query(
+      "SELECT COUNT(*) as totalJurors FROM jurors WHERE case_id=?",
+      [id]
+    );
+
     const juryVotes = {
       plaintiffWins: 0,
       defendantWins: 0,
-      bothGuilty: 0
+      bothGuilty: 0,
+      totalJurors: Number(totalJurors) || 0
     };
 
     voteRows.forEach(r => {

@@ -18,6 +18,7 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
     plaintiffWins: 0,
     defendantWins: 0,
     bothGuilty: 0,
+    totalJurors: 0,
   };
 
   const totalVotes = votes.plaintiffWins + votes.defendantWins + votes.bothGuilty;
@@ -61,7 +62,15 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
           </p>
           <div className="mt-4 inline-block px-6 py-3 bg-purple-900 bg-opacity-30 border-2 border-purple-700 rounded-lg">
             <p className="text-sm text-purple-300">
-              👥 현재 {totalVotes}명의 배심원이 투표했습니다
+              {votes.totalJurors > 0 ? (
+                totalVotes >= votes.totalJurors ? (
+                  <>✅ 모든 배심원이 투표를 완료했습니다! ({totalVotes}/{votes.totalJurors}명)</>
+                ) : (
+                  <>👥 현재 {totalVotes}/{votes.totalJurors}명의 배심원이 투표했습니다</>
+                )
+              ) : (
+                <>👥 현재 {totalVotes}명의 배심원이 투표했습니다</>
+              )}
             </p>
           </div>
         </div>
@@ -132,10 +141,11 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
             </div>
           </div>
 
-          {/* 적용 법률 */}
           <div className="mt-6 pt-6 border-t border-[var(--color-court-border)]">
             <div className="flex items-center gap-3">
-              <span className="text-4xl">{law?.icon}</span>
+              {law?.icon && (
+                <img src={law.icon} alt={law.title} className="w-12 h-12 object-contain" />
+              )}
               <div>
                 <p className="text-sm text-gray-500">적용 법률</p>
                 <p className="font-bold text-[var(--color-gold-accent)]">{law?.title}</p>
@@ -233,11 +243,11 @@ function VoteButton({ icon, label, description, color, selected, onClick }: Vote
     // And "purple" (both guilty) might conflict if we use "purple" for Plaintiff.
     // Let's check VoteButtonProps. It accepts 'blue' | 'red' | 'purple'.
     // We should change the allowed colors in props too.
-    gray: { 
-       border: 'border-gray-600',
-       bg: 'bg-gray-900 bg-opacity-30',
-       hover: 'hover:bg-gray-900 hover:bg-opacity-50',
-       selected: 'bg-gray-700 border-gray-500', 
+    gray: {
+      border: 'border-gray-600',
+      bg: 'bg-gray-900 bg-opacity-30',
+      hover: 'hover:bg-gray-900 hover:bg-opacity-50',
+      selected: 'bg-gray-700 border-gray-500',
     }
   };
 
@@ -246,9 +256,8 @@ function VoteButton({ icon, label, description, color, selected, onClick }: Vote
   return (
     <button
       onClick={onClick}
-      className={`p-8 rounded-xl border-2 transition-all ${
-        selected ? classes.selected : `${classes.border} ${classes.bg} ${classes.hover}`
-      } ${selected ? 'scale-105' : 'hover:scale-105'}`}
+      className={`p-8 rounded-xl border-2 transition-all ${selected ? classes.selected : `${classes.border} ${classes.bg} ${classes.hover}`
+        } ${selected ? 'scale-105' : 'hover:scale-105'}`}
     >
       <div className="text-white mb-4">{icon}</div>
       <h3 className="text-xl font-bold text-white mb-2">{label}</h3>

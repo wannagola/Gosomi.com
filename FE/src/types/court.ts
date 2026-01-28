@@ -8,7 +8,7 @@ import spoilerIcon from '@/assets/스포방지법.png';
 import coupleIcon from '@/assets/커플평화협정법.png';
 
 // 사건 상태 타입
-export type CaseStatus = 
+export type CaseStatus =
   | 'SUMMONED' // 소환 완료 (피고에게 소환장 발송됨)
   | 'DEFENSE_SUBMITTED' // 변론 제출 완료
   | 'VERDICT_READY' // 판결(벌칙선택 대기)
@@ -17,7 +17,7 @@ export type CaseStatus =
   | 'COMPLETED'; // 종료
 
 // 법률 종류
-export type LawType = 
+export type LawType =
   | 'kakao' // 카톡매너법
   | 'friendship' // 우정법
   | 'time' // 시간준수법
@@ -69,17 +69,17 @@ export interface Case {
   defendant: string; // 피고
   plaintiffId: string;
   defendantId: string;
-  
+
   lawType: LawType;
   description?: string; // Deprecated, use content instead
   content?: string; // Main content from API
   evidences: Evidence[]; // Always returned as array from API
-  
+
   status: CaseStatus;
   displayStatus?: string; // e.g. "재판중"
 
   createdAt: Date;
-  
+
   defenseContent?: string; // 피고 변론 내용
   defendantResponse?: { // Keeping this structure for internal state if needed, or flattening?
     // API Spec has "defenseContent" string.
@@ -103,6 +103,7 @@ export interface Case {
     plaintiffWins: number;
     defendantWins: number;
     bothGuilty: number;
+    totalJurors?: number;
   };
 
   // Flattened Verdict Fields
@@ -111,11 +112,11 @@ export interface Case {
     plaintiff: number;
     defendant: number;
   };
-  penaltySelected?: string; 
+  penaltySelected?: string;
   penaltyChoice?: string; // "SERIOUS" | "FUNNY" from DB
-  penalties?: { 
-      serious: string[]; 
-      funny: string[] 
+  penalties?: {
+    serious: string[];
+    funny: string[]
   };
 
   // Appeal

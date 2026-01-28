@@ -12,7 +12,7 @@ router.get("/cases", async (req, res) => {
             return res.status(400).json({ error: "userId is required" });
         }
 
-        // 배심원으로 등록된 사건만 조회
+        // 배심원으로 등록된 사건만 조회 (단, 원고/피고인 경우는 제외)
         const [rows] = await pool.query(
             `SELECT c.id, c.case_number, c.title, c.content, c.status, c.created_at,
               c.plaintiff_id, c.defendant_id,
@@ -24,9 +24,11 @@ router.get("/cases", async (req, res) => {
        JOIN users p ON c.plaintiff_id = p.id
        JOIN users d ON c.defendant_id = d.id
        WHERE j.user_id = ?
+       AND c.plaintiff_id != ?
+       AND c.defendant_id != ?
        AND c.status NOT IN ('COMPLETED', 'EXPIRED')
        ORDER BY c.created_at DESC`,
-            [userId]
+            [userId, userId, userId]
         );
 
         const cases = rows.map(r => ({
