@@ -1,4 +1,5 @@
 import { Router } from "express";
+import jwt from "jsonwebtoken";
 import { pool } from "../db.js";
 
 const router = Router();
@@ -42,13 +43,17 @@ router.post("/", async (req, res) => {
 
     // 📸 Save Evidences (Photos, Text)
     if (evidences && Array.isArray(evidences) && evidences.length > 0) {
-      // Ensure content handles large Base64
-      await pool.query("ALTER TABLE evidences MODIFY content LONGTEXT");
+      try {
+        // Ensure text_content handles large Base64
+        await pool.query("ALTER TABLE evidences MODIFY text_content LONGTEXT");
+      } catch (e) {
+        console.error("Failed to alter evidences table", e);
+      }
 
       for (const ev of evidences) {
         await pool.query(
-          `INSERT INTO evidences (case_id, writer_id, type, content, is_key_evidence) VALUES (?, ?, ?, ?, ?)`,
-          [newId, plaintiffId, ev.type || 'text', ev.content, ev.isKeyEvidence ? 1 : 0]
+          `INSERT INTO evidences (case_id, submitted_by, type, text_content) VALUES (?, 'PLAINTIFF', ?, ?)`,
+          [newId, ev.type || 'text', ev.content]
         );
       }
     }
@@ -335,12 +340,24 @@ router.get("/:id", async (req, res) => {
     });
 
     // Check if current user is a juror and has voted
-    const userId = Number(req.query.userId);
+    // Try to get userId from Query or Token
+    let userId = Number(req.query.userId);
+    if (!userId || isNaN(userId)) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
+          userId = decoded.id;
+        } catch (e) { }
+      }
+    }
+
     let userVote = null;
 
     if (userId && !isNaN(userId)) {
       const [myVoteRows] = await pool.query(
-        "SELECT status, vote FROM jurors WHERE case_id=? AND id=?",
+        "SELECT status, vote FROM jurors WHERE case_id=? AND user_id=?",
         [id, userId]
       );
       if (myVoteRows.length > 0) {
