@@ -187,13 +187,17 @@ export default function App() {
         }
     };
 
-    const handleVote = async (caseId: string, vote: 'plaintiff' | 'defendant') => {
+    const handleVote = async (caseId: string, vote: 'plaintiff' | 'defendant' | 'both') => {
         if (!currentUser) return;
         try {
-            const apiVote = vote === 'plaintiff' ? 'PLAINTIFF' : 'DEFENDANT';
+            let apiVote: 'PLAINTIFF' | 'DEFENDANT' | 'BOTH';
+            if (vote === 'plaintiff') apiVote = 'PLAINTIFF';
+            else if (vote === 'defendant') apiVote = 'DEFENDANT';
+            else apiVote = 'BOTH';
+
             await juryService.submitVote(caseId, currentUser.id, apiVote);
             await refreshData();
-            alert("투표가 완료되었습니다.");
+            // No alert needed here as UI updates to "Voted" state
         } catch (error) {
             console.error("Voting failed", error);
             alert("투표에 실패했습니다.");
@@ -396,7 +400,7 @@ function CaseRouteHandler({
         const fetchCase = async () => {
             if (!id) return;
             try {
-                const data = await caseService.getCase(id);
+                const data = await caseService.getCase(id, currentUser?.id ? String(currentUser.id) : undefined);
                 setActiveCase(data);
             } catch (error) {
                 console.error("Failed to fetch case details", error);
@@ -405,7 +409,7 @@ function CaseRouteHandler({
             }
         };
         fetchCase();
-    }, [id]);
+    }, [id, cases]);
 
     // Fallback to case from list if fetch fails or while loading (optional, but safer to wait for full details)
     // Actually, we need full details like content/evidences for DefensePage. 

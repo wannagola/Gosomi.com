@@ -16,7 +16,8 @@ export const juryService = {
   },
 
   // Submit jury vote
-  submitVote: async (caseId: string, userId: string, vote: 'PLAINTIFF' | 'DEFENDANT'): Promise<void> => {
+  // Submit jury vote
+  submitVote: async (caseId: string, userId: string, vote: 'PLAINTIFF' | 'DEFENDANT' | 'BOTH'): Promise<void> => {
     await apiClient.post(`/api/cases/${caseId}/jury/vote`, { userId, vote });
   }
 };

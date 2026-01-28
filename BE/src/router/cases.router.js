@@ -379,8 +379,8 @@ router.post("/:id/jury/vote", async (req, res) => {
     const caseId = Number(req.params.id);
     const { userId, vote } = req.body;
 
-    if (!userId || !["PLAINTIFF", "DEFENDANT"].includes(vote)) {
-      return res.status(400).json({ error: "userId and valid vote (PLAINTIFF/DEFENDANT) required" });
+    if (!userId || !["PLAINTIFF", "DEFENDANT", "BOTH"].includes(vote)) {
+      return res.status(400).json({ error: "userId and valid vote (PLAINTIFF/DEFENDANT/BOTH) required" });
     }
 
     // Check Case Status (No voting during appeal)
@@ -392,7 +392,7 @@ router.post("/:id/jury/vote", async (req, res) => {
 
     // Check if user is a juror for this case
     const [jRows] = await pool.query(
-      "SELECT id, status FROM jurors WHERE case_id=? AND user_id=?",
+      "SELECT id, status FROM jurors WHERE case_id=? AND id=?",
       [caseId, userId]
     );
     if (jRows.length === 0) return res.status(403).json({ error: "not a juror" });

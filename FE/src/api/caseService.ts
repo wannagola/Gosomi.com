@@ -22,8 +22,9 @@ export const caseService = {
   },
 
   // Get single case
-  getCase: async (id: string): Promise<Case> => {
-    const response = await apiClient.get<Case>(`/api/cases/${id}`);
+  getCase: async (id: string, userId?: string): Promise<Case> => {
+    const config = userId ? { params: { userId } } : {};
+    const response = await apiClient.get<Case>(`/api/cases/${id}`, config);
     return response.data;
   },
 
@@ -81,8 +82,12 @@ export const caseService = {
     await apiClient.post(`/api/cases/${caseId}/appeal/defense`, { content });
   },
 
-  // Appeal Verdict
   requestAppealVerdict: async (caseId: string): Promise<void> => {
     await apiClient.post(`/api/cases/${caseId}/appeal/verdict`);
+  },
+
+  // Jury Vote
+  voteJury: async (caseId: string, userId: string, vote: 'PLAINTIFF' | 'DEFENDANT' | 'BOTH'): Promise<void> => {
+    await apiClient.post(`/api/cases/${caseId}/jury/vote`, { userId, vote });
   }
 };
