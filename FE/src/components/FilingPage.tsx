@@ -283,7 +283,7 @@ function Step1BasicInfo({
                 setFormData({ 
                     ...formData, 
                     defendantId: e.target.value,
-                    defendant: selectedFriend?.nickname || '' 
+                    defendant: selectedFriend?.nickname || (selectedFriend as any)?.name || '' 
                 });
             }}
             className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white focus:border-[var(--color-gold-primary)] focus:outline-none appearance-none"
@@ -920,7 +920,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in-up">
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in-up">
           <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
             링크가 복사 되었습니다!
