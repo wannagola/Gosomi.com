@@ -182,8 +182,9 @@ router.post("/accept", async (req, res) => {
 router.delete("/", async (req, res) => {
     try {
         // userId and friendId can be in body or query
-        const userId = req.body.userId || req.query.userId;
-        const friendId = req.body.friendId || req.query.friendId;
+        const body = req.body || {};
+        const userId = body.userId || req.query.userId;
+        const friendId = body.friendId || req.query.friendId;
 
         console.log('DELETE /api/friends called with:', { userId, friendId, body: req.body, query: req.query });
 

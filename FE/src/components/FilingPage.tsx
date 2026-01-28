@@ -756,12 +756,6 @@ interface Step3Props {
 function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const [showToast, setShowToast] = useState(false);
 
-  // 배심원 링크 생성
-  const juryLink =
-    formData.juryEnabled && formData.juryMode === "INVITE"
-      ? shareLink.replace("/defense/", "/jury/")
-      : "";
-
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
     setShowToast(true);
@@ -772,22 +766,17 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
   const shareKakao = () => {
     if (!window.Kakao) {
-      alert("Kakao SDK가 로드되지 않았습니다. index.html script 태그 확인!");
+      alert("Kakao SDK가 로드되지 않았습니다.");
       return;
     }
 
     if (!window.Kakao.isInitialized()) {
       const key = import.meta.env.VITE_KAKAO_JS_KEY;
       if (!key) {
-        alert("VITE_KAKAO_JS_KEY가 없습니다. .env.local 확인!");
+        alert("VITE_KAKAO_JS_KEY가 없습니다.");
         return;
       }
       window.Kakao.init(key);
-    }
-
-    if (!shareLink) {
-      alert("공유할 링크가 아직 생성되지 않았습니다.");
-      return;
     }
 
     const description = formData.juryEnabled
@@ -818,7 +807,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   };
 
   return (
-    <div className="space-y-8 flex flex-col items-center animate-fade-in-up">
+    <div className="space-y-8 flex flex-col items-center animate-fade-in-up w-full">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4">
@@ -829,57 +818,57 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         </div>
       )}
 
-      {/* 소환장 카드 (Summons Writ) */}
-      <div className="w-full max-w-md bg-[#f4f1ea] text-black p-8 rounded-lg shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden font-serif">
+      {/* 소환장 카드 (Summons Writ) - Dark Theme */}
+      <div className="w-full max-w-lg bg-[#0a0a0f] border-2 border-[var(--color-gold-primary)] text-white p-8 rounded-lg shadow-[0_0_50px_rgba(212,175,55,0.15)] relative overflow-hidden font-serif">
         {/* 워터마크/배경 장식 */}
-        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-          <Gavel className="w-32 h-32" />
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+          <Gavel className="w-40 h-40 text-[var(--color-gold-primary)]" />
         </div>
         
         {/* 헤더 */}
-        <div className="text-center border-b-2 border-black pb-6 mb-6">
-          <h2 className="text-4xl font-bold mb-2 tracking-widest text-[#c92a2a]">소 환 장</h2>
-          <p className="text-sm font-bold text-gray-600 tracking-wider">DIGITAL SUPREME COURT</p>
+        <div className="text-center border-b border-[var(--color-gold-dark)] pb-6 mb-8 mt-2">
+          <h2 className="text-4xl font-bold mb-3 tracking-[0.2em] text-[var(--color-gold-primary)]">소 환 장</h2>
+          <p className="text-xs font-bold text-gray-500 tracking-[0.3em] uppercase">Digital Supreme Court</p>
         </div>
 
         {/* 본문 */}
-        <div className="space-y-4 text-left">
-          <div className="flex border-b border-gray-300 pb-2">
-            <span className="font-bold w-20 text-gray-700">사 건</span>
-            <span className="flex-1 font-semibold">{formData.title}</span>
+        <div className="space-y-6 text-left px-2">
+          <div className="flex items-center border-b border-gray-800 pb-3">
+            <span className="font-bold w-24 text-gray-400">사 건</span>
+            <span className="flex-1 font-bold text-xl text-white">{formData.title}</span>
           </div>
-          <div className="flex border-b border-gray-300 pb-2">
-            <span className="font-bold w-20 text-gray-700">원 고</span>
-            <span className="flex-1 font-semibold">{formData.plaintiff}</span>
+          <div className="flex items-center border-b border-gray-800 pb-3">
+            <span className="font-bold w-24 text-gray-400">원 고</span>
+            <span className="flex-1 font-semibold text-lg text-blue-300">{formData.plaintiff}</span>
           </div>
-          <div className="flex border-b border-gray-300 pb-2">
-            <span className="font-bold w-20 text-gray-700">피 고</span>
-            <span className="flex-1 font-semibold">{formData.defendant}</span>
+          <div className="flex items-center border-b border-gray-800 pb-3">
+            <span className="font-bold w-24 text-gray-400">피 고</span>
+            <span className="flex-1 font-semibold text-lg text-red-300">{formData.defendant}</span>
           </div>
 
-          <div className="mt-8 text-center text-sm leading-8 font-medium text-gray-800">
+          <div className="mt-10 text-center text-sm leading-8 text-gray-300 font-light">
             <p>위 사건에 관하여 귀하를 피고로 소환하오니,</p>
-            <p>본 소환장을 확인하는 즉시 변론기일에 출석하여</p>
+            <p className="text-white font-medium">본 소환장을 확인하는 즉시 변론기일에 출석하여</p>
             <p>답변서 및 증거를 제출하시기 바랍니다.</p>
-            <p className="text-[#c92a2a] mt-2 font-bold">
-              ※ 불출석 시 원고의 청구 취지대로 판결될 수 있습니다.
+            <p className="text-red-400 mt-4 text-xs">
+              ※ 정당한 사유 없이 불출석할 경우 원고의 청구 취지대로 판결될 수 있습니다.
             </p>
           </div>
         </div>
 
         {/* 날짜 및 서명 */}
-        <div className="mt-10 text-center">
-          <p className="text-lg font-bold mb-4">
+        <div className="mt-12 text-center pb-4">
+          <p className="text-lg font-bold mb-6 text-gray-400">
             {new Date().getFullYear()}년 {new Date().getMonth() + 1}월 {new Date().getDate()}일
           </p>
-          <div className="relative inline-block">
-            <span className="text-2xl font-bold border-2 border-black px-6 py-2">
+          <div className="relative inline-block mt-2">
+            <span className="text-2xl font-bold border-2 border-white px-8 py-3 tracking-widest">
               고 소 미 닷 컴
             </span>
             {/* 도장 효과 */}
-            <div className="absolute -right-6 -top-4 transform rotate-12 opacity-80 mix-blend-multiply">
-              <div className="w-16 h-16 rounded-full border-4 border-[#c92a2a] flex items-center justify-center">
-                <span className="text-[10px] text-[#c92a2a] font-bold">OFFICIAL</span>
+            <div className="absolute -right-8 -top-6 transform rotate-12 opacity-90 mix-blend-screen">
+              <div className="w-20 h-20 rounded-full border-4 border-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.5)] bg-red-900/10">
+                <span className="text-[10px] text-red-500 font-bold tracking-tighter">OFFICIAL</span>
               </div>
             </div>
           </div>
@@ -887,34 +876,34 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
       </div>
 
       {/* 안내 메시지 */}
-      <p className="text-gray-400 text-sm text-center">
+      <p className="text-gray-400 text-sm text-center animate-pulse">
         상대방에게 소환장을 보내 재판을 시작하세요.
       </p>
 
       {/* 공유 버튼 영역 */}
-      <div className="w-full max-w-md space-y-3">
+      <div className="w-full max-w-lg space-y-4">
         <button
           onClick={shareKakao}
-          className="w-full py-4 bg-[#FEE500] text-[#000000] rounded-xl font-bold text-lg hover:shadow-lg hover:bg-[#fae100] transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-[#FEE500] text-[#000000] rounded-xl font-bold text-lg hover:shadow-[0_0_20px_#FEE50066] hover:scale-[1.01] transition-all flex items-center justify-center gap-3"
         >
-          <span className="text-xl">💬</span>
-          카카오톡으로 공유하기
+          <span className="text-2xl">💬</span>
+          카카오톡으로 소환장 보내기
         </button>
 
         <button
           onClick={copyLink}
-          className="w-full py-4 bg-[#2a2a35] border border-gray-700 text-white rounded-xl font-bold text-lg hover:bg-[#32323f] hover:border-gray-500 transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-[#1a1a24] border border-gray-700 text-white rounded-xl font-bold text-lg hover:bg-[#2a2a35] hover:border-gray-500 hover:text-white transition-all flex items-center justify-center gap-3 group"
         >
-          <Share2 className="w-5 h-5 text-gray-300" />
+          <Share2 className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
           다른 방법으로 공유하기
         </button>
       </div>
 
       {/* 대기화면 이동 (하단 고정 느낌) */}
-      <div className="pt-8 w-full max-w-md">
+      <div className="pt-6 w-full max-w-lg border-t border-gray-800 mt-4">
         <button
           onClick={onBack}
-          className="w-full py-4 bg-transparent border-2 border-[var(--color-gold-dark)] text-[var(--color-gold-primary)] rounded-xl font-bold hover:bg-[var(--color-gold-dark)] hover:text-white transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-transparent border border-[var(--color-gold-dark)] text-[var(--color-gold-primary)] rounded-xl font-bold hover:bg-[var(--color-gold-dark)] hover:text-white transition-all flex items-center justify-center gap-2"
         >
           <CheckCircle className="w-5 h-5" />
           대기 화면으로 이동
