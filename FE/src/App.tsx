@@ -81,6 +81,33 @@ export default function App() {
         return () => window.removeEventListener('auth:logout', handleLogoutEvent);
     }, []);
 
+    // Real-time Data Polling - Check for updates every 10 seconds
+    useEffect(() => {
+        if (!currentUser) return;
+
+        const pollData = async () => {
+            try {
+                const [fetchedCases, fetchedJuryCases, fetchedNotifs] = await Promise.all([
+                    caseService.getCases({ userId: String(currentUser.id) }),
+                    juryService.getJuryCases(String(currentUser.id)),
+                    notificationService.getNotifications(currentUser.id)
+                ]);
+
+                setCases(fetchedCases);
+                setJuryCases(fetchedJuryCases);
+                setNotifications(fetchedNotifs);
+            } catch (error) {
+                console.error("Failed to poll data", error);
+            }
+        };
+
+        // Poll every 10 seconds
+        const intervalId = setInterval(pollData, 10000);
+
+        // Cleanup on unmount
+        return () => clearInterval(intervalId);
+    }, [currentUser]);
+
     // Auth Guard
     // Auth Guard Logic
     if (!currentUser && location.pathname !== '/login' && location.pathname !== '/law-book' && !location.pathname.startsWith('/case/')) {
