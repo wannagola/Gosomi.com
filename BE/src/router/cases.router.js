@@ -379,6 +379,13 @@ router.post("/:id/jury/vote", async (req, res) => {
     const caseId = Number(req.params.id);
     const { userId, vote } = req.body;
 
+    // Ensure index exists to prevent Safe Update Mode error
+    try {
+      await pool.query("ALTER TABLE jurors ADD INDEX idx_jurors_case_user (case_id, id)");
+    } catch (err) {
+      // Ignore error if index already exists
+    }
+
     if (!userId || !["PLAINTIFF", "DEFENDANT", "BOTH"].includes(vote)) {
       return res.status(400).json({ error: "userId and valid vote (PLAINTIFF/DEFENDANT/BOTH) required" });
     }
@@ -402,8 +409,8 @@ router.post("/:id/jury/vote", async (req, res) => {
 
     // Update Vote
     await pool.query(
-      "UPDATE jurors SET status='VOTED', vote=? WHERE id=?",
-      [vote, juror.id]
+      "UPDATE jurors SET status='VOTED', vote=? WHERE case_id=? AND id=?",
+      [vote, caseId, juror.id]
     );
 
     return res.json({ ok: true });

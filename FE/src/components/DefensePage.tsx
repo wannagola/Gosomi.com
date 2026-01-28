@@ -4,10 +4,11 @@ import { Case, Evidence, LAWS } from '@/types/court';
 
 interface DefensePageProps {
   case_: Case;
-  onSubmitDefense: (response: { statement: string; evidences: Evidence[] }) => void;
+  onSubmitDefense: (response: { statement: string; evidences: Evidence[] }) => Promise<void> | void;
 }
 
 export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [statement, setStatement] = useState('');
   const [evidences, setEvidences] = useState<Evidence[]>([]);
   const [textEvidence, setTextEvidence] = useState('');
@@ -64,7 +65,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
       ]);
     };
     reader.readAsDataURL(file);
-    
+
     // Reset input
     e.target.value = '';
   };
@@ -81,9 +82,15 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
     setEvidences(evidences.filter((e) => e.id !== id));
   };
 
-  const handleSubmit = () => {
-    if (statement.trim()) {
-      onSubmitDefense({ statement, evidences });
+  const handleSubmit = async () => {
+    if (statement.trim() && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        await onSubmitDefense({ statement, evidences });
+      } catch (e) {
+        setIsSubmitting(false);
+        // 에러는 부모 컴포넌트(App.tsx)에서 처리됨 (alert 등)
+      }
     }
   };
 
@@ -175,8 +182,8 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-3">고소 내용</h3>
               <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-30 rounded-lg border-l-4 border-purple-600">
                 <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {showOriginal 
-                    ? (case_.content || '소송 내용이 없습니다.') 
+                  {showOriginal
+                    ? (case_.content || '소송 내용이 없습니다.')
                     : ((case_.content || '').slice(0, 200) + ((case_.content?.length ?? 0) > 200 ? '...' : ''))
                   }
                 </p>
@@ -193,11 +200,10 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   {case_.evidences?.map((evidence) => (
                     <div
                       key={evidence.id}
-                      className={`p-3 rounded-lg border ${
-                        evidence.isKeyEvidence
+                      className={`p-3 rounded-lg border ${evidence.isKeyEvidence
                           ? 'border-yellow-600 bg-yellow-900 bg-opacity-20'
                           : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
-                      }`}
+                        }`}
                     >
                       {evidence.isKeyEvidence && (
                         <span className="inline-block px-2 py-0.5 bg-yellow-600 text-black text-xs font-bold rounded mb-1">
@@ -205,9 +211,9 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                         </span>
                       )}
                       {evidence.type === 'image' ? (
-                        <img 
-                          src={evidence.content} 
-                          alt="원고 증거 이미지" 
+                        <img
+                          src={evidence.content}
+                          alt="원고 증거 이미지"
                           className="max-w-sm rounded-lg border border-[var(--color-court-border)]"
                         />
                       ) : (
@@ -246,7 +252,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-4">
                 증거 자료 제출
               </label>
-              
+
               {/* 텍스트 증거 입력 */}
               <div className="flex gap-3 mb-6">
                 <textarea
@@ -282,7 +288,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   >
                     <ImageIcon className="w-8 h-8 text-purple-400 mb-3" />
                     <span className="text-base font-bold text-gray-300">이미지 증거 업로드</span>
-                    <span className="text-xs text-gray-500 mt-2 text-center">판결에 직접 반영됨<br/>(Max 2MB)</span>
+                    <span className="text-xs text-gray-500 mt-2 text-center">판결에 직접 반영됨<br />(Max 2MB)</span>
                   </label>
                 </div>
 
@@ -302,25 +308,24 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   >
                     <Paperclip className="w-8 h-8 text-orange-400 mb-3" />
                     <span className="text-base font-bold text-gray-300">기타 파일 첨부</span>
-                    <span className="text-xs text-gray-500 mt-2 text-center">문서, PDF 등<br/>참고자료</span>
+                    <span className="text-xs text-gray-500 mt-2 text-center">문서, PDF 등<br />참고자료</span>
                   </button>
                 </div>
               </div>
 
               {/* 업로드된 항목 표시 목록 */}
               <div className="space-y-4">
-                 {/* 이미지/텍스트 증거 목록 */}
-                 {evidences.length > 0 && (
+                {/* 이미지/텍스트 증거 목록 */}
+                {evidences.length > 0 && (
                   <div className="space-y-3">
                     <p className="text-sm font-semibold text-gray-400 mb-2">등록된 증거 ({evidences.length})</p>
                     {evidences.map((evidence) => (
                       <div
                         key={evidence.id}
-                        className={`p-4 rounded-lg border-2 ${
-                          evidence.isKeyEvidence
+                        className={`p-4 rounded-lg border-2 ${evidence.isKeyEvidence
                             ? 'border-purple-500 bg-purple-900 bg-opacity-10'
                             : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
@@ -331,9 +336,9 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                             )}
                             {evidence.type === 'image' ? (
                               <div className="relative group mt-1">
-                                <img 
-                                  src={evidence.content} 
-                                  alt="증거 이미지" 
+                                <img
+                                  src={evidence.content}
+                                  alt="증거 이미지"
                                   className="h-24 w-auto rounded border border-[var(--color-court-border)] object-cover"
                                 />
                               </div>
@@ -342,7 +347,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                             )}
                           </div>
                           <div className="flex flex-col gap-2">
-                           <button
+                            <button
                               onClick={() => toggleKeyEvidence(evidence.id)}
                               className={`px-3 py-1.5 text-xs border rounded transition-colors whitespace-nowrap ${evidence.isKeyEvidence ? 'border-purple-500 text-purple-400' : 'border-gray-600 text-gray-500 hover:border-purple-500'}`}
                             >
@@ -383,30 +388,29 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
 
             {/* 💡 변론 팁 (심플 버전 - 테두리 제거 & 간격 추가 & 내부 여백 확보) */}
             <div className="mt-8 mb-12 p-8 bg-purple-900 bg-opacity-20 rounded-xl flex gap-4 items-start">
-               <div className="p-2 bg-purple-500/20 rounded-lg shrink-0">
-                  <Shield className="w-6 h-6 text-purple-300" />
-               </div>
-               <div>
-                  <h3 className="font-bold text-lg text-purple-200 mb-2">변론 팁</h3>
-                  <p className="text-sm text-purple-300/80 leading-relaxed">
-                     감정적인 호소보다는 객관적인 사실과 증거를 제시하세요.<br/>
-                     AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.
-                  </p>
-               </div>
+              <div className="p-2 bg-purple-500/20 rounded-lg shrink-0">
+                <Shield className="w-6 h-6 text-purple-300" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-purple-200 mb-2">변론 팁</h3>
+                <p className="text-sm text-purple-300/80 leading-relaxed">
+                  감정적인 호소보다는 객관적인 사실과 증거를 제시하세요.<br />
+                  AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.
+                </p>
+              </div>
             </div>
 
             {/* 제출 버튼 */}
             <button
               onClick={handleSubmit}
-              disabled={statement.trim().length === 0}
-              className={`w-full px-6 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg ${
-                statement.trim().length > 0
+              disabled={statement.trim().length === 0 || isSubmitting}
+              className={`w-full px-6 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg ${statement.trim().length > 0 && !isSubmitting
                   ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-xl hover:scale-[1.02]'
                   : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-              }`}
+                }`}
             >
               <Send className="w-6 h-6" />
-              변론서 제출하기
+              {isSubmitting ? '제출 중...' : '변론서 제출하기'}
             </button>
           </div>
         </div>

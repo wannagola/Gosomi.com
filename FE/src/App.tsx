@@ -169,8 +169,14 @@ export default function App() {
             // CaseRouteHandler will show WaitingPage (since no verdict yet).
             // So navigate to main case path seems correct.
             navigate(`/case/${caseId}`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Defense submission failed", error);
+            // 만약 이미 제출된 상태라면, 성공한 것으로 간주하고 이동
+            if (error.response?.data?.error === "defense already submitted" || error.message?.includes("defense already submitted")) {
+                await refreshData();
+                navigate(`/case/${caseId}`);
+                return;
+            }
             alert("변론 제출에 실패했습니다.");
         }
     };
@@ -198,9 +204,9 @@ export default function App() {
             await juryService.submitVote(caseId, currentUser.id, apiVote);
             await refreshData();
             // No alert needed here as UI updates to "Voted" state
-        } catch (error) {
+        } catch (error: any) {
             console.error("Voting failed", error);
-            alert("투표에 실패했습니다.");
+            alert(`투표에 실패했습니다: ${error.response?.data?.error || error.message}`);
         }
     };
 

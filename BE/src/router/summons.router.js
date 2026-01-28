@@ -88,7 +88,7 @@ router.post("/summons/:token/defense", async (req, res) => {
         [caseRows[0].plaintiff_id, case_id]
       );
     }
-    
+
     // 🤖 Trigger AI Verdict
     // REMOVED: Verdict is now requested manually by the user after defense submission.
     // await generateVerdictWithGemini(case_id);
@@ -130,28 +130,34 @@ router.post("/cases/:id/defense", async (req, res) => {
     // Spec says strict, but for debugging/usability, ignoring repeated might be better or returning 409 is fine.
     // Preserving existing logic:
     const [existing] = await pool.query("SELECT id FROM defenses WHERE case_id = ?", [caseId]);
-    if (existing.length > 0) return res.status(409).json({ error: "defense already submitted" });
+    if (existing.length > 0) {
+      // Self-healing: If somehow defense exists but status is not updated
+      if (c.status === 'SUMMONED') {
+        await pool.query("UPDATE cases SET status='DEFENSE_SUBMITTED' WHERE id=?", [caseId]);
+      }
+      return res.status(409).json({ error: "defense already submitted" });
+    }
 
     await pool.query("INSERT INTO defenses (case_id, content) VALUES (?, ?)", [caseId, content]);
     await pool.query("UPDATE cases SET status='DEFENSE_SUBMITTED' WHERE id=?", [caseId]);
 
     // Handle Evidence
     if (evidences && Array.isArray(evidences)) {
-        for (const ev of evidences) {
-            let filePath = null;
-             // Only save image content if it looks like base64
-            if (ev.type === 'image' && ev.content && ev.content.startsWith('data:')) {
-                filePath = saveBase64Image(ev.content);
-            }
-
-            // If it's text, we store in text_content. If image, filePath.
-            // DB schema: type, text_content, file_path, submitted_by
-            await pool.query(
-                `INSERT INTO evidences (case_id, type, text_content, file_path, submitted_by, stage) 
-                 VALUES (?, ?, ?, ?, 'DEFENDANT', 'INITIAL')`,
-                [caseId, ev.type, ev.type === 'text' ? ev.content : null, filePath]
-            );
+      for (const ev of evidences) {
+        let filePath = null;
+        // Only save image content if it looks like base64
+        if (ev.type === 'image' && ev.content && ev.content.startsWith('data:')) {
+          filePath = saveBase64Image(ev.content);
         }
+
+        // If it's text, we store in text_content. If image, filePath.
+        // DB schema: type, text_content, file_path, submitted_by
+        await pool.query(
+          `INSERT INTO evidences (case_id, type, text_content, file_path, submitted_by, stage) 
+                 VALUES (?, ?, ?, ?, 'DEFENDANT', 'INITIAL')`,
+          [caseId, ev.type, ev.type === 'text' ? ev.content : null, filePath]
+        );
+      }
     }
 
     // 🔔 Notification: Notify Plaintiff

@@ -566,7 +566,13 @@ export function VerdictPage({
                 </div>
               )}
               <h3 className="text-xl font-bold text-red-400 mb-3">⚖️ 엄중한 처벌</h3>
-              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getSeriousPenalty()}</p>
+              {confirmedPenalty === 'serious' ? (
+                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getSeriousPenalty()}</p>
+              ) : (
+                <div className="h-24 flex items-center justify-center bg-black bg-opacity-30 rounded-lg border border-red-900 border-dashed">
+                  <p className="text-red-700 font-mono text-sm">⛔ SECURED CONTENT</p>
+                </div>
+              )}
 
               {isDefendant && !confirmedPenalty && (
                 <button
@@ -592,7 +598,13 @@ export function VerdictPage({
                 </div>
               )}
               <h3 className="text-xl font-bold text-yellow-500 mb-3">🎭 유쾌한 처벌</h3>
-              <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getFunnyPenalty()}</p>
+              {confirmedPenalty === 'funny' ? (
+                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{getFunnyPenalty()}</p>
+              ) : (
+                <div className="h-24 flex items-center justify-center bg-black bg-opacity-30 rounded-lg border border-yellow-900 border-dashed">
+                  <p className="text-yellow-700 font-mono text-sm">🔒 HIDDEN CONTENT</p>
+                </div>
+              )}
 
               {isDefendant && !confirmedPenalty && (
                 <button

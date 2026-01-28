@@ -316,11 +316,12 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
         {/* Law Details Modal */}
         {showLawModal && law && createPortal(
           <div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] p-4"
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100000] p-4 sm:p-6"
             onClick={() => setShowLawModal(false)}
+            style={{ paddingTop: '80px', paddingBottom: '80px' }} // Add safe area for nav bar
           >
             <div
-              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-[80vh] overflow-y-auto p-8 relative shadow-2xl"
+              className="bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-accent)] rounded-2xl max-w-3xl w-full max-h-full flex flex-col relative shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6 sticky top-0 bg-[var(--color-court-gray)] z-10 pb-4 border-b border-[var(--color-court-border)]">
