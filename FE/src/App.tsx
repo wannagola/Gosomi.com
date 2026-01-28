@@ -149,12 +149,26 @@ export default function App() {
     const handleCreateCase = async (newCaseData: any) => {
         if (!currentUser) return;
         try {
+            console.log('Creating case with data:', {
+                ...newCaseData,
+                evidences: newCaseData.evidences?.map((e: any) => ({
+                    type: e.type,
+                    contentLength: e.content?.length,
+                    isKeyEvidence: e.isKeyEvidence
+                }))
+            });
+
             const result = await caseService.createCase(newCaseData);
+            console.log('Case created successfully:', result);
             await refreshData();
             navigate(`/case/${result.caseId}`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Create case failed", error);
-            alert("사건 접수에 실패했습니다.");
+            console.error("Error response:", error.response?.data);
+            console.error("Error message:", error.message);
+            
+            const errorMsg = error.response?.data?.error || error.message || "사건 접수에 실패했습니다.";
+            alert(`사건 접수 실패: ${errorMsg}`);
         }
     };
 

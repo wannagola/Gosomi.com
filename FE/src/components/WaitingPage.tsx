@@ -2,6 +2,7 @@ import { Case, LAWS } from '@/types/court';
 import { User } from '@/types/user';
 import { Scale, Clock, Send, Gavel, Loader } from 'lucide-react';
 import { useState } from 'react';
+import dapDapGif from '@/assets/답답해.gif';
 
 interface WaitingPageProps {
   case_: Case;
@@ -47,9 +48,8 @@ export function WaitingPage({ case_, currentUser, onRequestVerdict, hasVerdict }
   return (
     <div className="min-h-screen bg-[#05050a] text-white flex flex-col items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center space-y-8">
-        <div className="relative">
-          <div className="absolute inset-0 bg-blue-500 blur-[100px] opacity-20 rounded-full animate-pulse"></div>
-          <Scale className="w-24 h-24 mx-auto text-[var(--color-gold-primary)] relative z-10" />
+        <div className="w-40 h-40 mx-auto flex items-center justify-center">
+          <img src={dapDapGif} alt="답답해" className="w-full h-full object-contain" />
         </div>
 
         <div className="space-y-4">
