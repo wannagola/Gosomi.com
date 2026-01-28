@@ -268,6 +268,23 @@ router.get("/:id", async (req, res) => {
       isKeyEvidence: false // Default to false since column doesn't exist in schema
     }));
 
+    // Fetch Jury Votes
+    const [voteRows] = await pool.query(
+      "SELECT vote, COUNT(*) as cnt FROM jurors WHERE case_id=? AND status='VOTED' GROUP BY vote",
+      [id]
+    );
+    
+    const juryVotes = {
+      plaintiffWins: 0,
+      defendantWins: 0,
+      bothGuilty: 0
+    };
+
+    voteRows.forEach(r => {
+      if (r.vote === 'PLAINTIFF') juryVotes.plaintiffWins = Number(r.cnt);
+      else if (r.vote === 'DEFENDANT') juryVotes.defendantWins = Number(r.cnt);
+    });
+
     return res.json({
       id: c.id,
       caseNumber: c.case_number,
@@ -290,6 +307,7 @@ router.get("/:id", async (req, res) => {
       penaltyChoice: c.penalty_choice,
       penaltySelected: c.penalty_selected,
       appealStatus: c.appeal_status,
+      juryVotes, // Added jury votes stats
     });
   } catch (e) {
     return res.status(500).json({ error: e.message });
