@@ -459,4 +459,27 @@ router.get("/user/:userId/stats", async (req, res) => {
   }
 });
 
+// POST /api/cases/:id/select-penalty - 벌칙 선택
+router.post('/:id/select-penalty', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { penalty } = req.body; // "serious" or "funny"
+
+    if (!penalty || !['serious', 'funny'].includes(penalty)) {
+      return res.status(400).json({ error: 'Invalid penalty choice' });
+    }
+
+    // Update penalty_choice in database
+    const choice = penalty.toUpperCase(); // "SERIOUS" or "FUNNY"
+    await pool.query(
+      'UPDATE cases SET penalty_choice = ? WHERE id = ?',
+      [choice, id]
+    );
+
+    res.json({ ok: true, penaltyChoice: choice });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 export default router;
