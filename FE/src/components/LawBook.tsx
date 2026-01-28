@@ -136,9 +136,7 @@ interface LawDetailModalProps {
 }
 
 function LawDetailModal({ law, onClose }: LawDetailModalProps) {
-  const [selectedSeverity, setSelectedSeverity] = useState<
-    "low" | "medium" | "high"
-  >("medium");
+  // Removed selectedSeverity state as buttons are no longer interactive
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-6">
@@ -186,45 +184,30 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
               </h3>
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <button
-                onClick={() => setSelectedSeverity("low")}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  selectedSeverity === "low"
-                    ? "border-green-500 bg-green-900 bg-opacity-20"
-                    : "border-[var(--color-court-border)]"
-                }`}
+              <div
+                className="p-4 rounded-lg border-2 transition-all border-green-500 bg-green-900 bg-opacity-20"
               >
                 <h4 className="font-bold text-green-400 mb-2">하 (경미)</h4>
                 <p className="text-xs text-gray-400">
                   {law.severityCriteria.low}
                 </p>
-              </button>
-              <button
-                onClick={() => setSelectedSeverity("medium")}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  selectedSeverity === "medium"
-                    ? "border-yellow-500 bg-yellow-900 bg-opacity-20"
-                    : "border-[var(--color-court-border)]"
-                }`}
+              </div>
+              <div
+                className="p-4 rounded-lg border-2 transition-all border-yellow-500 bg-yellow-900 bg-opacity-20"
               >
                 <h4 className="font-bold text-yellow-400 mb-2">중 (보통)</h4>
                 <p className="text-xs text-gray-400">
                   {law.severityCriteria.medium}
                 </p>
-              </button>
-              <button
-                onClick={() => setSelectedSeverity("high")}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  selectedSeverity === "high"
-                    ? "border-red-500 bg-red-900 bg-opacity-20"
-                    : "border-[var(--color-court-border)]"
-                }`}
+              </div>
+              <div
+                className="p-4 rounded-lg border-2 transition-all border-red-500 bg-red-900 bg-opacity-20"
               >
                 <h4 className="font-bold text-red-400 mb-2">상 (중대)</h4>
                 <p className="text-xs text-gray-400">
                   {law.severityCriteria.high}
                 </p>
-              </button>
+              </div>
             </div>
           </section>
 
@@ -241,7 +224,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
               <div className="p-6 bg-gradient-to-br from-blue-900 from-opacity-20 to-transparent rounded-lg border-2 border-blue-800 border-opacity-30">
                 <div className="flex items-center gap-2 mb-3">
                   <Scale className="w-5 h-5 text-blue-400" />
-                  <h4 className="font-bold text-blue-400">진지한 벌칙</h4>
+                  <h4 className="font-bold text-blue-400">엄중한 처벌</h4>
                 </div>
                 <p className="text-sm text-gray-300 leading-relaxed">
                   상황에 맞는 진지한 반성을 위한 벌칙이 AI에 의해 생성됩니다.
@@ -252,7 +235,7 @@ function LawDetailModal({ law, onClose }: LawDetailModalProps) {
               <div className="p-6 bg-gradient-to-br from-purple-900 from-opacity-20 to-transparent rounded-lg border-2 border-purple-800 border-opacity-30">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xl">😄</span>
-                  <h4 className="font-bold text-purple-400">재미있는 벌칙</h4>
+                  <h4 className="font-bold text-purple-400">유쾌한 처벌</h4>
                 </div>
                 <p className="text-sm text-gray-300 leading-relaxed">
                   분위기를 풀고 화해할 수 있는 유쾌한 벌칙이 AI에 의해 생성됩니다.

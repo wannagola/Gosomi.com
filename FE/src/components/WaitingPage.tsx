@@ -43,7 +43,7 @@ export function WaitingPage({ case_, currentUser, onRequestVerdict, hasVerdict }
     setRequesting(false);
   };
 
-  const isDefenseSubmitted = case_.status === 'DEFENSE_SUBMITTED';
+  const isDefenseSubmitted = case_.status === 'DEFENSE_SUBMITTED' || !!case_.defendantResponse;
 
   return (
     <div className="min-h-screen bg-[#05050a] text-white flex flex-col items-center justify-center p-4">

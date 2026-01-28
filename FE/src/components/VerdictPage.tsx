@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import {
   Scale,
@@ -8,6 +9,7 @@ import {
   FileText,
   Paperclip,
   Upload,
+  Home,
 } from "lucide-react";
 import { Case, LAWS } from "@/types/court";
 import { User } from "@/types/user";
@@ -33,6 +35,7 @@ export function VerdictPage({
   onAppeal,
   onSelectPenalty,
 }: VerdictPageProps) {
+  const navigate = useNavigate();
   const [penaltyTypeSelected, setPenaltyTypeSelected] = useState<
     "serious" | "funny" | null
   >(null);
@@ -207,33 +210,37 @@ export function VerdictPage({
   // const law = LAWS.find(l => l.id === case_.lawType);
 
   const getSeriousPenalty = () => {
+    let content = "";
     if (parsedPenalties.serious && parsedPenalties.serious.length > 0) {
       // Limit to 1 penalty
-      return parsedPenalties.serious[0];
+      content = parsedPenalties.serious[0];
+    } else {
+      const l: any = law as any;
+      content =
+        l?.seriousPenalty ??
+        l?.serious ??
+        l?.penalties?.serious ??
+        l?.penalty?.serious ??
+        "엄중한 처벌 내용이 준비되지 않았습니다.";
     }
-    const l: any = law as any;
-    return (
-      l?.seriousPenalty ??
-      l?.serious ??
-      l?.penalties?.serious ??
-      l?.penalty?.serious ??
-      "진지한 벌칙 내용이 준비되지 않았습니다."
-    );
+    return content.replace(/^\d+\.\s*/, "");
   };
 
   const getFunnyPenalty = () => {
+    let content = "";
     if (parsedPenalties.funny && parsedPenalties.funny.length > 0) {
       // Limit to 1 penalty
-      return parsedPenalties.funny[0];
+      content = parsedPenalties.funny[0];
+    } else {
+      const l: any = law as any;
+      content =
+        l?.funnyPenalty ??
+        l?.funny ??
+        l?.penalties?.funny ??
+        l?.penalty?.funny ??
+        "유쾌한 처벌 내용이 준비되지 않았습니다.";
     }
-    const l: any = law as any;
-    return (
-      l?.funnyPenalty ??
-      l?.funny ??
-      l?.penalties?.funny ??
-      l?.penalty?.funny ??
-      "재미있는 벌칙 내용이 준비되지 않았습니다."
-    );
+    return content.replace(/^\d+\.\s*/, "");
   };
 
   const verdict = {
@@ -567,7 +574,7 @@ export function VerdictPage({
                 onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('serious')}
               >
                 {confirmedPenalty === 'serious' && (
-                  <div className="absolute top-4 right-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
+                  <div className="absolute top-4 left-4 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
                     확정됨
                   </div>
                 )}
@@ -599,7 +606,7 @@ export function VerdictPage({
                 onClick={() => isDefendant && !confirmedPenalty && handleConfirmPenalty('funny')}
               >
                 {confirmedPenalty === 'funny' && (
-                  <div className="absolute top-4 right-4 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
+                  <div className="absolute top-4 left-4 bg-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold animate-pulse z-10">
                     확정됨
                   </div>
                 )}
@@ -708,6 +715,19 @@ export function VerdictPage({
                 항소하기 (1회 가능)
               </button>
             )}
+          </div>
+        )}
+
+        {/* Home Button */}
+        {!isCapturing && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => navigate('/')}
+              className="px-8 py-3 bg-[var(--color-court-dark)] border border-[var(--color-court-border)] rounded-full text-gray-400 hover:text-white hover:border-[var(--color-gold-primary)] transition-all flex items-center gap-2"
+            >
+              <Home className="w-5 h-5" />
+              홈으로 가기
+            </button>
           </div>
         )}
 

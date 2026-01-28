@@ -10,6 +10,7 @@ import {
 import { LAWS, LawType, Evidence } from "@/types/court";
 import { Friend } from "@/types/user";
 import { FriendSelectionModal } from "./FriendSelectionModal";
+import { ShareSuccessModal } from "./ShareSuccessModal";
 
 declare global {
   interface Window {
@@ -744,7 +745,7 @@ interface Step3Props {
 function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const [copied, setCopied] = useState(false);
   const [juryCopied, setJuryCopied] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // 배심원 링크 생성
   const juryLink =
@@ -755,10 +756,9 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
     setCopied(true);
-    setShowToast(true);
+    setShowShareModal(true);
     setTimeout(() => {
       setCopied(false);
-      setShowToast(false);
     }, 2000);
   };
 
@@ -792,10 +792,9 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
     window.Kakao.Link.sendDefault({
       objectType: "feed",
       content: {
-        title: "📩 고소미 대법원 소환장 도착!",
+        title: `📩 [고소미] ${formData.title}`,
         description: `${formData.plaintiff}님이 제기한 사건에 대한 변론을 진행해주세요. (24시간 내)`,
-        // ⚠️ 카카오 공유 이미지는 https 이어야 함 (임시)
-        imageUrl: "https://placehold.co/800x400/png",
+        imageUrl: `${window.location.origin}/gosomidotcom.png`,
         link: {
           mobileWebUrl: shareLink,
           webUrl: shareLink,
@@ -902,6 +901,23 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         </div>
       )}
 
+      {/* 버튼 */}
+      <div className="flex gap-4 pt-4">
+        <button
+          onClick={onBack}
+          className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"
+        >
+          이전
+        </button>
+        <button
+          onClick={onSubmit}
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+        >
+          <CheckCircle className="w-5 h-5" />
+          사건 접수 완료
+        </button>
+      </div>
+
       {/* 공유 버튼 */}
       <div className="grid md:grid-cols-2 gap-4">
         <button
@@ -921,31 +937,9 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         </button>
       </div>
 
-      {/* 버튼 */}
-      <div className="flex gap-4 pt-4">
-        <button
-          onClick={onBack}
-          className="flex-1 px-6 py-3 border-2 border-[var(--color-court-border)] rounded-lg text-gray-300 hover:border-[var(--color-gold-dark)] transition-all"
-        >
-          이전
-        </button>
-        <button
-          onClick={onSubmit}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-green-700 to-green-600 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
-        >
-          <CheckCircle className="w-5 h-5" />
-          사건 접수 완료
-        </button>
-      </div>
-
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] animate-bounce">
-          <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
-            <CheckCircle className="w-5 h-5" />
-            링크가 복사 되었습니다!
-          </div>
-        </div>
+      {/* Share Success Modal */}
+      {showShareModal && (
+        <ShareSuccessModal onClose={() => setShowShareModal(false)} />
       )}
     </div>
   );
