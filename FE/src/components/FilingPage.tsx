@@ -585,6 +585,7 @@ function Step2Evidence({
             accept="image/*"
             onChange={addImageEvidence}
             className="hidden"
+            style={{ display: 'none' }}
           />
           <label
             htmlFor="image-evidence-input"
@@ -820,30 +821,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         </div>
       </div>
 
-      {/* 피고 변론 링크 */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-2">
-          피고 변론 링크
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={shareLink}
-            readOnly
-            className="flex-1 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white font-mono text-sm"
-          />
-          <button
-            onClick={copyLink}
-            className={`px-6 py-3 rounded-lg font-bold transition-all ${
-              copied
-                ? "bg-green-600 text-white"
-                : "bg-[var(--color-gold-dark)] text-white hover:bg-[var(--color-gold-primary)]"
-            }`}
-          >
-            {copied ? "복사됨!" : "복사"}
-          </button>
-        </div>
-      </div>
+
 
       {/* 배심원 초대 링크 (초대 모드일 때만) */}
       {formData.juryEnabled && formData.juryMode === "INVITE" && (

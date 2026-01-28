@@ -118,6 +118,7 @@ router.get("/", async (req, res) => {
 
     let sql = `
       SELECT c.id, c.case_number, c.title, c.status, c.appeal_status, c.created_at,
+             c.plaintiff_id, c.defendant_id,
              p.nickname AS plaintiff_name,
              d.nickname AS defendant_name
       FROM cases c
@@ -180,6 +181,8 @@ router.get("/", async (req, res) => {
         createdAt: r.created_at,
         plaintiff: r.plaintiff_name,
         defendant: r.defendant_name,
+        plaintiffId: r.plaintiff_id,
+        defendantId: r.defendant_id,
       };
     });
 

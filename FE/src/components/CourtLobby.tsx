@@ -6,10 +6,13 @@ import { LegalModal } from './LegalModal';
 import { TERMS_AND_CONDITIONS, PRIVACY_POLICY, THIRD_PARTY_CONSENT, MARKETING_CONSENT } from '@/data/legalText';
 import apiClient from '@/api/client';
 
+import { User } from '@/types/user';
+
 interface CourtLobbyProps {
   onNewCase: () => void;
   onViewCase: (caseId: string) => void;
   recentCases: Case[];
+  currentUser?: User | null;
 }
 
 interface Stats {
@@ -22,6 +25,7 @@ export function CourtLobby({
   onNewCase,
   onViewCase,
   recentCases,
+  currentUser
 }: CourtLobbyProps) {
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,12 +56,31 @@ export function CourtLobby({
   };
 
   const filteredCases = recentCases.filter(
-    (case_) =>
-      case_.status !== 'COMPLETED' &&
-      (case_.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (case_) => {
+      // Basic Filters
+      const matchesSearch = case_.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       case_.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       case_.plaintiff.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      case_.defendant.toLowerCase().includes(searchTerm.toLowerCase())),
+      case_.defendant.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const isNotCompleted = case_.status !== 'COMPLETED';
+
+      // User Filter: Only show cases where current user is Plaintiff or Defendant
+      // If no current user, show nothing? Or show all? User demanded "leave only cases where user exists..."
+      // Assuming if not logged in, show nothing or standard (but user is usually logging in).
+      // Given the request context: "Here, leave only cases where the user exists..."
+      // If currentUser is present, filter. If not, maybe show empty?
+      // Let's assume if currentUser is present, apply filter.
+      const isParticipant = currentUser 
+          ? (String(case_.plaintiffId) === String(currentUser.id) || String(case_.defendantId) === String(currentUser.id))
+          : true; // Or false if we want strict privacy? Original behavior was "recentCases" (all). 
+                  // But user request implies a personalized view. 
+                  // If logged out, "Real-time Trial Status" should probably remain public? 
+                  // But user is "The User". They are likely logged in.
+                  // I will apply filter if currentUser is provided.
+
+       return isNotCompleted && matchesSearch && isParticipant;
+    }
   );
 
   return (

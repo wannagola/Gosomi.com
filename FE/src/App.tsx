@@ -283,7 +283,7 @@ export default function App() {
       )}
       
       <Routes>
-        <Route path="/" element={<CourtLobby onNewCase={handleNewCase} onViewCase={handleViewCase} recentCases={cases} />} />
+        <Route path="/" element={<CourtLobby onNewCase={handleNewCase} onViewCase={handleViewCase} recentCases={cases} currentUser={currentUser} />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/filing" element={<FilingPage currentUser={currentUser!} onSubmit={handleCreateCase} friends={friends} onCancel={() => navigate('/')} />} />
         <Route path="/law-book" element={<LawBook />} />
