@@ -1,30 +1,31 @@
 import "dotenv/config";
-import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.GEMINI_API_KEY;
-
-if (!apiKey) {
-    console.error("NO API KEY FOUND IN ENV");
-    process.exit(1);
-}
-
-console.log(`API Key hash: ${apiKey.substring(0, 4)}...`);
-
-const ai = new GoogleGenAI({ apiKey });
+const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
 
 async function main() {
-  const model = "gemini-1.5-flash";
-  console.log(`Testing ${model}...`);
+  console.log("Fetching models via HTTP...");
   try {
-    const response = await ai.models.generateContent({
-        model: model,
-        contents: [{ text: "hi" }]
-    });
-    console.log(`[WORKS] ${model}`);
-    console.log(response.text.substring(0, 20));
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    
+    if (data.models) {
+        console.log("\nPassed Models:");
+        data.models.forEach(m => {
+            // Filter slightly to keep it clean, or show all
+            if (m.name.includes("gemini")) {
+                console.log(`- ${m.name.replace('models/', '')} (${m.version}) [Methods: ${m.supportedGenerationMethods?.join(', ')}]`);
+            }
+        });
+    } else {
+        console.log("No 'models' field in response:", data);
+    }
+
   } catch (e) {
-      console.log(`[FAILS] ${model}`);
-      console.log(JSON.stringify(e, Object.getOwnPropertyNames(e), 2));
+      console.error("FAILED TO FETCH MODELS:", e.message);
   }
 }
 
