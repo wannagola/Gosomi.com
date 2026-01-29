@@ -114,7 +114,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
   const timeRemaining = 24; // 실제로는 계산 필요
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10" style={{ paddingTop: '150px' }}>
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-52 pb-12 px-6 relative z-10">
       <div className="max-w-6xl mx-auto px-6">
         {/* 헤더 */}
         <div className="text-center mb-8">

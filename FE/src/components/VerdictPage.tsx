@@ -315,7 +315,7 @@ export function VerdictPage({
   return (
     <div
       ref={captureRef}
-      className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12 px-6 relative z-10"
+      className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-64 pb-12 px-6 relative z-10"
     >
       <div className="max-w-5xl mx-auto px-6">
         {/* 헤더 */}
@@ -631,18 +631,18 @@ export function VerdictPage({
 
             {/* Messages based on state */}
             {confirmedPenalty ? (
-              <div className="mt-8 p-6 bg-gradient-to-r from-green-900 to-green-800 bg-opacity-30 border-2 border-green-600 rounded-xl">
+              <div className="mt-8 p-6 bg-gradient-to-r from-green-900 to-green-800 bg-opacity-30 border-2 border-green-600 rounded-xl text-right">
                 <h3 className="text-xl font-bold text-green-400 mb-3">✅ 최종 처벌 확정</h3>
                 <p className="text-green-200 mb-4">
                   피고인이 <strong>{confirmedPenalty === 'serious' ? '⚖️ 엄중한 처벌' : '🎭 유쾌한 처벌'}</strong>을 선택하였습니다.
                 </p>
-                <div className="bg-black bg-opacity-40 p-4 rounded-lg border-l-4 border-green-500">
+                <div className="bg-black bg-opacity-40 p-4 rounded-lg border-r-4 border-green-500 border-l-0 text-right">
                   <p className="text-sm font-semibold text-green-300 mb-2">확정된 벌칙 내용:</p>
                   <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">
                     {confirmedPenalty === 'serious' ? getSeriousPenalty() : getFunnyPenalty()}
                   </p>
                 </div>
-                <p className="text-xs text-green-300 mt-4 text-center">
+                <p className="text-xs text-green-300 mt-4">
                   ⚠️ 확정된 처벌은 변경할 수 없습니다.
                 </p>
               </div>

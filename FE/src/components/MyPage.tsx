@@ -92,7 +92,7 @@ export function MyPage({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-64 pb-12">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* Profile Header */}

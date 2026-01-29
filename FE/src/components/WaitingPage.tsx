@@ -47,7 +47,7 @@ export function WaitingPage({ case_, currentUser, onRequestVerdict, hasVerdict }
   const isDefenseSubmitted = case_.status === 'DEFENSE_SUBMITTED' || !!case_.defendantResponse;
 
   return (
-    <div className="min-h-screen bg-[#05050a] text-white flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#05050a] text-white flex flex-col items-center justify-center p-4 pt-52">
       <div className="max-w-2xl w-full text-center space-y-8">
         <div className="w-40 h-40 mx-auto flex items-center justify-center">
           <img src={dapDapGif} alt="답답해" className="w-full h-full object-contain" />

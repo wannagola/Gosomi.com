@@ -129,7 +129,7 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
 
   // Scroll to top when step changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   }, [step]);
 
   useEffect(() => {
@@ -170,10 +170,10 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-64 pb-12">
       <div className="max-w-4xl mx-auto px-6">
         {/* 진행 단계 표시 */}
-        <div className="mb-12">
+        <div className="mb-12 mt-8">
           <div className="flex items-center justify-center gap-4 mb-8">
             <StepIndicator
               number={1}
@@ -447,7 +447,7 @@ function Step1BasicInfo({
       </div>
 
       {/* 배심원 투표 옵션 */}
-      <div className="p-6 bg-purple-900 bg-opacity-20 border-2 border-purple-700 border-opacity-30 rounded-lg">
+      <div className="p-6 bg-[var(--color-court-gray)] border-2 border-[var(--color-gold-dark)] border-opacity-30 rounded-lg">
         <div className="flex items-start gap-3 mb-4">
           <input
             type="checkbox"
@@ -456,12 +456,12 @@ function Step1BasicInfo({
             onChange={(e) =>
               setFormData({ ...formData, juryEnabled: e.target.checked })
             }
-            className="w-5 h-5 mt-0.5 rounded border-purple-500 bg-[var(--color-court-dark)] text-purple-600 focus:ring-purple-500 focus:ring-offset-0"
+            className="w-5 h-5 mt-0.5 rounded border-[var(--color-gold-dark)] bg-[var(--color-court-dark)] text-[var(--color-gold-primary)] focus:ring-[var(--color-gold-primary)] focus:ring-offset-0"
           />
           <div className="flex-1">
             <label
               htmlFor="juryEnabled"
-              className="text-lg font-bold text-purple-300 cursor-pointer"
+              className="text-lg font-bold text-[var(--color-gold-primary)] cursor-pointer"
             >
               👥 배심원 투표 활성화
             </label>
@@ -473,8 +473,8 @@ function Step1BasicInfo({
         </div>
 
         {formData.juryEnabled && (
-          <div className="mt-4 pt-4 border-t border-purple-800">
-            <label className="block text-sm font-medium text-purple-300 mb-3">
+          <div className="mt-4 pt-4 border-t border-[var(--color-court-border)]">
+            <label className="block text-sm font-medium text-[var(--color-gold-primary)] mb-3">
               배심원 선택 방식
             </label>
             <div className="grid md:grid-cols-2 gap-3">
@@ -482,13 +482,13 @@ function Step1BasicInfo({
                 type="button"
                 onClick={() => setFormData({ ...formData, juryMode: "INVITE" })}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${formData.juryMode === "INVITE"
-                  ? "border-purple-500 bg-purple-900 bg-opacity-30"
-                  : "border-purple-800 border-opacity-30 hover:border-purple-700"
+                  ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-20"
+                  : "border-[var(--color-court-border)] hover:border-[var(--color-gold-dark)]"
                   }`}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl">📨</span>
-                  <span className="font-bold text-purple-300">초대하기</span>
+                  <span className="font-bold text-[var(--color-gold-accent)]">초대하기</span>
                 </div>
                 <p className="text-xs text-gray-400">
                   특정 친구들에게 배심원 링크를 공유하여 투표를 받습니다
@@ -500,7 +500,7 @@ function Step1BasicInfo({
                         e.stopPropagation();
                         handleInviteFriends();
                       }}
-                      className="w-full py-2 bg-purple-700 hover:bg-purple-600 rounded text-center text-sm font-bold text-white transition-colors cursor-pointer"
+                      className="w-full py-2 bg-[var(--color-gold-dark)] hover:bg-[var(--color-gold-primary)] rounded text-center text-sm font-bold text-white transition-colors cursor-pointer"
                     >
                       친구 초대하기 {formData.invitedJurors && formData.invitedJurors.length > 0 ? `(${formData.invitedJurors.length}명 선택됨)` : ''}
                     </div>
@@ -512,13 +512,13 @@ function Step1BasicInfo({
                 type="button"
                 onClick={() => setFormData({ ...formData, juryMode: "RANDOM" })}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${formData.juryMode === "RANDOM"
-                  ? "border-purple-500 bg-purple-900 bg-opacity-30"
-                  : "border-purple-800 border-opacity-30 hover:border-purple-700"
+                  ? "border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-20"
+                  : "border-[var(--color-court-border)] hover:border-[var(--color-gold-dark)]"
                   }`}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl">🎲</span>
-                  <span className="font-bold text-purple-300">랜덤 배정</span>
+                  <span className="font-bold text-[var(--color-gold-accent)]">랜덤 배정</span>
                 </div>
                 <p className="text-xs text-gray-400">
                   고소미닷컴의 랜덤 배심원단이 자동으로 배정됩니다 (최대 5명)
@@ -540,11 +540,11 @@ function Step1BasicInfo({
       )}
 
       {/* 주의사항 */}
-      <div className="p-4 bg-blue-900 bg-opacity-20 border border-blue-700 border-opacity-30 rounded-lg flex gap-3">
-        <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-blue-200">
-          <p className="font-semibold mb-1">작성 시 유의사항</p>
-          <ul className="list-disc list-inside space-y-1 text-xs">
+      <div className="p-4 bg-slate-900 bg-opacity-50 border border-slate-700 border-opacity-50 rounded-lg flex gap-3">
+        <AlertCircle className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-gray-300">
+          <p className="font-semibold mb-1 text-white">작성 시 유의사항</p>
+          <ul className="list-disc list-inside space-y-1 text-xs text-gray-400">
             <li>
               허위 사실을 기재하지 마세요. AI 판사는 논리적 일관성을 검토합니다.
             </li>
@@ -757,11 +757,11 @@ function Step2Evidence({
       )}
 
       {/* 안내 */}
-      <div className="p-4 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-lg flex gap-3">
-        <AlertCircle className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-purple-200">
-          <p className="font-semibold mb-1">증거 채택 안내</p>
-          <p className="text-xs">
+      <div className="p-4 bg-slate-900 bg-opacity-50 border border-slate-700 border-opacity-50 rounded-lg flex gap-3">
+        <AlertCircle className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-gray-300">
+          <p className="font-semibold mb-1 text-white">증거 채택 안내</p>
+          <p className="text-xs text-gray-400">
             '핵심 증거'로 표시된 항목은 AI 판사가 판결 시 우선적으로 참조합니다.
             증거가 없어도 접수는 가능하나, 판결의 정확도가 낮아질 수 있습니다.
           </p>

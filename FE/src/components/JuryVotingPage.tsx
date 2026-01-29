@@ -68,7 +68,7 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
   // 양측 모두 입장을 제출하지 않은 경우
   if (!bothPartiesSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10" style={{ paddingTop: '150px' }}>
+      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-52 pb-12 px-6 relative z-10">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-4">
@@ -102,7 +102,7 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
   // 투표 완료 화면
   if (hasVoted) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10 flex items-center justify-center" style={{ paddingTop: '150px' }}>
+      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-52 pb-12 px-6 relative z-10 flex items-center justify-center">
         <div className="max-w-2xl w-full text-center">
           <div className="official-document rounded-2xl p-12">
             <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center animate-bounce">
@@ -150,7 +150,7 @@ export function JuryVotingPage({ case_, onVote }: JuryVotingPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10" style={{ paddingTop: '150px' }}>
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-52 pb-12 px-6 relative z-10">
       <div className="max-w-5xl mx-auto px-6">
         {/* 헤더 */}
         <div className="text-center mb-8">

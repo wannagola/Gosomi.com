@@ -110,7 +110,7 @@ export function AppealPage({ case_, onSubmitAppeal }: AppealPageProps) {
 
   if (isWaiting) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] flex flex-col items-center justify-center p-4 relative z-10" style={{ paddingTop: '100px' }}>
+      <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] flex flex-col items-center justify-center p-4 relative z-10 pt-52">
         <div className="max-w-2xl w-full text-center space-y-8">
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500 blur-[100px] opacity-20 rounded-full animate-pulse"></div>
@@ -142,7 +142,7 @@ export function AppealPage({ case_, onSubmitAppeal }: AppealPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10" style={{ paddingTop: '150px' }}>
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-52 pb-12 px-6 relative z-10">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">

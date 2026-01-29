@@ -31,7 +31,7 @@ export function MyCasesPage({ cases, onViewCase }: MyCasesPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-64 pb-12">
       <div className="max-w-7xl mx-auto px-6">
         {/* 헤더 */}
         <div className="mb-8">
