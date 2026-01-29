@@ -199,6 +199,7 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
                 try {
                   const caseId = await onSubmit({
                     ...formData,
+                    defendantId: formData.defendantId,
                     evidences
                   });
                   if (caseId) {
@@ -340,16 +341,15 @@ function Step1BasicInfo({
             value={formData.defendantId}
             onChange={(e) => {
               const selectedId = e.target.value;
-              console.log('Selected ID:', selectedId);
-              console.log('Friends:', friends);
               const selectedFriend = friends.find(f => String(f.id) === String(selectedId));
-              console.log('Selected Friend:', selectedFriend);
               const defendantName = selectedFriend?.nickname || (selectedFriend as any)?.name || '';
-              console.log('Defendant Name:', defendantName);
               setFormData({
                 ...formData,
                 defendantId: selectedId,
-                defendant: defendantName
+                defendant: defendantName,
+                // Reset jurors if defendant changes to avoid conflicts (optional but safer)
+                invitedJurors: [],
+                juryInvitedUserIds: []
               });
             }}
             className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white focus:border-[var(--color-gold-primary)] focus:outline-none appearance-none"
