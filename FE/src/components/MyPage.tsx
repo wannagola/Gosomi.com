@@ -92,11 +92,11 @@ export function MyPage({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-32 pb-12">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* Profile Header */}
-        <div className="flex items-center gap-6 mb-12">
+        <div className="flex items-center gap-6 mb-12 mt-4">
           <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-[var(--color-gold-dark)]">
             {currentUserWithStats.profileImage ? (
               <img src={currentUserWithStats.profileImage} alt={currentUserWithStats.nickname} className="w-full h-full object-cover" />

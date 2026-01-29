@@ -14,9 +14,9 @@ export function JuryDashboard({ cases }: JuryDashboardProps) {
   const activeJuryCases = cases.filter(c => c.status !== 'COMPLETED' && c.status !== 'APPEAL_VERDICT_READY');
 
   return (
-    <div className="min-h-screen bg-[var(--color-court-dark)] px-8 pb-8 pt-32 relative z-10">
+    <div className="min-h-screen bg-[var(--color-court-dark)] px-8 pb-8 pt-40 relative z-10">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-8 mt-4">
           <Users className="w-10 h-10 text-[var(--color-gold-accent)]" />
           <h1 className="text-3xl font-bold text-white">배심원 대기실</h1>
         </div>

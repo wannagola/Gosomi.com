@@ -792,6 +792,12 @@ interface Step3Props {
 function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
   const [showToast, setShowToast] = useState(false);
 
+  // 햄스터 GIF 미리 로드
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/고구마 먹는 햄스터 움짤.gif';
+  }, []);
+
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
     setShowToast(true);
@@ -860,7 +866,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
           <Gavel className="w-40 h-40 text-[var(--color-gold-primary)]" />
         </div>
-        
+
         {/* 헤더 */}
         <div className="text-center border-b border-[var(--color-gold-dark)] pb-6 mb-8 mt-2">
           <h2 className="text-4xl font-bold mb-3 tracking-[0.2em] text-[var(--color-gold-primary)]">소 환 장</h2>
@@ -916,44 +922,61 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
         상대방에게 소환장을 보내 재판을 시작하세요.
       </p>
 
-      {/* 공유 버튼 영역 */}
+      {/* 공유 버튼 영역 - 프레임 추가 */}
       <div className="w-full max-w-lg space-y-4">
-        <button
-          onClick={shareKakao}
-          className="w-full py-4 bg-[#FEE500] text-[#000000] rounded-xl font-bold text-lg hover:shadow-[0_0_20px_#FEE50066] hover:scale-[1.01] transition-all flex items-center justify-center gap-3"
-        >
-          <span className="text-2xl">💬</span>
-          카카오톡으로 소환장 보내기
-        </button>
+        {/* 카카오톡 공유 - 프리미엄 프레임 */}
+        <div className="relative p-1 rounded-2xl bg-gradient-to-r from-[var(--color-gold-dark)] via-[var(--color-gold-primary)] to-[var(--color-gold-dark)] animate-gradient-x">
+          <div className="bg-[#0a0a0f] rounded-xl p-1">
+            <button
+              onClick={shareKakao}
+              className="w-full py-5 bg-[#FEE500] text-[#000000] rounded-lg font-bold text-lg hover:shadow-[0_0_30px_#FEE50099] hover:scale-[1.02] transition-all flex items-center justify-center gap-3 relative overflow-hidden group"
+            >
+              {/* 반짝이는 효과 */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
 
+              <span className="text-3xl animate-bounce-subtle">💬</span>
+              <span className="relative z-10">카카오톡으로 소환장 보내기</span>
+
+              {/* 우측 화살표 아이콘 */}
+              <svg className="w-5 h-5 ml-auto opacity-60 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* 다른 방법으로 공유 */}
         <button
           onClick={copyLink}
-          className="w-full py-4 bg-[#1a1a24] border border-gray-700 text-white rounded-xl font-bold text-lg hover:bg-[#2a2a35] hover:border-gray-500 hover:text-white transition-all flex items-center justify-center gap-3 group"
+          className="w-full py-4 bg-gradient-to-br from-[#1a1a24] to-[#2a2a35] border-2 border-gray-700 text-white rounded-xl font-bold text-lg hover:border-[var(--color-gold-dark)] hover:shadow-[0_0_20px_rgba(212,175,55,0.2)] transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
         >
-          <Share2 className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
-          다른 방법으로 공유하기
+          {/* 호버 시 배경 효과 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-gold-dark)]/0 via-[var(--color-gold-dark)]/10 to-[var(--color-gold-dark)]/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+          <Share2 className="w-5 h-5 text-gray-400 group-hover:text-[var(--color-gold-primary)] transition-colors relative z-10" />
+          <span className="relative z-10">다른 방법으로 공유하기</span>
         </button>
       </div>
 
       {/* 대기화면 이동 (하단 고정 느낌) */}
-      <div className="pt-6 w-full max-w-lg border-t border-gray-800 mt-4 space-y-3">
+      <div className="pt-8 w-full max-w-lg border-t border-gray-800 mt-6 space-y-3">
         <button
           onClick={onBack}
-          className="w-full py-4 bg-transparent border border-[var(--color-gold-dark)] text-[var(--color-gold-primary)] rounded-xl font-bold hover:bg-[var(--color-gold-dark)] hover:text-white transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
         >
           <CheckCircle className="w-5 h-5" />
           대기 화면으로 이동
         </button>
-        
+
         <button
           onClick={() => {
             // Force reset to Step 1
             localStorage.removeItem('filingStep');
             localStorage.removeItem('filingFormData');
             localStorage.removeItem('filingEvidences');
-            window.location.reload(); 
+            window.location.reload();
           }}
-          className="w-full py-3 text-sm text-gray-500 hover:text-white transition-colors underline"
+          className="w-full py-3 text-sm text-gray-500 hover:text-[var(--color-gold-primary)] transition-colors underline"
         >
           새로운 사건 접수하기
         </button>
