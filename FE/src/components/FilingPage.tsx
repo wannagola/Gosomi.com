@@ -47,34 +47,12 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
   const navigate = useNavigate();
 
   // Load from localStorage on mount
-  // ✅ Fix: If saved step is 3 (Completed), reset to 1 (New Filing) to prevent getting stuck on Summons page
   const [step, setStep] = useState<1 | 2 | 3>(() => {
     const saved = localStorage.getItem('filingStep');
-    const parsed = saved ? (parseInt(saved) as 1 | 2 | 3) : 1;
-    return parsed === 3 ? 1 : parsed;
+    return saved ? (parseInt(saved) as 1 | 2 | 3) : 1;
   });
 
   const [formData, setFormData] = useState<FormData>(() => {
-    // If we are resetting from step 3 (detected via localStorage check above, but we can't access 'step' variable here yet), 
-    // strictly speaking we should clear data. 
-    // But for simplicity/robustness: if we are starting fresh, we might want to allow data recovery.
-    // However, user likely wants a blank slate if they finished.
-    // Let's check localStorage directly again.
-    const savedStep = localStorage.getItem('filingStep');
-    if (savedStep === '3') return {
-      title: "",
-      plaintiff: currentUser?.nickname || "",
-      plaintiffId: currentUser?.id || "",
-      defendant: "",
-      defendantId: "",
-      lawType: "" as LawType,
-      content: "",
-      juryEnabled: false,
-      juryMode: "INVITE",
-      invitedJurors: [],
-      juryInvitedUserIds: []
-    };
-
     const saved = localStorage.getItem('filingFormData');
     if (saved) {
       try {
@@ -903,13 +881,13 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
           <p className="text-lg font-bold mb-6 text-gray-400">
             {new Date().getFullYear()}년 {new Date().getMonth() + 1}월 {new Date().getDate()}일
           </p>
-          <div className="inline-block mt-2">
-            <span className="text-2xl font-bold border-2 border-white px-8 py-3 tracking-widest block">
+          <div className="relative inline-block mt-2">
+            <span className="text-2xl font-bold border-2 border-white px-8 py-3 tracking-widest block relative z-10">
               고 소 미 닷 컴
             </span>
-            {/* 도장 효과 - 텍스트 아래로 이동 */}
-            <div className="flex justify-center mt-4">
-              <div className="w-20 h-20 rounded-full border-4 border-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.5)] bg-red-900/10 transform rotate-12">
+            {/* 도장 효과 - 텍스트 등 뒤에 살짝 겹치게 */}
+            <div className="absolute -right-6 -top-4 transform rotate-12 opacity-90 mix-blend-screen z-20">
+              <div className="w-20 h-20 rounded-full border-4 border-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.5)] bg-red-900/10">
                 <span className="text-[10px] text-red-500 font-bold tracking-tighter">OFFICIAL</span>
               </div>
             </div>
