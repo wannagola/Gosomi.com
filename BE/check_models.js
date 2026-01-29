@@ -1,30 +1,31 @@
+import "dotenv/config";
+import { GoogleGenAI } from "@google/genai";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
-dotenv.config();
+const apiKey = process.env.GEMINI_API_KEY;
 
-async function listModels() {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-    const modelsToTry = [
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-001"
-    ];
-
-    for (const m of modelsToTry) {
-        try {
-            console.log(`Checking ${m}...`);
-            const model = genAI.getGenerativeModel({ model: m });
-            const result = await model.generateContent("Hello");
-            console.log(`SUCCESS: ${m}`);
-            console.log(result.response.text());
-            process.exit(0);
-        } catch (e) {
-            console.log(`FAILED: ${m} - ${e.message}`);
-        }
-    }
+if (!apiKey) {
+    console.error("NO API KEY FOUND IN ENV");
+    process.exit(1);
 }
 
-listModels();
+console.log(`API Key hash: ${apiKey.substring(0, 4)}...`);
+
+const ai = new GoogleGenAI({ apiKey });
+
+async function main() {
+  const model = "gemini-1.5-flash";
+  console.log(`Testing ${model}...`);
+  try {
+    const response = await ai.models.generateContent({
+        model: model,
+        contents: [{ text: "hi" }]
+    });
+    console.log(`[WORKS] ${model}`);
+    console.log(response.text.substring(0, 20));
+  } catch (e) {
+      console.log(`[FAILS] ${model}`);
+      console.log(JSON.stringify(e, Object.getOwnPropertyNames(e), 2));
+  }
+}
+
+main();
