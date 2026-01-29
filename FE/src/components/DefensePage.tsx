@@ -119,15 +119,15 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
         {/* 헤더 */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
-            <Shield className="w-10 h-10 text-purple-400" />
+            <Shield className="w-10 h-10 text-[var(--color-gold-accent)]" />
             <h1 className="text-4xl">변론실</h1>
           </div>
           <p className="text-gray-400 mb-4">
             원고의 주장에 대해 반박할 기회입니다. 정확한 사실을 바탕으로 변론하세요.
           </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-900 bg-opacity-30 border border-orange-700 rounded-lg">
-            <AlertTriangle className="w-5 h-5 text-orange-400" />
-            <span className="text-orange-400 font-bold">남은 시간: {timeRemaining}시간</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-court-dark)] bg-opacity-50 border border-[var(--color-gold-dark)] rounded-lg">
+            <AlertTriangle className="w-5 h-5 text-[var(--color-gold-primary)]" />
+            <span className="text-[var(--color-gold-primary)] font-bold">남은 시간: {timeRemaining}시간</span>
           </div>
         </div>
 
@@ -149,12 +149,12 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-purple-900 bg-opacity-20 border border-purple-700 border-opacity-30 rounded-lg">
-                  <p className="text-sm text-purple-400 mb-1">원고</p>
+                <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-50 border border-[var(--color-court-border)] rounded-lg">
+                  <p className="text-sm text-gray-400 mb-1">원고</p>
                   <p className="font-bold text-white">{case_.plaintiff}</p>
                 </div>
-                <div className="p-4 bg-orange-900 bg-opacity-20 border border-orange-700 border-opacity-30 rounded-lg">
-                  <p className="text-sm text-orange-400 mb-1">피고</p>
+                <div className="p-4 bg-[var(--color-gold-dark)] bg-opacity-10 border border-[var(--color-gold-dark)] border-opacity-30 rounded-lg">
+                  <p className="text-sm text-[var(--color-gold-primary)] mb-1">피고</p>
                   <p className="font-bold text-white">{case_.defendant}</p>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
             {/* 고소 내용 */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-[var(--color-gold-primary)] mb-3">고소 내용</h3>
-              <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-30 rounded-lg border-l-4 border-purple-600">
+              <div className="p-4 bg-[var(--color-court-dark)] bg-opacity-30 rounded-lg border-l-4 border-[var(--color-gold-dark)]">
                 <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
                   {case_.content || '소송 내용이 없습니다.'}
                 </p>
@@ -198,12 +198,12 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                     <div
                       key={evidence.id}
                       className={`p-3 rounded-lg border ${evidence.isKeyEvidence
-                        ? 'border-yellow-600 bg-yellow-900 bg-opacity-20'
+                        ? 'border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-20'
                         : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
                         }`}
                     >
                       {evidence.isKeyEvidence && (
-                        <span className="inline-block px-2 py-0.5 bg-yellow-600 text-black text-xs font-bold rounded mb-1">
+                        <span className="inline-block px-2 py-0.5 bg-[var(--color-gold-accent)] text-black text-xs font-bold rounded mb-1">
                           핵심 증거
                         </span>
                       )}
@@ -237,7 +237,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                 onChange={(e) => setStatement(e.target.value)}
                 placeholder="원고의 주장에 대한 반박을 작성하세요. 사실 관계를 명확히 하고, 정당한 사유가 있었다면 설명해 주세요."
                 rows={12}
-                className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none mb-2"
+                className="w-full px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-[var(--color-gold-primary)] focus:outline-none resize-none mb-2"
               />
               <p className="text-xs text-gray-500 mt-2">
                 {statement.length}자 작성됨 (최소 50자 권장)
@@ -257,11 +257,11 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   onChange={(e) => setTextEvidence(e.target.value)}
                   placeholder="텍스트로 된 증거/참료 자료를 입력하세요"
                   rows={1}
-                  className="flex-1 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none"
+                  className="flex-1 px-4 py-3 bg-[var(--color-court-dark)] border-2 border-[var(--color-court-border)] rounded-lg text-white placeholder-gray-500 focus:border-[var(--color-gold-primary)] focus:outline-none resize-none"
                 />
                 <button
                   onClick={addTextEvidence}
-                  className="px-6 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors whitespace-nowrap text-sm font-bold"
+                  className="px-6 bg-[var(--color-gold-dark)] text-white rounded-lg hover:bg-[var(--color-gold-primary)] transition-colors whitespace-nowrap text-sm font-bold"
                 >
                   텍스트 추가
                 </button>
@@ -281,9 +281,9 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   />
                   <label
                     htmlFor="defense-image-input"
-                    className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-purple-500 hover:bg-purple-900 hover:bg-opacity-10 cursor-pointer transition-all h-full"
+                    className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] hover:bg-opacity-10 cursor-pointer transition-all h-full"
                   >
-                    <ImageIcon className="w-8 h-8 text-purple-400 mb-3" />
+                    <ImageIcon className="w-8 h-8 text-[var(--color-gold-primary)] mb-3" />
                     <span className="text-base font-bold text-gray-300">이미지 증거 업로드</span>
                     <span className="text-xs text-gray-500 mt-2 text-center">판결에 직접 반영됨<br />(Max 2MB)</span>
                   </label>
@@ -301,9 +301,9 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-orange-500 hover:bg-orange-900 hover:bg-opacity-10 cursor-pointer transition-all"
+                    className="w-full h-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--color-court-border)] rounded-lg hover:border-[var(--color-gold-primary)] hover:bg-[var(--color-gold-dark)] hover:bg-opacity-10 cursor-pointer transition-all"
                   >
-                    <Paperclip className="w-8 h-8 text-orange-400 mb-3" />
+                    <Paperclip className="w-8 h-8 text-[var(--color-gold-primary)] mb-3" />
                     <span className="text-base font-bold text-gray-300">기타 파일 첨부</span>
                     <span className="text-xs text-gray-500 mt-2 text-center">문서, PDF 등<br />참고자료</span>
                   </button>
@@ -320,14 +320,14 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                       <div
                         key={evidence.id}
                         className={`p-4 rounded-lg border-2 ${evidence.isKeyEvidence
-                          ? 'border-purple-500 bg-purple-900 bg-opacity-10'
+                          ? 'border-[var(--color-gold-accent)] bg-[var(--color-gold-dark)] bg-opacity-10'
                           : 'border-[var(--color-court-border)] bg-[var(--color-court-dark)] bg-opacity-30'
                           }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">
                             {evidence.isKeyEvidence && (
-                              <span className="inline-block px-2 py-1 bg-purple-500 text-white text-xs font-bold rounded mb-2">
+                              <span className="inline-block px-2 py-1 bg-[var(--color-gold-accent)] text-black text-xs font-bold rounded mb-2">
                                 핵심 증거
                               </span>
                             )}
@@ -346,7 +346,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
                           <div className="flex flex-col gap-2">
                             <button
                               onClick={() => toggleKeyEvidence(evidence.id)}
-                              className={`px-3 py-1.5 text-xs border rounded transition-colors whitespace-nowrap ${evidence.isKeyEvidence ? 'border-purple-500 text-purple-400' : 'border-gray-600 text-gray-500 hover:border-purple-500'}`}
+                              className={`px-3 py-1.5 text-xs border rounded transition-colors whitespace-nowrap ${evidence.isKeyEvidence ? 'border-[var(--color-gold-accent)] text-[var(--color-gold-accent)]' : 'border-gray-600 text-gray-500 hover:border-[var(--color-gold-primary)]'}`}
                             >
                               {evidence.isKeyEvidence ? '★ 핵심' : '☆ 중요 표시'}
                             </button>
@@ -384,13 +384,13 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
             </div>
 
             {/* 💡 변론 팁 (심플 버전 - 테두리 제거 & 간격 추가 & 내부 여백 확보) */}
-            <div className="mt-8 mb-12 p-8 bg-purple-900 bg-opacity-20 rounded-xl flex gap-4 items-start">
-              <div className="p-2 bg-purple-500/20 rounded-lg shrink-0">
-                <Shield className="w-6 h-6 text-purple-300" />
+            <div className="mt-8 mb-12 p-8 bg-[var(--color-court-dark)] bg-opacity-50 border border-[var(--color-gold-dark)] rounded-xl flex gap-4 items-start">
+              <div className="p-2 bg-[var(--color-gold-dark)] bg-opacity-20 rounded-lg shrink-0">
+                <Shield className="w-6 h-6 text-[var(--color-gold-primary)]" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-purple-200 mb-2">변론 팁</h3>
-                <p className="text-sm text-purple-300/80 leading-relaxed">
+                <h3 className="font-bold text-lg text-[var(--color-gold-accent)] mb-2">변론 팁</h3>
+                <p className="text-sm text-gray-300 leading-relaxed">
                   감정적인 호소보다는 객관적인 사실과 증거를 제시하세요.<br />
                   AI 판사는 논리적 일관성과 증거의 신빙성을 중요하게 평가합니다.
                 </p>
@@ -402,7 +402,7 @@ export function DefensePage({ case_, onSubmitDefense }: DefensePageProps) {
               onClick={handleSubmit}
               disabled={statement.trim().length === 0 || isSubmitting}
               className={`w-full px-6 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg ${statement.trim().length > 0 && !isSubmitting
-                ? 'bg-gradient-to-r from-orange-700 to-orange-600 text-white hover:shadow-xl hover:scale-[1.02]'
+                ? 'bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white hover:shadow-xl hover:scale-[1.02]'
                 : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                 }`}
             >
