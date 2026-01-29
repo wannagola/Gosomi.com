@@ -206,8 +206,8 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const status = statusConfig[case_.status] || statusConfig['SUMMONED'];
   const timeSince = getTimeSince(case_.createdAt);
   const isAppeal = case_.status.includes('APPEAL') || (case_.appealStatus && case_.appealStatus !== 'NONE');
-  const trialStage = isAppeal ? "항소심" : "1심";
-  const trialStage = isAppeal ? "항소심" : "1심";
+
+
   const trialColor = isAppeal ? "bg-rose-900/40 text-rose-300 border-rose-600/50" : "bg-slate-800 text-slate-300 border-slate-600";
 
   return (
