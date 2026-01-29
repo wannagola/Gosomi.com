@@ -41,14 +41,40 @@ interface FilingPageProps {
   friends?: Friend[];
 }
 
+import { useNavigate } from "react-router-dom";
+
 export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: FilingPageProps) {
+  const navigate = useNavigate();
+
   // Load from localStorage on mount
+  // ✅ Fix: If saved step is 3 (Completed), reset to 1 (New Filing) to prevent getting stuck on Summons page
   const [step, setStep] = useState<1 | 2 | 3>(() => {
     const saved = localStorage.getItem('filingStep');
-    return saved ? (parseInt(saved) as 1 | 2 | 3) : 1;
+    const parsed = saved ? (parseInt(saved) as 1 | 2 | 3) : 1;
+    return parsed === 3 ? 1 : parsed;
   });
 
   const [formData, setFormData] = useState<FormData>(() => {
+    // If we are resetting from step 3 (detected via localStorage check above, but we can't access 'step' variable here yet), 
+    // strictly speaking we should clear data. 
+    // But for simplicity/robustness: if we are starting fresh, we might want to allow data recovery.
+    // However, user likely wants a blank slate if they finished.
+    // Let's check localStorage directly again.
+    const savedStep = localStorage.getItem('filingStep');
+    if (savedStep === '3') return {
+      title: "",
+      plaintiff: currentUser?.nickname || "",
+      plaintiffId: currentUser?.id || "",
+      defendant: "",
+      defendantId: "",
+      lawType: "" as LawType,
+      content: "",
+      juryEnabled: false,
+      juryMode: "INVITE",
+      invitedJurors: [],
+      juryInvitedUserIds: []
+    };
+
     const saved = localStorage.getItem('filingFormData');
     if (saved) {
       try {
@@ -204,7 +230,9 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
                   });
                   if (caseId) {
                     generateShareLink(String(caseId));
-                    clearFilingCache();
+                    // Do NOT clear cache yet, we need it for Step 3? 
+                    // Actually we should clear basic info but maybe keep formData for Display in Step 3
+                    // Let's keep it until they leave Step 3.
                     setStep(3);
                   }
                 } catch (e) {
@@ -221,7 +249,15 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
               formData={formData}
               shareLink={shareLink}
               onSubmit={handleSubmit} // Unused now basically
-              onBack={() => window.location.href = `/case/${shareLink.split('/').pop()}`} // Go to Waiting
+              onBack={() => {
+                clearFilingCache(); // Clear State!
+                const caseId = shareLink.split('/').pop();
+                if (caseId) {
+                  navigate(`/case/${caseId}`);
+                } else {
+                  navigate('/');
+                }
+              }}
             />
           )}
         </div>
@@ -900,13 +936,26 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
       </div>
 
       {/* 대기화면 이동 (하단 고정 느낌) */}
-      <div className="pt-6 w-full max-w-lg border-t border-gray-800 mt-4">
+      <div className="pt-6 w-full max-w-lg border-t border-gray-800 mt-4 space-y-3">
         <button
           onClick={onBack}
           className="w-full py-4 bg-transparent border border-[var(--color-gold-dark)] text-[var(--color-gold-primary)] rounded-xl font-bold hover:bg-[var(--color-gold-dark)] hover:text-white transition-all flex items-center justify-center gap-2"
         >
           <CheckCircle className="w-5 h-5" />
           대기 화면으로 이동
+        </button>
+        
+        <button
+          onClick={() => {
+            // Force reset to Step 1
+            localStorage.removeItem('filingStep');
+            localStorage.removeItem('filingFormData');
+            localStorage.removeItem('filingEvidences');
+            window.location.reload(); 
+          }}
+          className="w-full py-3 text-sm text-gray-500 hover:text-white transition-colors underline"
+        >
+          새로운 사건 접수하기
         </button>
       </div>
     </div>
