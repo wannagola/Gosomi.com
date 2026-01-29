@@ -41,9 +41,9 @@ export function JuryDashboard({ cases }: JuryDashboardProps) {
                     </span>
                     <h3 className="text-xl font-bold text-white mb-2">{case_.title}</h3>
                     <p className="text-gray-400 text-sm line-clamp-2 mb-4">{case_.description}</p>
-                    <div className="flex gap-4 text-xs text-slate-500">
-                      <span>원고: {case_.plaintiff}</span>
-                      <span>피고: {case_.defendant}</span>
+                    <div className="flex gap-4 text-xs font-medium">
+                      <span className="text-sky-200/80">원고: {case_.plaintiff}</span>
+                      <span className="text-rose-200/80">피고: {case_.defendant}</span>
                     </div>
                   </div>
                   {case_.juryStatus === 'VOTED' ? (

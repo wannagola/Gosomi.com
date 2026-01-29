@@ -127,6 +127,11 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
     localStorage.setItem('filingStep', String(step));
   }, [step]);
 
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   useEffect(() => {
     localStorage.setItem('filingFormData', JSON.stringify(formData));
   }, [formData]);
@@ -165,7 +170,7 @@ export function FilingPage({ currentUser, onSubmit, onCancel, friends = [] }: Fi
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] py-12">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12">
       <div className="max-w-4xl mx-auto px-6">
         {/* 진행 단계 표시 */}
         <div className="mb-12">
@@ -852,7 +857,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
     <div className="space-y-8 flex flex-col items-center animate-fade-in-up w-full">
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4">
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[9999] animate-in fade-in slide-in-from-top-4">
           <div className="bg-[#1a1a24] text-white px-6 py-3 rounded-full shadow-2xl border border-[var(--color-gold-primary)] flex items-center gap-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
             <span className="font-bold">링크가 복사되었습니다!</span>
@@ -862,11 +867,6 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
 
       {/* 소환장 카드 (Summons Writ) - Dark Theme */}
       <div className="w-full max-w-lg bg-[#0a0a0f] border-2 border-[var(--color-gold-primary)] text-white p-8 rounded-lg shadow-[0_0_50px_rgba(212,175,55,0.15)] relative overflow-hidden font-serif">
-        {/* 워터마크/배경 장식 */}
-        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-          <Gavel className="w-40 h-40 text-[var(--color-gold-primary)]" />
-        </div>
-
         {/* 헤더 */}
         <div className="text-center border-b border-[var(--color-gold-dark)] pb-6 mb-8 mt-2">
           <h2 className="text-4xl font-bold mb-3 tracking-[0.2em] text-[var(--color-gold-primary)]">소 환 장</h2>
@@ -881,18 +881,18 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
           </div>
           <div className="flex items-center border-b border-gray-800 pb-3">
             <span className="font-bold w-24 text-gray-400">원 고</span>
-            <span className="flex-1 font-semibold text-lg text-blue-300">{formData.plaintiff}</span>
+            <span className="flex-1 font-semibold text-lg text-sky-200">{formData.plaintiff}</span>
           </div>
           <div className="flex items-center border-b border-gray-800 pb-3">
             <span className="font-bold w-24 text-gray-400">피 고</span>
-            <span className="flex-1 font-semibold text-lg text-red-300">{formData.defendant}</span>
+            <span className="flex-1 font-semibold text-lg text-rose-200">{formData.defendant}</span>
           </div>
 
           <div className="mt-10 text-center text-sm leading-8 text-gray-300 font-light">
             <p>위 사건에 관하여 귀하를 피고로 소환하오니,</p>
             <p className="text-white font-medium">본 소환장을 확인하는 즉시 변론기일에 출석하여</p>
             <p>답변서 및 증거를 제출하시기 바랍니다.</p>
-            <p className="text-red-400 mt-4 text-xs">
+            <p className="text-rose-400 mt-4 text-xs">
               ※ 정당한 사유 없이 불출석할 경우 원고의 청구 취지대로 판결될 수 있습니다.
             </p>
           </div>
@@ -903,13 +903,13 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
           <p className="text-lg font-bold mb-6 text-gray-400">
             {new Date().getFullYear()}년 {new Date().getMonth() + 1}월 {new Date().getDate()}일
           </p>
-          <div className="relative inline-block mt-2">
-            <span className="text-2xl font-bold border-2 border-white px-8 py-3 tracking-widest">
+          <div className="inline-block mt-2">
+            <span className="text-2xl font-bold border-2 border-white px-8 py-3 tracking-widest block">
               고 소 미 닷 컴
             </span>
-            {/* 도장 효과 */}
-            <div className="absolute -right-8 -top-6 transform rotate-12 opacity-90 mix-blend-screen">
-              <div className="w-20 h-20 rounded-full border-4 border-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.5)] bg-red-900/10">
+            {/* 도장 효과 - 텍스트 아래로 이동 */}
+            <div className="flex justify-center mt-4">
+              <div className="w-20 h-20 rounded-full border-4 border-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.5)] bg-red-900/10 transform rotate-12">
                 <span className="text-[10px] text-red-500 font-bold tracking-tighter">OFFICIAL</span>
               </div>
             </div>
@@ -959,7 +959,7 @@ function Step3Summon({ formData, shareLink, onSubmit, onBack }: Step3Props) {
       </div>
 
       {/* 대기화면 이동 (하단 고정 느낌) */}
-      <div className="pt-8 w-full max-w-lg border-t border-gray-800 mt-6 space-y-3">
+      <div className="pt-8 w-full max-w-lg mt-6 space-y-3">
         <button
           onClick={onBack}
           className="w-full py-4 bg-gradient-to-r from-[var(--color-gold-dark)] to-[var(--color-gold-primary)] text-white rounded-xl font-bold hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] hover:scale-[1.01] transition-all flex items-center justify-center gap-2"

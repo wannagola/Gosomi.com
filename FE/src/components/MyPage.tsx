@@ -131,14 +131,14 @@ export function MyPage({
                   <div className="flex gap-2">
                     <button
                       onClick={() => onAcceptFriend(req.id)}
-                      className="p-2 bg-blue-600 hover:bg-blue-500 rounded text-content text-white transition-colors"
+                      className="p-2 bg-[var(--color-gold-dark)] hover:bg-[var(--color-gold-primary)] rounded text-content text-black transition-colors"
                       title="수락"
                     >
                       <Check className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onRejectFriend(req.id)}
-                      className="p-2 bg-red-600 hover:bg-red-500 rounded text-content text-white transition-colors"
+                      className="p-2 bg-rose-900/50 hover:bg-rose-800/50 border border-rose-800 rounded text-content text-rose-200 transition-colors"
                       title="거절"
                     >
                       <X className="w-4 h-4" />
@@ -208,7 +208,7 @@ export function MyPage({
                         e.stopPropagation();
                         onUnfollow(friend.id);
                       }}
-                      className="p-3 rounded-xl bg-[var(--color-court-gray)] hover:bg-red-500/20 hover:text-red-400 text-gray-400 transition-colors"
+                      className="p-3 rounded-xl bg-[var(--color-court-gray)] hover:bg-rose-950/30 hover:text-rose-400 text-gray-400 transition-colors border border-transparent hover:border-rose-900/30"
                       title="친구 끊기"
                     >
                       <X className="w-5 h-5" />
@@ -236,12 +236,12 @@ export function MyPage({
 
           {/* Stat Cards */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-            <StatCard label="전체" count={statusStats.all} color="gray" active={caseFilter === 'all'} onClick={() => setCaseFilter('all')} />
-            <StatCard label="소환됨" count={statusStats['SUMMONED']} color="purple" active={caseFilter === 'SUMMONED'} onClick={() => setCaseFilter('SUMMONED')} />
-            <StatCard label="변론 중" count={statusStats['DEFENSE_SUBMITTED']} color="yellow" active={caseFilter === 'DEFENSE_SUBMITTED'} onClick={() => setCaseFilter('DEFENSE_SUBMITTED')} />
-            <StatCard label="판결 대기" count={statusStats['VERDICT_READY']} color="orange" active={caseFilter === 'VERDICT_READY'} onClick={() => setCaseFilter('VERDICT_READY')} />
-            <StatCard label="종료됨" count={statusStats['COMPLETED']} color="green" active={caseFilter === 'COMPLETED'} onClick={() => setCaseFilter('COMPLETED')} />
-            <StatCard label="항소 중" count={statusStats['UNDER_APPEAL']} color="red" active={caseFilter === 'UNDER_APPEAL'} onClick={() => setCaseFilter('UNDER_APPEAL')} />
+            <StatCard label="전체" count={statusStats.all} color="slate" active={caseFilter === 'all'} onClick={() => setCaseFilter('all')} />
+            <StatCard label="소환됨" count={statusStats['SUMMONED']} color="gold" active={caseFilter === 'SUMMONED'} onClick={() => setCaseFilter('SUMMONED')} />
+            <StatCard label="변론 중" count={statusStats['DEFENSE_SUBMITTED']} color="amber" active={caseFilter === 'DEFENSE_SUBMITTED'} onClick={() => setCaseFilter('DEFENSE_SUBMITTED')} />
+            <StatCard label="판결 대기" count={statusStats['VERDICT_READY']} color="bronze" active={caseFilter === 'VERDICT_READY'} onClick={() => setCaseFilter('VERDICT_READY')} />
+            <StatCard label="종료됨" count={statusStats['COMPLETED']} color="emerald" active={caseFilter === 'COMPLETED'} onClick={() => setCaseFilter('COMPLETED')} />
+            <StatCard label="항소 중" count={statusStats['UNDER_APPEAL']} color="rose" active={caseFilter === 'UNDER_APPEAL'} onClick={() => setCaseFilter('UNDER_APPEAL')} />
           </div>
 
           {/* Search */}
@@ -296,19 +296,19 @@ export function MyPage({
 interface StatCardProps {
   label: string;
   count: number;
-  color: 'gray' | 'purple' | 'yellow' | 'orange' | 'green' | 'red';
+  color: 'slate' | 'gold' | 'amber' | 'bronze' | 'emerald' | 'rose';
   active: boolean;
   onClick: () => void;
 }
 
 function StatCard({ label, count, color, active, onClick }: StatCardProps) {
   const colorClasses = {
-    gray: 'border-gray-600 bg-gray-900',
-    purple: 'border-purple-600 bg-purple-900',
-    yellow: 'border-yellow-600 bg-yellow-900',
-    orange: 'border-orange-600 bg-orange-900',
-    green: 'border-green-600 bg-green-900',
-    red: 'border-red-600 bg-red-900',
+    slate: 'border-slate-600 bg-slate-900/50 text-slate-200',
+    gold: 'border-[var(--color-gold-dark)] bg-[var(--color-gold-dark)]/20 text-[var(--color-gold-primary)]',
+    amber: 'border-amber-700 bg-amber-900/30 text-amber-200',
+    bronze: 'border-orange-800 bg-orange-900/30 text-orange-200', // Using orange as base for bronze
+    emerald: 'border-emerald-800 bg-emerald-900/30 text-emerald-200',
+    rose: 'border-rose-800 bg-rose-900/30 text-rose-200',
   };
 
   return (
@@ -336,39 +336,39 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const statusConfig: Record<string, { label: string; color: string; icon: ReactNode; textColor: string }> = {
     'SUMMONED': {
       label: '소환 완료',
-      color: 'bg-indigo-500',
+      color: 'bg-[var(--color-gold-dark)]',
       icon: <AlertCircle className="w-5 h-5" />,
-      textColor: 'text-indigo-300'
+      textColor: 'text-[var(--color-gold-primary)]'
     },
     'DEFENSE_SUBMITTED': {
       label: '변론 제출됨',
-      color: 'bg-amber-500',
+      color: 'bg-slate-500',
       icon: <Clock className="w-5 h-5" />,
-      textColor: 'text-amber-300'
+      textColor: 'text-slate-300'
     },
     'VERDICT_READY': {
       label: '판결 대기(벌칙)',
-      color: 'bg-orange-500',
+      color: 'bg-amber-600',
       icon: <Clock className="w-5 h-5" />,
-      textColor: 'text-orange-300'
+      textColor: 'text-amber-300'
     },
     'COMPLETED': {
       label: '종료됨',
-      color: 'bg-emerald-500',
+      color: 'bg-emerald-600',
       icon: <CheckCircle className="w-5 h-5" />,
       textColor: 'text-emerald-300'
     },
     'UNDER_APPEAL': {
       label: '항소 진행 중',
-      color: 'bg-pink-500',
+      color: 'bg-rose-600',
       icon: <AlertCircle className="w-5 h-5" />,
-      textColor: 'text-pink-300'
+      textColor: 'text-rose-300'
     },
     'APPEAL_VERDICT_READY': {
       label: '항소심 선고',
-      color: 'bg-rose-500',
+      color: 'bg-rose-700',
       icon: <CheckCircle className="w-5 h-5" />,
-      textColor: 'text-rose-300'
+      textColor: 'text-rose-200'
     }
   };
 
@@ -376,7 +376,7 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
   const timeSince = getTimeSince(case_.createdAt);
   const isAppeal = case_.status.includes('APPEAL') || (case_.appealStatus && case_.appealStatus !== 'NONE');
   const trialStage = isAppeal ? "항소심" : "1심";
-  const trialColor = isAppeal ? "bg-rose-900/40 text-rose-300 border-rose-600/50" : "bg-cyan-900/40 text-cyan-300 border-cyan-600/50";
+  const trialColor = isAppeal ? "bg-rose-900/40 text-rose-300 border-rose-600/50" : "bg-slate-800 text-slate-300 border-slate-600";
 
   return (
     <button
@@ -411,11 +411,11 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">원고:</span>
-              <span className="text-sm font-medium text-blue-400">{case_.plaintiff}</span>
+              <span className="text-sm font-medium text-blue-200">{case_.plaintiff}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">피고:</span>
-              <span className="text-sm font-medium text-red-400">{case_.defendant}</span>
+              <span className="text-sm font-medium text-rose-200">{case_.defendant}</span>
             </div>
           </div>
 
@@ -448,11 +448,11 @@ function CaseListItem({ case_, onView }: CaseListItemProps) {
                   </div>
                   <div className="h-2 bg-[var(--color-court-dark)] rounded-full overflow-hidden flex">
                     <div
-                      className="bg-blue-500"
+                      className="bg-blue-400/80"
                       style={{ width: `${case_.faultRatio.plaintiff}%` }}
                     />
                     <div
-                      className="bg-red-500"
+                      className="bg-rose-500/80"
                       style={{ width: `${case_.faultRatio.defendant}%` }}
                     />
                   </div>

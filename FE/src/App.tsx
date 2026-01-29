@@ -191,10 +191,10 @@ export default function App() {
             await caseService.submitDefense(caseId, response.statement, response.evidences);
             // Verdict is NO LONGER auto-generated.
             // User must explicitly request it now.
-            
+
             // First refresh data to get the updated case state
             await refreshData();
-            
+
             // Then navigate to the case page
             // The CaseRouteHandler will evaluate the updated state and show WaitingPage
             // since defendantResponse now exists
@@ -262,23 +262,38 @@ export default function App() {
         }
     };
 
-    const handleSubmitAppeal = async (caseId: string, litigant: 'plaintiff' | 'defendant', statement: string, evidences: Evidence[]) => {
+    const handleSubmitAppeal = async (caseId: string, litigant: 'plaintiff' | 'defendant', statement: string, evidences: Evidence[], files: FileList | null) => {
         try {
             // Determine if Request or Defense based on current status or Appeal object
-            // For simplicity, we try submitAppeal first, if it fails (already exists), try Defense
-            // OR better: Check case status
             const targetCase = cases.find(c => c.id === caseId);
             if (!targetCase) return;
 
-            if (!targetCase.appealStatus || targetCase.appealStatus === 'NONE') {
+            // Upload files if present
+            if (files && files.length > 0 && currentUser) {
+                await caseService.uploadEvidence(caseId, String(currentUser.id), files);
+            }
+
+            let isInitiator = false;
+
+            if (!targetCase.appealStatus || targetCase.appealStatus === 'NONE' || targetCase.appealStatus === 'COMPLETED') { // 'COMPLETED' check in case looking at old state
+                // Initiator
+                isInitiator = true;
                 await caseService.submitAppeal(caseId, currentUser?.id || '', statement);
             } else if (targetCase.appealStatus === 'REQUESTED') {
+                // Responder
                 await caseService.submitAppealDefense(caseId, statement);
                 await caseService.requestAppealVerdict(caseId);
             }
 
             await refreshData();
-            navigate(`/case/${caseId}/verdict`);
+
+            if (isInitiator) {
+                // Stay on appeal page or reload to show "Waiting" state
+                navigate(`/case/${caseId}/appeal?litigant=${litigant}`, { replace: true });
+            } else {
+                // Redirect to verdict
+                navigate(`/case/${caseId}/verdict`);
+            }
         } catch (error) {
             console.error("Appeal submission failed", error);
             alert("항소 처리에 실패했습니다.");
@@ -347,8 +362,8 @@ export default function App() {
             // If data is provided, submit directly
             // Combine reason and evidence into statement for now, as API might not accept separate evidence string field yet
             const combinedStatement = `[항소 사유]\n${data.reason}\n\n[추가 증거]\n${data.evidence}`;
-            // Files are not handled yet in basic flow, passing empty array for evidences
-            handleSubmitAppeal(caseId, appellant, combinedStatement, []);
+            // Pass actual files if available
+            handleSubmitAppeal(caseId, appellant, combinedStatement, [], data.files);
         } else {
             // Fallback navigation
             navigate(`/case/${caseId}/appeal?litigant=${appellant}`);

@@ -315,8 +315,7 @@ export function VerdictPage({
   return (
     <div
       ref={captureRef}
-      className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pb-12 px-6 relative z-10"
-      style={{ paddingTop: '150px' }}
+      className="min-h-screen bg-gradient-to-b from-[var(--color-court-dark)] to-[#05050a] pt-40 pb-12 px-6 relative z-10"
     >
       <div className="max-w-5xl mx-auto px-6">
         {/* 헤더 */}
@@ -715,6 +714,20 @@ export function VerdictPage({
                 항소하기 (1회 가능)
               </button>
             )}
+
+            {/* ✅ 항소 답변하기 버튼 (항소 진행 중이고, 내가 답변해야 할 때) */}
+            {(case_.status === 'UNDER_APPEAL' || case_.appealStatus === 'REQUESTED') &&
+              isLitigant &&
+              case_.appeal?.requester !== (isPlaintiff ? 'plaintiff' : 'defendant') && (
+                <button
+                  type="button"
+                  onClick={() => navigate(`/case/${case_.id}/appeal?litigant=${isPlaintiff ? 'plaintiff' : 'defendant'}`)}
+                  className="px-8 py-4 border-2 border-purple-600 text-purple-400 font-bold rounded-xl hover:bg-purple-900 hover:bg-opacity-20 transition-all flex items-center justify-center gap-3"
+                >
+                  <FileText className="w-6 h-6" />
+                  항소 답변 제출하기
+                </button>
+              )}
           </div>
         )}
 
@@ -733,7 +746,7 @@ export function VerdictPage({
 
         {/* 공식 인장 */}
         <div className="mt-12 text-center">
-          <div className="inline-flex w-32 h-32 rounded-full border-4 border-[var(--color-gold-dark)] items-center justify-center mb-4 overflow-hidden">
+          <div className="inline-flex w-32 h-32 rounded-full items-center justify-center mb-4 overflow-hidden">
             <img src={logoImg} alt="고소미닷컴" className="w-full h-full object-cover" />
           </div>
           <p className="text-sm text-gray-500">고소미 대법원 공식 판결</p>

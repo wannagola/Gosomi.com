@@ -23,10 +23,12 @@ if (typeof window !== "undefined" && window.Kakao) {
 }
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <BrowserRouter>
+      <ScrollToTop />
       <App />
     </BrowserRouter>
   </ErrorBoundary>
